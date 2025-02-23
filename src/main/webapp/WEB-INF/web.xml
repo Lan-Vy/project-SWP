@@ -12,6 +12,14 @@
         <servlet-name>ShopControl</servlet-name>
         <url-pattern>/ShopControl</url-pattern>
     </servlet-mapping>
+        <servlet>
+        <servlet-name>ManagerControl</servlet-name>
+        <servlet-class>control.ManagerControl</servlet-class>
+    </servlet>
+       <servlet-mapping>
+        <servlet-name>ManagerControl</servlet-name>
+        <url-pattern>/ManagerControl</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>
             30
