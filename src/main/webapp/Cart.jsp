@@ -1,8 +1,4 @@
-<%-- 
-    Document   : Cart
-    Created on : Jan 13, 2021, 2:04:21 PM
-    Author     : Admin
---%>
+
 
 <%@page import="entity.Cart"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
