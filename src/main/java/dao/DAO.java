@@ -313,4 +313,27 @@ public class DAO {
         }
         return list;
     }
+
+    public List<Category> searchWithPaging(int pageIndex, int pageSize) {
+        List<Category> list = new ArrayList<>();
+        String query = "select * from Category";
+        query += " ORDER BY cID desc OFFSET\n"
+                + "                    (?*?-?) ROWS FETCH NEXT ? ROWS ONLY";
+        try {
+            DAO dao = new DAO();
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setInt(1, pageIndex);
+            ps.setInt(2, pageSize);
+            ps.setInt(3, pageSize);
+            ps.setInt(4, pageSize);
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            while (rs.next()) {
+                list.add(new Category(rs.getInt(1),
+                        rs.getString(2)));
+            }
+        } catch (Exception e) {
+        }
+        return list;
+    }
 }
