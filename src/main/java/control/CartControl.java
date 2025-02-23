@@ -65,24 +65,10 @@ public class CartControl extends HttpServlet {
             }
             // If the action is to decrease the quantity of a product
             if (action != null && action.equalsIgnoreCase("minus")) {
-                // Retrieve the product from the database
-                Product p = new DAO().getProductByID(id);
-                // Get the cart from the session
-                Cart c = (Cart) session.getAttribute("cart");
-                // Decrease the quantity of the product in the cart
-                c.minus(new Product(p.getId(), p.getName(), p.getImage(), p.getPrice(),
-                        p.getTitle(), p.getDescription(), p.getCateID(), p.getSubImage(),
-                        p.getAmount(), p.getIsDeleted()));
-                // Update the cart in the session
-                session.setAttribute("cart", c);
+
                 // If the action is to delete a product from the cart
             } else if (action != null && action.equalsIgnoreCase("delete")) {
-                // Get the cart from the session
-                Cart c = (Cart) session.getAttribute("cart");
-                // Remove the product with the specified ID from the cart
-                c.remove(Integer.parseInt(id));
-                // Update the cart in the session
-                session.setAttribute("cart", c);
+
             }
         }
         // Forward the request to the Cart.jsp page
