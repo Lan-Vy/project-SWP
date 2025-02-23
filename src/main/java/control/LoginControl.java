@@ -55,7 +55,7 @@ public class LoginControl extends HttpServlet {
             // Optionally update the user's viewed status (could be for tracking or analytics)
             dao.updateViewed();
             // Redirect to the shop control page after successful login
-            response.sendRedirect("Shop.jsp");
+            response.sendRedirect("ShopControl");
         }
     }
 

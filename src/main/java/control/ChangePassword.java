@@ -93,7 +93,7 @@ public class ChangePassword extends HttpServlet {
             // Set a success message to be displayed on the ChangePassword.jsp page
             request.setAttribute("message", "Change password successfull");
             // Forward the request to ChangePassword.jsp to show the success message
-            request.getRequestDispatcher("ChangePassword.jsp").forward(request, response);
+            request.getRequestDispatcher("Profile").forward(request, response);
         } else {
             // If the old password is incorrect, set an error message
             request.setAttribute("errorMessage", "Old password is wrong");
