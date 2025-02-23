@@ -6,9 +6,11 @@
 package control;
 
 import dao.DAO;
-import entity.Account;
+import entity.Cart;
+import entity.Product;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -21,8 +23,8 @@ import jakarta.servlet.http.HttpSession;
  *
  * @author Admin
  */
-@WebServlet(name = "LoginControl", urlPatterns = {"/login"})
-public class LoginControl extends HttpServlet {
+@WebServlet(name = "CartControl", urlPatterns = {"/cart"})
+public class CartControl extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,27 +38,42 @@ public class LoginControl extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        // Retrieve the user credentials from the request parameters
-        String user = request.getParameter("user");
-        String pass = request.getParameter("pass");
-        // Create an instance of the DAO (Data Access Object) to interact with the database
-        DAO dao = new DAO();
-        // Attempt to log in the user using the provided credentials
-        Account a = dao.login(user, pass);
-        // Check if the account exists
-        if (a == null) {
-            // If login fails, set an error message and forward to the login page
-            request.setAttribute("errorMessage", "This account does not exist!");
-            request.getRequestDispatcher("Login.jsp").forward(request, response);
-        } else {
-            // If login is successful, create a session and store the account information
-            HttpSession session = request.getSession();
-            session.setAttribute("acc", a);
-            // Optionally update the user's viewed status (could be for tracking or analytics)
-            dao.updateViewed();
-            // Redirect to the shop control page after successful login
-            response.sendRedirect("ShopControl");
+        HttpSession session = request.getSession(true);
+        // Get the product ID and action from the request parameters
+        String id = request.getParameter("id");
+        String action = request.getParameter("action");
+        // Check if both id and action are not null
+        if (!(id == null && action == null)) {
+            // If the action is to add a product to the cart
+            if (action != null && action.equalsIgnoreCase("add")) {
+                // Check if the cart does not exist in the session
+                if (session.getAttribute("cart") == null) {
+                    // Initialize a new cart with an empty product list
+                    List<Product> lst = new ArrayList<>();
+                    session.setAttribute("cart", new Cart(lst));
+                }
+                // Retrieve the product from the database using its ID
+                Product p = new DAO().getProductByID(id);
+                // Get the cart from the session
+                Cart c = (Cart) session.getAttribute("cart");
+                // Add the product to the cart
+                c.add(new Product(p.getId(), p.getName(), p.getImage(), p.getPrice(),
+                        p.getTitle(), p.getDescription(), p.getCateID(), p.getSubImage(),
+                        p.getAmount(), 1, p.getIsDeleted()));
+                // Update the cart in the session
+                session.setAttribute("cart", c);
+            }
+            // If the action is to decrease the quantity of a product
+            if (action != null && action.equalsIgnoreCase("minus")) {
+
+                // If the action is to delete a product from the cart
+            } else if (action != null && action.equalsIgnoreCase("delete")) {
+
+            }
         }
+        // Forward the request to the Cart.jsp page
+        request.getRequestDispatcher("Cart.jsp").forward(request, response);
+//        response.sendRedirect("order");
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -1,7 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 package control;
 
@@ -9,7 +8,6 @@ import dao.DAO;
 import entity.Account;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -21,8 +19,8 @@ import jakarta.servlet.http.HttpSession;
  *
  * @author Admin
  */
-@WebServlet(name = "LoginControl", urlPatterns = {"/login"})
-public class LoginControl extends HttpServlet {
+@WebServlet(name = "ProfileControl", urlPatterns = {"/Profile"})
+public class ProfileControl extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,27 +34,18 @@ public class LoginControl extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        // Retrieve the user credentials from the request parameters
-        String user = request.getParameter("user");
-        String pass = request.getParameter("pass");
-        // Create an instance of the DAO (Data Access Object) to interact with the database
+        // Retrieve the current session for the user
+        HttpSession session = request.getSession();
+        // Create a new DAO instance to interact with the database
         DAO dao = new DAO();
-        // Attempt to log in the user using the provided credentials
-        Account a = dao.login(user, pass);
-        // Check if the account exists
-        if (a == null) {
-            // If login fails, set an error message and forward to the login page
-            request.setAttribute("errorMessage", "This account does not exist!");
-            request.getRequestDispatcher("Login.jsp").forward(request, response);
-        } else {
-            // If login is successful, create a session and store the account information
-            HttpSession session = request.getSession();
-            session.setAttribute("acc", a);
-            // Optionally update the user's viewed status (could be for tracking or analytics)
-            dao.updateViewed();
-            // Redirect to the shop control page after successful login
-            response.sendRedirect("ShopControl");
-        }
+        // Get the currently logged-in account from the session
+        Account a = (Account) session.getAttribute("acc");
+        // Retrieve the user account details from the database using the user's ID
+        Account user = dao.getAccountById(a.getId());
+        // Set the user account details as a request attribute for use in the JSP
+        request.setAttribute("user", user);
+        // Forward the request to Profile.jsp to display the user information
+        request.getRequestDispatcher("Profile.jsp").forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
