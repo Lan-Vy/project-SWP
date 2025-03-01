@@ -33,7 +33,7 @@
                 <!--<li><a href="HomeControl">Home</a></li>-->
                 <li><a href="ShopControl">Shop</a></li>
                     <c:if test="${sessionScope.acc != null && (sessionScope.acc.role == 2 || sessionScope.acc.role == 3)}">
-                    <li><a href="dashboard"> Dashboard</a></li>
+                    <li><a href="ManagerControl"> Dashboard</a></li>
                     </c:if>
                 <!--<li><a href="ProductDetail.jsp">Product</a></li>-->
                 <li><a href="cart">Cart</a></li>
