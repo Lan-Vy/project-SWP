@@ -375,4 +375,110 @@ public class DAO {
             e.printStackTrace();
         }
     }
+
+    public void addNewProduct(String name, String image, String price,
+            String title, String description, String cid, int amount) {
+        String query = "INSERT into Product (pName, [image], price, title, [description], cID, pAmount, isDeleted)\n"
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, 0)";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setString(1, name);
+            ps.setString(2, image);
+            ps.setString(3, price);
+            ps.setString(4, title);
+            ps.setString(5, description);
+            ps.setString(6, cid);
+            ps.setInt(7, amount);
+            ps.executeUpdate();
+        } catch (Exception e) {
+        }
+    }
+
+    public int getProductIDToAdd() {
+        String query = "SELECT TOP(1) pID from Product order BY pID DESC";
+        try {
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+        }
+        return 0;
+    }
+
+    public void addNewSubImage(String pID, String Simage) {
+        String query = "INSERT into SubImage (pID, SImage)\n"
+                + "VALUES (?, ?)";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setString(1, pID);
+            ps.setString(2, Simage);
+            ps.executeUpdate();
+        } catch (Exception e) {
+        }
+    }
+
+    public void deleteSubImage(String pid) throws Exception {//edit param
+        //edit query (my_table), number of param
+        String query = "delete from SubImage\n"
+                + "where pID = ?";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setString(1, pid);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public void deleteProduct(String pid) throws Exception {//edit param
+        //edit query (my_table), number of param
+        String query = "Update Product\n"
+                + "set isDeleted = 1 WHERE pID = ?";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setString(1, pid);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public void updateProduct(String name, String image, String price,
+            String title, String description, String cid, int amount, int pID) {
+        String query = "UPDATE Product set pName = ?, image = ?, price = ?, title = ?, description = ?, cID = ?, pAmount = ? where pID = ?";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setString(1, name);
+            ps.setString(2, image);
+            ps.setString(3, price);
+            ps.setString(4, title);
+            ps.setString(5, description);
+            ps.setString(6, cid);
+            ps.setInt(7, amount);
+            ps.setInt(8, pID);
+            ps.executeUpdate();
+        } catch (Exception e) {
+        }
+    }
+
+    public void updateSubImage(String pID, String sImage, String sId) {
+        String query = "UPDATE SubImage set pID = ?, SImage = ? where subImageID = ?";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setString(1, pID);
+            ps.setString(2, sImage);
+            ps.setString(3, sId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+        }
+    }
 }

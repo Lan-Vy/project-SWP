@@ -280,7 +280,7 @@
                                                 var id = param;
                                                 console.log(id);
                                                 $.ajax({
-                                                    url: "/Project_Group1/UpdateProductControl",
+                                                    url: "/Project_Group6/UpdateProductControl",
                                                     type: "get", //send it throung get method
                                                     data: {
                                                         id: id
