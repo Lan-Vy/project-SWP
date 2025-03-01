@@ -1,7 +1,7 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<% String currentPage = request.getRequestURI(); %>
+<% String currentPage = request.getRequestURI();%>
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -10,7 +10,7 @@
         <ul class="nav navbar-nav">
             <li class="<%= currentPage.contains("ShopControl") ? "active" : ""%>">
                 <a href="ShopControl">Shop</a>
-                </li>
+            </li>
             <c:if test="${sessionScope.acc != null && (sessionScope.acc.role == 2)}">
                 <li class="<%= currentPage.contains("dashboard") ? "active" : ""%>">
                     <a href="dashboard">Dashboard</a>
@@ -31,6 +31,7 @@
             <li class="<%= currentPage.contains("ManagerOrder") ? "active" : ""%>">
                 <a href="ManagerOrder">Manage Order</a>
             </li>
+            <li><a href="logout">Logout</a></li>
         </ul>
     </div>
 </nav>

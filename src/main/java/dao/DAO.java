@@ -8,6 +8,9 @@ package dao;
 import context.DBContext;
 import entity.Account;
 import entity.Category;
+import entity.Feedback;
+import entity.Order;
+import entity.OrderDetails;
 import entity.Product;
 import entity.SubImage;
 import java.math.BigDecimal;
@@ -622,6 +625,234 @@ public class DAO {
                         rs.getString(2));
             }
 
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
+    public List<Feedback> searchFBWithPaging(String txtSearch, Integer pageIndex, Integer pageSize) {
+        List<Feedback> list = new ArrayList<>();
+        String query = "select f.*, a.userName, p.pName from Feedback f\n"
+                + "left join Account a on f.UserId = a.uID\n"
+                + "left join Product p on p.pID = f.ProductId where ? = '' or p.pName like ?";
+        if (pageIndex != null && pageSize != null) {
+            query += " ORDER BY f.Id desc OFFSET\n"
+                    + "                    (?*?-?) ROWS FETCH NEXT ? ROWS ONLY";
+        }
+        try {
+            DAO dao = new DAO();
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setString(1, txtSearch);
+            ps.setString(2, "%" + txtSearch + "%");
+            if (pageIndex != null && pageSize != null) {
+                ps.setInt(3, pageIndex);
+                ps.setInt(4, pageSize);
+                ps.setInt(5, pageSize);
+                ps.setInt(6, pageSize);
+            }
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            while (rs.next()) {
+                Feedback f = new Feedback(rs.getInt(1),
+                        rs.getInt(2),
+                        rs.getInt(3),
+                        rs.getInt(4),
+                        rs.getString(5),
+                        rs.getTimestamp(6));
+                f.setUserName(rs.getString(7));
+                f.setProductName(rs.getString(8));
+                list.add(f);
+            }
+        } catch (Exception e) {
+        }
+        return list;
+    }
+
+    public List<Order> getAllOrders(int pageIndex, int pageSize) {
+        List<Order> list = new ArrayList<>();
+        String query = "select * from [Order] o left join Account a on o.shipperID = a.uID";
+        query += " ORDER BY o.id desc OFFSET\n"
+                + "                    (?*?-?) ROWS FETCH NEXT ? ROWS ONLY";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setInt(1, pageIndex);
+            ps.setInt(2, pageSize);
+            ps.setInt(3, pageSize);
+            ps.setInt(4, pageSize);
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            while (rs.next()) {
+                Order o = new Order(rs.getInt(1),
+                        rs.getDate(2),
+                        rs.getInt(3),
+                        rs.getString(4),
+                        rs.getString(5),
+                        rs.getString(6),
+                        rs.getDouble(7));
+                o.setStatus(rs.getInt("status"));
+                Account shipper = new Account(rs.getInt("uID"), rs.getString("userName"));
+                o.setShipper(shipper);
+                list.add(o);
+            }
+        } catch (Exception e) {
+        }
+        return list;
+    }
+
+    public List<Order> getAllOrders() {
+        List<Order> list = new ArrayList<>();
+        String query = "select * from [Order] o left join Account a on o.shipperID = a.uID";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            while (rs.next()) {
+                Order o = new Order(rs.getInt(1),
+                        rs.getDate(2),
+                        rs.getInt(3),
+                        rs.getString(4),
+                        rs.getString(5),
+                        rs.getString(6),
+                        rs.getDouble(7));
+                o.setStatus(rs.getInt("status"));
+                Account shipper = new Account(rs.getInt("uID"), rs.getString("userName"));
+                o.setShipper(shipper);
+                list.add(o);
+            }
+        } catch (Exception e) {
+        }
+        return list;
+    }
+
+    public List<Order> getAllOrdersByShipper(int pageIndex, int pageSize, int shipperID) {
+        List<Order> list = new ArrayList<>();
+        String query = "select * from [Order] o left join Account a on o.shipperID = a.uID where o.shipperID = ?";
+        query += " ORDER BY o.id desc OFFSET\n"
+                + "                    (?*?-?) ROWS FETCH NEXT ? ROWS ONLY";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setInt(1, shipperID);
+            ps.setInt(2, pageIndex);
+            ps.setInt(3, pageSize);
+            ps.setInt(4, pageSize);
+            ps.setInt(5, pageSize);
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            while (rs.next()) {
+                Order o = new Order(rs.getInt(1),
+                        rs.getDate(2),
+                        rs.getInt(3),
+                        rs.getString(4),
+                        rs.getString(5),
+                        rs.getString(6),
+                        rs.getDouble(7));
+                o.setStatus(rs.getInt("status"));
+                Account shipper = new Account(rs.getInt("uID"), rs.getString("userName"));
+                o.setShipper(shipper);
+                list.add(o);
+            }
+        } catch (Exception e) {
+        }
+        return list;
+    }
+
+    public List<Order> getAllOrdersByShipper(int shipperID) {
+        List<Order> list = new ArrayList<>();
+        String query = "select * from [Order] o left join Account a on o.shipperID = a.uID where o.shipperID = ?";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setInt(1, shipperID);
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            while (rs.next()) {
+                Order o = new Order(rs.getInt(1),
+                        rs.getDate(2),
+                        rs.getInt(3),
+                        rs.getString(4),
+                        rs.getString(5),
+                        rs.getString(6),
+                        rs.getDouble(7));
+                o.setStatus(rs.getInt("status"));
+                Account shipper = new Account(rs.getInt("uID"), rs.getString("userName"));
+                o.setShipper(shipper);
+                list.add(o);
+            }
+        } catch (Exception e) {
+        }
+        return list;
+    }
+
+    public List<Account> getAccountsByRole(int role) {
+        List<Account> list = new ArrayList<>();
+        String query = "select * from Account a where a.role = ?";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setInt(1, role);
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            while (rs.next()) {
+                Account o = new Account(rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getInt(4),
+                        rs.getString(5));
+                list.add(o);
+            }
+        } catch (Exception e) {
+        }
+        return list;
+    }
+
+    public List<OrderDetails> getOrderDetailByOrderID(int orderId) {
+        String query = "SELECT od.*, p.image, p.pName, c.cName from OrderDetails od\n"
+                + "left join Product p on od.ProductID = p.pID\n"
+                + "left join Category c on p.cID = c.cID\n"
+                + "where OrderID = ?";
+        try {
+            List<OrderDetails> ls = new ArrayList<>();
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, orderId);
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            DAO dao = new DAO();
+            while (rs.next()) {
+                ls.add(new OrderDetails(rs.getInt(1),
+                        rs.getInt(2),
+                        rs.getDouble(3),
+                        rs.getInt(4),
+                        rs.getString(5),
+                        rs.getString(6),
+                        rs.getString(7)));
+            }
+            return ls;
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
+    public List<Order> getOrderHistoryByAccountID(int accID) {
+        String query = "SELECT o.*,a.uID,a.userName from [Order] o left join Account a on o.shipperID = a.uID where o.accountID = ?";
+        try {
+            List<Order> ls = new ArrayList<>();
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, accID);
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            DAO dao = new DAO();
+            while (rs.next()) {
+                Order o = new Order(rs.getInt(1),
+                        rs.getDate(2),
+                        rs.getInt(3),
+                        rs.getString(4),
+                        rs.getString(5),
+                        rs.getString(6),
+                        rs.getDouble(7));
+                o.setStatus(rs.getInt("status"));
+                Account shipper = new Account(rs.getInt("uID"), rs.getString("userName"));
+                o.setShipper(shipper);
+                ls.add(o);
+            }
+            return ls;
         } catch (Exception e) {
         }
         return null;
