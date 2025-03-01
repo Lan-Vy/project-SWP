@@ -4,7 +4,7 @@
  */
 package control;
 
-import dao.DAO;
+import dao.AccountDAO;
 import entity.Account;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -44,7 +44,7 @@ public class AdminAddAccountControl extends HttpServlet {
             Account newAccount = new Account(name, pass, Integer.parseInt(role), email);
 
             // Create an instance of the DAO to interact with the database
-            DAO dao = new DAO();
+            AccountDAO dao = new AccountDAO();
             Account a = dao.checkExist(email);
             if (a == null) {
                 dao.signUp(newAccount);

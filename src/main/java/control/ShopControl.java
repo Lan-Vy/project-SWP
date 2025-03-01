@@ -5,7 +5,8 @@
  */
 package control;
 
-import dao.DAO;
+import dao.CategoryDAO;
+import dao.ProductDAO;
 import entity.Category;
 import entity.Product;
 import java.io.IOException;
@@ -39,7 +40,7 @@ public class ShopControl extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try ( PrintWriter out = response.getWriter()) {
             // Retrieve all categories from the database
-            List<Category> lsNewsType = new DAO().getAllCategory();
+            List<Category> lsNewsType = new CategoryDAO().getAllCategory();
             // Get search parameters from the request
             String txtSearch = request.getParameter("txtSearch");
             String cID = request.getParameter("cID");
@@ -52,7 +53,7 @@ public class ShopControl extends HttpServlet {
             // Set category ID to the first category if not provided
             cID = (cID == null || cID.equals("")) ? lsNewsType.get(0).getId() + "" : Integer.parseInt(cID) + "";
             // Calculate the total number of pages based on the total products found
-            int pageSize = getPageSize(6, new DAO().search(txtSearch, cID, priceRange).size());
+            int pageSize = getPageSize(6, new ProductDAO().search(txtSearch, cID, priceRange).size());
             // Get the requested page index from the request, defaulting to 1 if not provided
             String index = request.getParameter("pageIndex");
             int pageIndex = 0;
@@ -62,7 +63,7 @@ public class ShopControl extends HttpServlet {
                 pageIndex = Integer.parseInt(index);
             }
             // Retrieve the list of products matching the search criteria with pagination
-            List<Product> ls = new DAO().searchWithPaging(txtSearch, pageIndex, 6, cID, sort, priceRange);
+            List<Product> ls = new ProductDAO().searchWithPaging(txtSearch, pageIndex, 6, cID, sort, priceRange);
             // Set various attributes for the request to be used in the JSP
             request.setAttribute("totalPage", pageSize);
             request.setAttribute("numberProduct", 6);

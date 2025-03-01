@@ -4,7 +4,7 @@
  */
 package control;
 
-import dao.DAO;
+import dao.FeedbackDAO;
 import entity.Category;
 import entity.Feedback;
 import java.io.IOException;
@@ -36,7 +36,7 @@ public class ManagerFeedbackController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         // Create a new DAO instance for database interactions
-        DAO dao = new DAO();
+        FeedbackDAO dao = new FeedbackDAO();
         // Retrieve the search query from the request parameters, defaulting to an empty string if null
         String txtSearch = request.getParameter("txtSearch") == null ? "" : request.getParameter("txtSearch");
         // Retrieve the current page index from the request parameters

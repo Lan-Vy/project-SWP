@@ -4,7 +4,7 @@
  */
 package control;
 
-import dao.DAO;
+import dao.CategoryDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -35,7 +35,7 @@ public class AdminAddCategoryControl extends HttpServlet {
         // Retrieve the 'name' parameter from the request
         String name = request.getParameter("name");
         // Create an instance of the DAO to interact with the database
-        DAO dao = new DAO();
+        CategoryDAO dao = new CategoryDAO();
         // Call the method to add a new category using the provided name
         dao.addNewCategory(name);
         // Set a success message to be forwarded with the request

@@ -4,7 +4,8 @@
  */
 package control;
 
-import dao.DAO;
+import dao.AccountDAO;
+import dao.OrderDAO;
 import entity.Account;
 import entity.Order;
 import java.io.IOException;
@@ -43,7 +44,7 @@ public class ManagerOrderController extends HttpServlet {
             // Get the currently logged-in account from the session
             Account a = (Account) session.getAttribute("acc");
 
-            DAO dao = new DAO();
+            OrderDAO dao = new OrderDAO();
             // Retrieve the page index from the request parameters
             String index = request.getParameter("pageIndex");
             int pageIndex = 0;
@@ -59,7 +60,8 @@ public class ManagerOrderController extends HttpServlet {
             int pageSize = 0;
             if (a.getRole() == 2) {
                 orders = dao.getAllOrders(pageIndex, 6);
-                List<Account> shippers = dao.getAccountsByRole(3);
+                AccountDAO accountDAO = new AccountDAO();
+                List<Account> shippers = accountDAO.getAccountsByRole(3);
                 request.setAttribute("shippers", shippers);
                 pageSize = getPageSize(6, dao.getAllOrders().size());
             } else if (a.getRole() == 3) {

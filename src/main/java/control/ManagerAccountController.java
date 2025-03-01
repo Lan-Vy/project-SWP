@@ -4,7 +4,7 @@
  */
 package control;
 
-import dao.DAO;
+import dao.AccountDAO;
 import entity.Account;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -38,7 +38,7 @@ public class ManagerAccountController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try {
 
-            DAO dao = new DAO();
+            AccountDAO dao = new AccountDAO();
             // Retrieve the page index from the request parameters
             String index = request.getParameter("pageIndex");
             int pageIndex = 0;

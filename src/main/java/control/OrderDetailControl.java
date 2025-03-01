@@ -4,7 +4,7 @@
  */
 package control;
 
-import dao.DAO;
+import dao.OrderDetailDAO;
 import entity.Account;
 import entity.Order;
 import entity.OrderDetails;
@@ -38,11 +38,11 @@ public class OrderDetailControl extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         // Create a new DAO instance to access the database
-        DAO dao = new DAO();
+        OrderDetailDAO odDAO = new OrderDetailDAO();
         // Retrieve the order ID from the request parameters
         String orderID = request.getParameter("orderId");
         // Fetch the order details associated with the given order ID
-        List<OrderDetails> lstOrderDetail = dao.getOrderDetailByOrderID(Integer.parseInt(orderID));
+        List<OrderDetails> lstOrderDetail = odDAO.getOrderDetailByOrderID(Integer.parseInt(orderID));
         // Set the list of order details as a request attribute for the JSP
         request.setAttribute("lstOrderDetail", lstOrderDetail);
         // Forward the request to the OrderDetail.jsp page for rendering

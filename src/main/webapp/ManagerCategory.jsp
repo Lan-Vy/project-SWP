@@ -1,6 +1,5 @@
 <%@page import="entity.Category"%>
 <%@page import="java.util.List"%>
-<%@page import="dao.DAO"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>

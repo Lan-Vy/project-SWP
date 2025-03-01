@@ -5,7 +5,7 @@
  */
 package control;
 
-import dao.DAO;
+import dao.ProductDAO;
 import entity.Product;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -35,7 +35,7 @@ public class ManagerControl extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         // Create a new DAO instance to interact with the database
-        DAO dao = new DAO();
+        ProductDAO dao = new ProductDAO();
         // Retrieve the page index from the request parameters
         String index = request.getParameter("pageIndex");
         int pageIndex = 0;

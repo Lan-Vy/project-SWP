@@ -5,7 +5,8 @@
  */
 package control;
 
-import dao.DAO;
+import dao.ProductDAO;
+import dao.SubImageDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
@@ -37,11 +38,12 @@ public class AdminDeleteProductControl extends HttpServlet {
         try {
             response.setContentType("text/html;charset=UTF-8");
             // Create a DAO instance to interact with the database
-            DAO dao = new DAO();
+            ProductDAO dao = new ProductDAO();
+            SubImageDAO sdao = new SubImageDAO();
             // Retrieve the product ID parameter from the request for the product to be deleted
             String pid = request.getParameter("deletePID");
             // Call the DAO method to delete associated sub-images of the product
-            dao.deleteSubImage(pid);
+            sdao.deleteSubImage(pid);
             // Call the DAO method to delete the product itself
             dao.deleteProduct(pid);
             // Set a success message indicating the deletion was successful

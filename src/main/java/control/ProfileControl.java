@@ -4,7 +4,7 @@
  */
 package control;
 
-import dao.DAO;
+import dao.AccountDAO;
 import entity.Account;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -37,7 +37,7 @@ public class ProfileControl extends HttpServlet {
         // Retrieve the current session for the user
         HttpSession session = request.getSession();
         // Create a new DAO instance to interact with the database
-        DAO dao = new DAO();
+        AccountDAO dao = new AccountDAO();
         // Get the currently logged-in account from the session
         Account a = (Account) session.getAttribute("acc");
         // Retrieve the user account details from the database using the user's ID

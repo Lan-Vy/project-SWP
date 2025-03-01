@@ -4,7 +4,7 @@
  */
 package control;
 
-import dao.DAO;
+import dao.AccountDAO;
 import entity.Account;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -79,7 +79,7 @@ public class ChangePassword extends HttpServlet {
         String password = request.getParameter("pass");
         String oldPassword = request.getParameter("oldPass");
         // Create a new DAO instance for database operations
-        DAO dao = new DAO();
+        AccountDAO dao = new AccountDAO();
         // Retrieve the current session
         HttpSession session = request.getSession();
         // Get the currently logged-in account from the session
