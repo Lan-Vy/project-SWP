@@ -313,4 +313,66 @@ public class DAO {
         }
         return list;
     }
+
+    public List<Account> getAllAccounts(int pageIndex, int pageSize) {
+        List<Account> list = new ArrayList<>();
+        String query = "select * from Account a";
+        query += " ORDER BY a.uID desc OFFSET\n"
+                + "                    (?*?-?) ROWS FETCH NEXT ? ROWS ONLY";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setInt(1, pageIndex);
+            ps.setInt(2, pageSize);
+            ps.setInt(3, pageSize);
+            ps.setInt(4, pageSize);
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            while (rs.next()) {
+                Account o = new Account(rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getInt(4),
+                        rs.getString(5));
+                list.add(o);
+            }
+        } catch (Exception e) {
+        }
+        return list;
+    }
+
+    public List<Account> getAllAccounts() {
+        List<Account> list = new ArrayList<>();
+        String query = "select * from Account a";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            while (rs.next()) {
+                Account o = new Account(rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getInt(4),
+                        rs.getString(5));
+                list.add(o);
+            }
+        } catch (Exception e) {
+        }
+        return list;
+    }
+
+    public void signUp(Account a) {
+        String query = "insert into Account\n"
+                + "values(?,?,?,?)";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setString(1, a.getUserName());
+            ps.setString(2, a.getPassWord());
+            ps.setInt(3, a.getRole());
+            ps.setString(4, a.getEmail());
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
