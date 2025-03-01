@@ -1,30 +1,27 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 package control;
 
 import dao.DAO;
-import entity.Cart;
-import entity.Product;
+import entity.Account;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import utils.MailService;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name = "CartControl", urlPatterns = {"/cart"})
-public class CartControl extends HttpServlet {
+@WebServlet(name = "AdminAddAccountControl", urlPatterns = {"/addAccount"})
+public class AdminAddAccountControl extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,35 +35,31 @@ public class CartControl extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        HttpSession session = request.getSession(true);
-        // Get the product ID and action from the request parameters
-        String id = request.getParameter("id");
-        String action = request.getParameter("action");
-        // Check if both id and action are not null
-        if (!(id == null && action == null)) {
-            // If the action is to add a product to the cart
-            if (action != null && action.equalsIgnoreCase("add")) {
-                // Check if the cart does not exist in the session
-                if (session.getAttribute("cart") == null) {
-                    // Initialize a new cart with an empty product list
-                    List<Product> lst = new ArrayList<>();
-                    session.setAttribute("cart", new Cart(lst));
-                }
-                // Retrieve the product from the database using its ID
-                Product p = new DAO().getProductByID(id);
-                // Get the cart from the session
-                Cart c = (Cart) session.getAttribute("cart");
-                // Add the product to the cart
-                c.add(new Product(p.getId(), p.getName(), p.getImage(), p.getPrice(),
-                        p.getTitle(), p.getDescription(), p.getCateID(), p.getSubImage(),
-                        p.getAmount(), 1, p.getIsDeleted()));
-                // Update the cart in the session
-                session.setAttribute("cart", c);
+        try {
+            // Retrieve the 'name' parameter from the request
+            String name = request.getParameter("name");
+            String email = request.getParameter("email");
+            String role = request.getParameter("role");
+            String pass = "Abc@123"; //default pass
+            Account newAccount = new Account(name, pass, Integer.parseInt(role), email);
+
+            // Create an instance of the DAO to interact with the database
+            DAO dao = new DAO();
+            Account a = dao.checkExist(email);
+            if (a == null) {
+                dao.signUp(newAccount);
+                //send mail
+                MailService.sendMail(email, "PASSWORD", "Your password is: " + pass);
+                request.setAttribute("message", "Register success!");
+                request.getRequestDispatcher("ManagerAccount").forward(request, response);
+            } else {
+                request.setAttribute("errorMessage", "This email registed!");
+                request.getRequestDispatcher("ManagerAccount").forward(request, response);
             }
+        } catch (Exception e) {
+            // Print the stack trace for any exceptions that occur
+            e.printStackTrace();
         }
-        // Forward the request to the Cart.jsp page
-        request.getRequestDispatcher("Cart.jsp").forward(request, response);
-//        response.sendRedirect("order");
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -1,30 +1,26 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 package control;
 
-import dao.DAO;
-import entity.Cart;
-import entity.Product;
+import entity.Account;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import utils.MailService;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name = "CartControl", urlPatterns = {"/cart"})
-public class CartControl extends HttpServlet {
+@WebServlet(name = "ContactControl", urlPatterns = {"/Contact"})
+public class ContactControl extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,35 +34,18 @@ public class CartControl extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        HttpSession session = request.getSession(true);
-        // Get the product ID and action from the request parameters
-        String id = request.getParameter("id");
-        String action = request.getParameter("action");
-        // Check if both id and action are not null
-        if (!(id == null && action == null)) {
-            // If the action is to add a product to the cart
-            if (action != null && action.equalsIgnoreCase("add")) {
-                // Check if the cart does not exist in the session
-                if (session.getAttribute("cart") == null) {
-                    // Initialize a new cart with an empty product list
-                    List<Product> lst = new ArrayList<>();
-                    session.setAttribute("cart", new Cart(lst));
-                }
-                // Retrieve the product from the database using its ID
-                Product p = new DAO().getProductByID(id);
-                // Get the cart from the session
-                Cart c = (Cart) session.getAttribute("cart");
-                // Add the product to the cart
-                c.add(new Product(p.getId(), p.getName(), p.getImage(), p.getPrice(),
-                        p.getTitle(), p.getDescription(), p.getCateID(), p.getSubImage(),
-                        p.getAmount(), 1, p.getIsDeleted()));
-                // Update the cart in the session
-                session.setAttribute("cart", c);
-            }
+        try ( PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet ContactControl</title>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet ContactControl at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
         }
-        // Forward the request to the Cart.jsp page
-        request.getRequestDispatcher("Cart.jsp").forward(request, response);
-//        response.sendRedirect("order");
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -81,7 +60,6 @@ public class CartControl extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
     }
 
     /**
@@ -95,7 +73,16 @@ public class CartControl extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        // Retrieve parameters from the request
+        String name = request.getParameter("name");
+        String email = request.getParameter("email");
+        String message = request.getParameter("message");
+        // Send an email using the MailService, including the customer's name and message
+        MailService.sendMail("vinhtran5114@gmail.com", "Message of customer " + name, email + " gửi liên hệ cho bạn với nội dung: " + message);
+        // Set an attribute to indicate that the message was sent successfully
+        request.setAttribute("message", "Send message success");
+        // Forward the request back to Contact.jsp to display the success message
+        request.getRequestDispatcher("Contact.jsp").forward(request, response);
     }
 
     /**

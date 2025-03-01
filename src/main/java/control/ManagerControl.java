@@ -6,25 +6,21 @@
 package control;
 
 import dao.DAO;
-import entity.Cart;
 import entity.Product;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name = "CartControl", urlPatterns = {"/cart"})
-public class CartControl extends HttpServlet {
+public class ManagerControl extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,35 +34,43 @@ public class CartControl extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        HttpSession session = request.getSession(true);
-        // Get the product ID and action from the request parameters
-        String id = request.getParameter("id");
-        String action = request.getParameter("action");
-        // Check if both id and action are not null
-        if (!(id == null && action == null)) {
-            // If the action is to add a product to the cart
-            if (action != null && action.equalsIgnoreCase("add")) {
-                // Check if the cart does not exist in the session
-                if (session.getAttribute("cart") == null) {
-                    // Initialize a new cart with an empty product list
-                    List<Product> lst = new ArrayList<>();
-                    session.setAttribute("cart", new Cart(lst));
-                }
-                // Retrieve the product from the database using its ID
-                Product p = new DAO().getProductByID(id);
-                // Get the cart from the session
-                Cart c = (Cart) session.getAttribute("cart");
-                // Add the product to the cart
-                c.add(new Product(p.getId(), p.getName(), p.getImage(), p.getPrice(),
-                        p.getTitle(), p.getDescription(), p.getCateID(), p.getSubImage(),
-                        p.getAmount(), 1, p.getIsDeleted()));
-                // Update the cart in the session
-                session.setAttribute("cart", c);
-            }
+        // Create a new DAO instance to interact with the database
+        DAO dao = new DAO();
+        // Retrieve the page index from the request parameters
+        String index = request.getParameter("pageIndex");
+        int pageIndex = 0;
+        // Determine the current page index
+        if (index == null) {
+            // If no page index is provided, default to the first page
+            pageIndex = 1;
+        } else {
+            // Parse the page index from the request parameter
+            pageIndex = Integer.parseInt(index);
         }
-        // Forward the request to the Cart.jsp page
-        request.getRequestDispatcher("Cart.jsp").forward(request, response);
-//        response.sendRedirect("order");
+        // Fetch the products with pagination, 6 products per page
+        // Parameters: search query (empty string for no search), current page index, number of items per page, and additional filters
+        List<Product> listP = dao.searchWithPaging("", pageIndex, 6, "", "", "0");
+        // Set the list of products as a request attribute for the JSP
+        request.setAttribute("listP", listP);
+        // Calculate the total number of pages needed based on the total number of products
+        int pageSize = getPageSize(6, dao.search("", "", "0").size());
+        request.setAttribute("totalPage", pageSize);
+        // Set the current page index as a request attribute
+        request.setAttribute("pageIndex", pageIndex);
+        // Forward the request to the ManagerProduct.jsp page for rendering
+        request.getRequestDispatcher("ManagerProduct.jsp").forward(request, response);
+
+    }
+
+    public int getPageSize(int numberProduct, int allProduct) {
+        // Calculate the total number of pages needed based on the number of products per page
+        int pageSize = allProduct / numberProduct;
+        // If there are leftover products that don't fill a complete page, add an additional page
+        if (allProduct % numberProduct != 0) {
+            pageSize = (allProduct / numberProduct) + 1;
+        }
+        return pageSize;
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

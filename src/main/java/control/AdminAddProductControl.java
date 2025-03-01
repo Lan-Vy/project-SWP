@@ -6,25 +6,22 @@
 package control;
 
 import dao.DAO;
-import entity.Cart;
 import entity.Product;
+
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name = "CartControl", urlPatterns = {"/cart"})
-public class CartControl extends HttpServlet {
+@WebServlet(name = "AdminAddProductControl", urlPatterns = {"/addProduct"})
+public class AdminAddProductControl extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,35 +35,34 @@ public class CartControl extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        HttpSession session = request.getSession(true);
-        // Get the product ID and action from the request parameters
-        String id = request.getParameter("id");
-        String action = request.getParameter("action");
-        // Check if both id and action are not null
-        if (!(id == null && action == null)) {
-            // If the action is to add a product to the cart
-            if (action != null && action.equalsIgnoreCase("add")) {
-                // Check if the cart does not exist in the session
-                if (session.getAttribute("cart") == null) {
-                    // Initialize a new cart with an empty product list
-                    List<Product> lst = new ArrayList<>();
-                    session.setAttribute("cart", new Cart(lst));
-                }
-                // Retrieve the product from the database using its ID
-                Product p = new DAO().getProductByID(id);
-                // Get the cart from the session
-                Cart c = (Cart) session.getAttribute("cart");
-                // Add the product to the cart
-                c.add(new Product(p.getId(), p.getName(), p.getImage(), p.getPrice(),
-                        p.getTitle(), p.getDescription(), p.getCateID(), p.getSubImage(),
-                        p.getAmount(), 1, p.getIsDeleted()));
-                // Update the cart in the session
-                session.setAttribute("cart", c);
-            }
-        }
-        // Forward the request to the Cart.jsp page
-        request.getRequestDispatcher("Cart.jsp").forward(request, response);
-//        response.sendRedirect("order");
+        // Retrieve input parameters from the request
+        String name = request.getParameter("name");
+        String image = request.getParameter("image");
+        String subImage1 = request.getParameter("subImage1");
+        String subImage2 = request.getParameter("subImage2");
+        String subImage3 = request.getParameter("subImage3");
+        String subImage4 = request.getParameter("subImage4");
+        String price = request.getParameter("price");
+        String title = request.getParameter("title");
+        String description = request.getParameter("description");
+        String amount = request.getParameter("amount");
+        String category = request.getParameter("category");
+        // Create a DAO instance to interact with the database
+        DAO dao = new DAO();
+
+        dao.addNewProduct(name, image, price, title, description, category, Integer.parseInt(amount));
+        // Retrieve the newly added product ID for adding sub-images
+        int pID = dao.getProductIDToAdd();
+        // Add each of the sub-images associated with the new product
+        dao.addNewSubImage(pID + "", subImage1);
+        dao.addNewSubImage(pID + "", subImage2);
+        dao.addNewSubImage(pID + "", subImage3);
+        dao.addNewSubImage(pID + "", subImage4);
+        // Set a success message to be displayed
+        request.setAttribute("message", "Create success!");
+        // Forward the request to ManagerControl to display the success message
+        request.getRequestDispatcher("ManagerControl").forward(request, response);
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

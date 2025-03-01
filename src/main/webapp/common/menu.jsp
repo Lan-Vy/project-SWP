@@ -1,8 +1,4 @@
-<%-- 
-    Document   : menu
-    Created on : Feb 19, 2025, 10:15:35 PM
-    Author     : Admin
---%>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <% String currentPage = request.getRequestURI(); %>

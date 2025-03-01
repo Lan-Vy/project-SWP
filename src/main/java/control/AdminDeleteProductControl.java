@@ -6,25 +6,22 @@
 package control;
 
 import dao.DAO;
-import entity.Cart;
-import entity.Product;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 /**
  *
  * @author Admin
  */
-@WebServlet(name = "CartControl", urlPatterns = {"/cart"})
-public class CartControl extends HttpServlet {
+@WebServlet(name = "AdminDeleteProductControl", urlPatterns = {"/delete"})
+public class AdminDeleteProductControl extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,37 +33,29 @@ public class CartControl extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        HttpSession session = request.getSession(true);
-        // Get the product ID and action from the request parameters
-        String id = request.getParameter("id");
-        String action = request.getParameter("action");
-        // Check if both id and action are not null
-        if (!(id == null && action == null)) {
-            // If the action is to add a product to the cart
-            if (action != null && action.equalsIgnoreCase("add")) {
-                // Check if the cart does not exist in the session
-                if (session.getAttribute("cart") == null) {
-                    // Initialize a new cart with an empty product list
-                    List<Product> lst = new ArrayList<>();
-                    session.setAttribute("cart", new Cart(lst));
-                }
-                // Retrieve the product from the database using its ID
-                Product p = new DAO().getProductByID(id);
-                // Get the cart from the session
-                Cart c = (Cart) session.getAttribute("cart");
-                // Add the product to the cart
-                c.add(new Product(p.getId(), p.getName(), p.getImage(), p.getPrice(),
-                        p.getTitle(), p.getDescription(), p.getCateID(), p.getSubImage(),
-                        p.getAmount(), 1, p.getIsDeleted()));
-                // Update the cart in the session
-                session.setAttribute("cart", c);
-            }
+            throws ServletException, IOException, Exception {
+        try {
+            response.setContentType("text/html;charset=UTF-8");
+            // Create a DAO instance to interact with the database
+            DAO dao = new DAO();
+            // Retrieve the product ID parameter from the request for the product to be deleted
+            String pid = request.getParameter("deletePID");
+            // Call the DAO method to delete associated sub-images of the product
+            dao.deleteSubImage(pid);
+            // Call the DAO method to delete the product itself
+            dao.deleteProduct(pid);
+            // Set a success message indicating the deletion was successful
+            request.setAttribute("message", "Delete success!");
+            // Forward the request to ManagerControl to display the result
+            request.getRequestDispatcher("ManagerControl").forward(request, response);
+
+        } catch (Exception e) {
+            // Rethrow the exception to be handled by a higher-level error handler
+             // Set a success message indicating the deletion was successful
+            request.setAttribute("errorMessage", "Delete fail!" + e.getMessage());
+            // Forward the request to ManagerControl to display the result
+            request.getRequestDispatcher("ManagerControl").forward(request, response);
         }
-        // Forward the request to the Cart.jsp page
-        request.getRequestDispatcher("Cart.jsp").forward(request, response);
-//        response.sendRedirect("order");
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -81,7 +70,12 @@ public class CartControl extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (Exception ex) {
+            // Log the exception if an error occurs during processing
+            Logger.getLogger(AdminDeleteProductControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -95,7 +89,12 @@ public class CartControl extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (Exception ex) {
+            // Log the exception if an error occurs during processing
+            Logger.getLogger(AdminDeleteProductControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
