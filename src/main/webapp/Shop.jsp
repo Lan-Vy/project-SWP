@@ -342,7 +342,7 @@
                                                 var priceRange = document.querySelector('input[name="price"]:checked').value;
                                                 console.log(priceRange);
                                                 $.ajax({
-                                                    url: "/Project_Group1/search",
+                                                    url: "/Project_Group6/search",
                                                     type: "get", //send it throung get method
                                                     data: {
                                                         txt: txtSearch,
