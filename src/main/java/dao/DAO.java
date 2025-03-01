@@ -481,4 +481,149 @@ public class DAO {
         } catch (Exception e) {
         }
     }
+
+    public List<Category> searchWithPaging(int pageIndex, int pageSize) {
+        List<Category> list = new ArrayList<>();
+        String query = "select * from Category";
+        query += " ORDER BY cID desc OFFSET\n"
+                + "                    (?*?-?) ROWS FETCH NEXT ? ROWS ONLY";
+        try {
+            DAO dao = new DAO();
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setInt(1, pageIndex);
+            ps.setInt(2, pageSize);
+            ps.setInt(3, pageSize);
+            ps.setInt(4, pageSize);
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            while (rs.next()) {
+                list.add(new Category(rs.getInt(1),
+                        rs.getString(2)));
+            }
+        } catch (Exception e) {
+        }
+        return list;
+    }
+
+    public void addNewCategory(String name) {
+        String query = "INSERT into Category (cName)\n"
+                + "VALUES (?)";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setString(1, name);
+            ps.executeUpdate();
+        } catch (Exception e) {
+        }
+    }
+
+    public void deleteCategory(String pid) throws Exception {//edit param
+        String query = "delete from Category\n"
+                + " WHERE cID = ?";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setString(1, pid);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public void updateCategory(String name, int cid) {
+        String query = "UPDATE Category set cName = ? where cID = ?";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setString(1, name);
+            ps.setInt(2, cid);
+            ps.executeUpdate();
+        } catch (Exception e) {
+        }
+    }
+
+    public List<Product> getProductByCid(String cid) {
+        List<Product> list = new ArrayList<>();
+        String query = "select * from Product where cID = ?";
+        DAO dao = new DAO();
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setString(1, cid);
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            while (rs.next()) {
+                list.add(new Product(rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getDouble(4),
+                        rs.getString(5),
+                        rs.getString(6),
+                        rs.getInt(7), dao.getAllSubImageByPID(rs.getInt(1) + ""), rs.getInt(8), rs.getInt(9)));
+            }
+
+        } catch (Exception e) {
+        }
+        return list;
+    }
+
+    public List<Product> getProductByCids(String cids) {
+        List<Product> list = new ArrayList<>();
+        DAO dao = new DAO();
+        String[] cidArray = cids.split(",");
+        StringBuilder queryBuilder = new StringBuilder("SELECT * FROM Product WHERE cID IN (");
+
+        // Append a '?' placeholder for each cid
+        for (int i = 0; i < cidArray.length; i++) {
+            queryBuilder.append("?");
+            if (i < cidArray.length - 1) {
+                queryBuilder.append(", ");
+            }
+        }
+        queryBuilder.append(")");
+
+        try {
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(queryBuilder.toString());
+
+            // Set each cid as a parameter in the query
+            for (int i = 0; i < cidArray.length; i++) {
+                ps.setInt(i + 1, Integer.parseInt(cidArray[i].trim()));
+            }
+
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(new Product(rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getDouble(4),
+                        rs.getString(5),
+                        rs.getString(6),
+                        rs.getInt(7), dao.getAllSubImageByPID(rs.getInt(1) + ""), rs.getInt(8), rs.getInt(9)));
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // Log the exception for debugging
+        } finally {
+            // Close resources here (conn, ps, rs) to prevent memory leaks
+        }
+
+        return list;
+    }
+
+    public Category getCategoryById(int cid) {
+        String query = "select * from Category where cID = ?";
+        DAO dao = new DAO();
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setInt(1, cid);
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            while (rs.next()) {
+                return new Category(rs.getInt(1),
+                        rs.getString(2));
+            }
+
+        } catch (Exception e) {
+        }
+        return null;
+    }
 }

@@ -184,7 +184,7 @@
                                                 var id = param;
                                                 console.log(id);
                                                 $.ajax({
-                                                    url: "/Project_Group1/updateCategory",
+                                                    url: "/Project_Group6/updateCategory",
                                                     type: "get", //send it throung get method
                                                     data: {
                                                         id: id
