@@ -5,7 +5,7 @@
  */
 package control;
 
-import dao.DAO;
+import dao.AccountDAO;
 import entity.Account;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -38,7 +38,7 @@ public class SignUpControl extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("pass");
 
-        DAO dao = new DAO();
+        AccountDAO dao = new AccountDAO();
         Account a = dao.checkExist(email);
         if (a == null) {
             //được sign up

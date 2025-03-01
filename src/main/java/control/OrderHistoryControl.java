@@ -4,7 +4,7 @@
  */
 package control;
 
-import dao.DAO;
+import dao.OrderDAO;
 import entity.Account;
 import entity.Order;
 import java.io.IOException;
@@ -36,7 +36,7 @@ public class OrderHistoryControl extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        DAO dao = new DAO();
+        OrderDAO dao = new OrderDAO();
         // Retrieve the current session
         HttpSession session = request.getSession();
         // Get the logged-in user's account information from the session

@@ -4,7 +4,7 @@
  */
 package control;
 
-import dao.DAO;
+import dao.OrderDetailDAO;
 import entity.OrderDetails;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -36,7 +36,7 @@ public class ManagerOrderDetailController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try {
             // Create a new DAO instance to access the database
-            DAO dao = new DAO();
+            OrderDetailDAO dao = new OrderDetailDAO();
             // Retrieve the order ID from the request parameters
             String orderID = request.getParameter("orderId");
             // Fetch the order details associated with the given order ID

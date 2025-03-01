@@ -5,7 +5,7 @@
  */
 package control;
 
-import dao.DAO;
+import dao.ProductDAO;
 import entity.Cart;
 import entity.Product;
 import java.io.IOException;
@@ -53,7 +53,7 @@ public class CartControl extends HttpServlet {
                     session.setAttribute("cart", new Cart(lst));
                 }
                 // Retrieve the product from the database using its ID
-                Product p = new DAO().getProductByID(id);
+                Product p = new ProductDAO().getProductByID(id);
                 // Get the cart from the session
                 Cart c = (Cart) session.getAttribute("cart");
                 // Add the product to the cart

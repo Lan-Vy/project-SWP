@@ -2,7 +2,7 @@
 
 <%@page import="entity.Category"%>
 <%@page import="java.util.List"%>
-<%@page import="dao.DAO"%>
+<%@page import="dao.CategoryDAO"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -163,7 +163,7 @@
                                     <input name="amount" type="number" class="form-control" required min="0">
                                 </div>
                                 <%
-                                    DAO dao = new DAO();
+                                    CategoryDAO dao = new CategoryDAO();
                                     List<Category> listC = dao.getAllCategory();
                                 %>
                                 <div class="form-group">

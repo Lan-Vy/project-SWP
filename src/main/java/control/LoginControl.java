@@ -5,7 +5,7 @@
  */
 package control;
 
-import dao.DAO;
+import dao.AccountDAO;
 import entity.Account;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -40,7 +40,7 @@ public class LoginControl extends HttpServlet {
         String user = request.getParameter("user");
         String pass = request.getParameter("pass");
         // Create an instance of the DAO (Data Access Object) to interact with the database
-        DAO dao = new DAO();
+        AccountDAO dao = new AccountDAO();
         // Attempt to log in the user using the provided credentials
         Account a = dao.login(user, pass);
         // Check if the account exists

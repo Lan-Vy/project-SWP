@@ -5,7 +5,9 @@
  */
 package control;
 
-import dao.DAO;
+import dao.CategoryDAO;
+import dao.ProductDAO;
+import dao.SubImageDAO;
 import entity.Category;
 import entity.Product;
 import entity.SubImage;
@@ -56,9 +58,9 @@ public class UpdateProductControl extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String id = request.getParameter("id");
 
-        DAO dao = new DAO();
+        ProductDAO dao = new ProductDAO();
         Product product = dao.getProductByID(id);
-        List<Category> listC = dao.getAllCategory();
+        List<Category> listC = new CategoryDAO().getAllCategory();
 
         String select = "";
 
@@ -169,10 +171,11 @@ public class UpdateProductControl extends HttpServlet {
         String amount = request.getParameter("amount");
         String category = request.getParameter("category");
 
-        DAO dao = new DAO();
+        ProductDAO dao = new ProductDAO();
+        SubImageDAO sdao = new SubImageDAO();
         Product oldProduct = dao.getProductByID(pID);
 
-        List<SubImage> listSubImg = dao.getAllSubImageByPID(pID);
+        List<SubImage> listSubImg = sdao.getAllSubImageByPID(pID);
         SubImage s = listSubImg.get(0);
         SubImage s1 = listSubImg.get(1);
         SubImage s2 = listSubImg.get(2);
@@ -182,10 +185,10 @@ public class UpdateProductControl extends HttpServlet {
         s2.setImage(subImage3);
         s3.setImage(subImage4);
 
-        dao.updateSubImage(s.getpID() + "", s.getImage() + "", s.getSubImageID() + "");
-        dao.updateSubImage(s1.getpID() + "", s1.getImage() + "", s1.getSubImageID() + "");
-        dao.updateSubImage(s2.getpID() + "", s2.getImage() + "", s2.getSubImageID() + "");
-        dao.updateSubImage(s3.getpID() + "", s3.getImage() + "", s3.getSubImageID() + "");
+        sdao.updateSubImage(s.getpID() + "", s.getImage() + "", s.getSubImageID() + "");
+        sdao.updateSubImage(s1.getpID() + "", s1.getImage() + "", s1.getSubImageID() + "");
+        sdao.updateSubImage(s2.getpID() + "", s2.getImage() + "", s2.getSubImageID() + "");
+        sdao.updateSubImage(s3.getpID() + "", s3.getImage() + "", s3.getSubImageID() + "");
         dao.updateProduct(name, image, price, title, description, category, Integer.parseInt(amount), Integer.parseInt(pID));
         request.setAttribute("message", "Update success!");
         request.getRequestDispatcher("ManagerControl").forward(request, response);

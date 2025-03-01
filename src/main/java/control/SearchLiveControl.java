@@ -6,7 +6,8 @@
 package control;
 
 import com.google.gson.JsonObject;
-import dao.DAO;
+import dao.CategoryDAO;
+import dao.ProductDAO;
 import entity.Category;
 import entity.Product;
 import java.io.IOException;
@@ -57,7 +58,7 @@ public class SearchLiveControl extends HttpServlet {
         String priceRange = request.getParameter("priceRange");
         priceRange = (priceRange == null || priceRange.equals("")) ? "0" : priceRange;
         // Calculate the total number of pages based on the number of products
-        int pageSize = getPageSize(6, new DAO().search(txtSearch, cID, priceRange).size());
+        int pageSize = getPageSize(6, new ProductDAO().search(txtSearch, cID, priceRange).size());
         String index = request.getParameter("pageIndex");
         int pageIndex = 0;
         if (index == null) {
@@ -66,7 +67,7 @@ public class SearchLiveControl extends HttpServlet {
             pageIndex = Integer.parseInt(index);
         }
         // Retrieve the list of products based on search criteria and pagination
-        List<Product> list = new DAO().searchWithPaging(txtSearch, pageIndex, 6, cID, sort, priceRange);
+        List<Product> list = new ProductDAO().searchWithPaging(txtSearch, pageIndex, 6, cID, sort, priceRange);
         // Prepare product HTML for response
         PrintWriter out = response.getWriter();
         String product = "";
@@ -131,7 +132,7 @@ public class SearchLiveControl extends HttpServlet {
         }
         // Prepare category menu HTML
         String categoryMenu = "<ul>";
-        List<Category> lsNewsType = new DAO().getAllCategory();
+        List<Category> lsNewsType = new CategoryDAO().getAllCategory();
         int id = (cID == null || cID.trim().equals("")) ? lsNewsType.get(0).getId() : Integer.parseInt(cID);
         for (Category newsType : lsNewsType) {
             if (newsType.getId() == id) {

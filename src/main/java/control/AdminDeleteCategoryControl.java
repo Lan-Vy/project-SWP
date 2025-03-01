@@ -4,7 +4,8 @@
  */
 package control;
 
-import dao.DAO;
+import dao.CategoryDAO;
+import dao.ProductDAO;
 import entity.Product;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -36,11 +37,12 @@ public class AdminDeleteCategoryControl extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try {
             // Create a DAO instance to interact with the database
-            DAO dao = new DAO();
+            CategoryDAO dao = new CategoryDAO();
             // Retrieve the category ID parameter from the request
             String cId = request.getParameter("cId");
+            ProductDAO pdao = new ProductDAO();
             // Get a list of products associated with the specified category ID
-            List<Product> lstP = dao.getProductByCid(cId);
+            List<Product> lstP = pdao.getProductByCid(cId);
             // Check if there are any products in the category
             if (lstP.size() > 0) {
                 // If there are products, set an error message indicating deletion is not allowed
@@ -87,13 +89,14 @@ public class AdminDeleteCategoryControl extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try {
             // Create a DAO instance to interact with the database
-            DAO dao = new DAO();
+            ProductDAO pdao = new ProductDAO();
+            CategoryDAO cdao = new CategoryDAO();
             // Retrieve the parameter containing selected category IDs
             String categoryIdsParam = request.getParameter("categoryIds");
             // Check if the parameter is not null and not empty
             if (categoryIdsParam != null && !categoryIdsParam.isEmpty()) {
                 // Get the list of products associated with the selected category IDs
-                List<Product> lstP = dao.getProductByCids(categoryIdsParam);
+                List<Product> lstP = pdao.getProductByCids(categoryIdsParam);
                 // Check if there are any products in the selected categories
                 if (lstP.size() > 0) {
                     // If products exist, set an error message indicating deletion is not allowed
@@ -104,7 +107,7 @@ public class AdminDeleteCategoryControl extends HttpServlet {
                     // Loop through each category ID and delete the corresponding category
                     for (String id : categoryIds) {
                         // Gọi hàm xóa từng category với id tương ứng
-                        dao.deleteCategory(id);
+                        cdao.deleteCategory(id);
                     }
                     // Set a success message indicating the categories were deleted
                     request.setAttribute("message", "Delete success!");

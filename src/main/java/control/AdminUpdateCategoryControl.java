@@ -4,7 +4,7 @@
  */
 package control;
 
-import dao.DAO;
+import dao.CategoryDAO;
 import entity.Category;
 import entity.Product;
 import entity.SubImage;
@@ -40,7 +40,7 @@ public class AdminUpdateCategoryControl extends HttpServlet {
         // Retrieve the 'id' parameter from the request
         String id = request.getParameter("id");
         // Create an instance of the DAO to interact with the database
-        DAO dao = new DAO();
+        CategoryDAO dao = new CategoryDAO();
         // Fetch the category object based on the provided ID
         Category c = dao.getCategoryById(Integer.parseInt(id));
         // Obtain a PrintWriter to send the response back to the client
@@ -105,7 +105,7 @@ public class AdminUpdateCategoryControl extends HttpServlet {
         // Retrieve the 'cid' parameter from the request (the ID of the category to update)
         String cId = request.getParameter("cid");
         // Create an instance of the DAO to perform database operations
-        DAO dao = new DAO();
+        CategoryDAO dao = new CategoryDAO();
         // Call the updateCategory method of the DAO to update the category name in the database
         dao.updateCategory(name, Integer.parseInt(cId));
         // Set a success message as a request attribute to be displayed after the update
