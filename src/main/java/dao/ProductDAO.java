@@ -318,4 +318,47 @@ public class ProductDAO {
         } catch (Exception e) {
         }
     }
+
+    public Product getNewestProduct() {
+        String query = "select top 1 *\n"
+                + "from Product where isDeleted != 1\n"
+                + "order by pID desc";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            while (rs.next()) {
+                return new Product(rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getDouble(4),
+                        rs.getString(5),
+                        rs.getString(6),
+                        rs.getInt(7), new SubImageDAO().getAllSubImageByPID(rs.getInt(1) + ""), rs.getInt(8), rs.getInt(9));
+            }
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
+    public int getBestSeller() {
+        String query = "with R as(\n"
+                + "select ProductID,SUM(Quantity) SL\n"
+                + "from Product P, OrderDetails O\n"
+                + "where P.pID = O.ProductID\n"
+                + "group by ProductID\n"
+                + ")\n"
+                + "select top 1 R.ProductID from R where SL = (select MAX(SL) from R)\n"
+                + "order by R.ProductID desc";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            while (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+        }
+        return 0;
+    }
 }
