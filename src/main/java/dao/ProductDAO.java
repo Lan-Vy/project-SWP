@@ -71,7 +71,7 @@ public class ProductDAO {
         }
         return list;
     }
-    
+
     public Product getProductByID(String id) {
         String query = "select * from Product where pID = ?";
         SubImageDAO dao = new SubImageDAO();
@@ -174,10 +174,6 @@ public class ProductDAO {
         return list;
     }
 
-    
-
-    
-
     public void addNewProduct(String name, String image, String price,
             String title, String description, String cid, int amount) {
         String query = "INSERT into Product (pName, [image], price, title, [description], cID, pAmount, isDeleted)\n"
@@ -210,7 +206,8 @@ public class ProductDAO {
         }
         return 0;
     }
-     public void deleteProduct(String pid) throws Exception {//edit param
+
+    public void deleteProduct(String pid) throws Exception {//edit param
         //edit query (my_table), number of param
         String query = "Update Product\n"
                 + "set isDeleted = 1 WHERE pID = ?";
@@ -242,7 +239,8 @@ public class ProductDAO {
         } catch (Exception e) {
         }
     }
- public List<Product> getProductByCid(String cid) {
+
+    public List<Product> getProductByCid(String cid) {
         List<Product> list = new ArrayList<>();
         String query = "select * from Product where cID = ?";
         SubImageDAO dao = new SubImageDAO();
@@ -309,5 +307,15 @@ public class ProductDAO {
         return list;
     }
 
-    
+    public void updateAmounProduct(int amount, int productID) {
+        String query = "UPDATE Product SET pAmount = ? WHERE pID = ?";
+        try {
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, amount);
+            ps.setInt(2, productID);
+            ps.executeUpdate();
+        } catch (Exception e) {
+        }
+    }
 }
