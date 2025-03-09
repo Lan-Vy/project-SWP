@@ -582,4 +582,24 @@ public class ProductDAO {
         }
         return total;
     }
+
+    public boolean isBought(int userId, int productId) {
+        String query = "select * from OrderDetails OD\n"
+                + "  left join [Order] O on O.id = OD.OrderID\n"
+                + "  where O.accountID = ? and OD.ProductID = ? and O.status = 3";
+        try {
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, userId);
+            ps.setInt(2, productId);
+
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

@@ -87,4 +87,30 @@ public class FeedbackDAO {
         } catch (Exception e) {
         }
     }
+    
+    public List<Feedback> getFeedbacksByProductId(int productId) {
+        List<Feedback> list = new ArrayList<>();
+        String query = "select f.*, a.userName from Feedback f\n"
+                + "left join Account a on f.UserId = a.uID\n"
+                + "where f.productId = ? order by f.feedbackDate";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setInt(1, productId);
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            while (rs.next()) {
+                Feedback f = new Feedback(rs.getInt(1),
+                        rs.getInt(2),
+                        rs.getInt(3),
+                        rs.getInt(4),
+                        rs.getString(5),
+                        rs.getTimestamp(6));
+                f.setUserName(rs.getString(7));
+                list.add(f);
+            }
+        } catch (Exception e) {
+        }
+        return list;
+    }
+
 }

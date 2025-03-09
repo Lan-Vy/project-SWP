@@ -114,4 +114,20 @@ public class CategoryDAO {
         }
         return null;
     }
+
+    public String getCnameByCID(String cid) {
+        String query = "select distinct cName from Product P, Category C\n"
+                + "where P.cID = C.cID and P.cID = ?";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setString(1, cid);
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            while (rs.next()) {
+                return rs.getString(1);
+            }
+        } catch (Exception e) {
+        }
+        return null;
+    }
 }
