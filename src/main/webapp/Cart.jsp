@@ -1,3 +1,9 @@
+<%-- 
+    Document   : Cart
+    Created on : Jan 13, 2021, 2:04:21 PM
+    Author     : Admin
+--%>
+
 <%@page import="entity.Cart"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -65,10 +71,10 @@
                                                 <span>$${o.price}</span>
                                             </td>
                                             <td class="qty">
-                                                <a href="#"><button class="btnSub">-</button></a> 
+                                                <a href="cart?id=${o.id}&action=minus"><button class="btnSub">-</button></a> 
                                                 <strong>${o.numberInCart}</strong>
-                                                <a href="#"><button class="btnAdd">+</button></a>
-                                                <a href="#" style="margin-left: 100px;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                                <a href="cart?id=${o.id}&action=add"><button class="btnAdd">+</button></a>
+                                                <a href="cart?id=${o.id}&action=delete" style="margin-left: 100px;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
                                                     <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
                                                     </svg></a>
                                             </td>
