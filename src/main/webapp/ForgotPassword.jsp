@@ -1,3 +1,8 @@
+<%-- 
+    Document   : Login
+    Created on : Jan 13, 2021, 2:06:52 PM
+    Author     : Admin
+--%>
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -19,56 +24,18 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
         <link href="css/login.css" rel="stylesheet" type="text/css" />
-        <title>Aloha Space Shop - Be good, Be bad, Be yourself | Login</title>
+        <title>KiA Shop - Be good, Be bad, Be yourself | Forgot password</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
         <script type="text/javascript" src="http://dev.jquery.com/view/trunk/plugins/validate/jquery.validate.js"></script>
-        <script type="text/javascript">
-            $(document).ready(function () {
-                $("#formlogin").validate({
-                    rules: {
-                        user: {
-                            required: true,
-                            email: true
-                        },
-                        pass: {
-                            required: true,
-                            maxlength: 20,
-                            minlength: 3
-                        }
-                    }
-                });
 
-                $("#formregister").validate({
-                    rules: {
-                        user: {
-                            required: true,
-                            maxlength: 20,
-                            minlength: 3
-                        },
-                        email: {
-                            required: true,
-                            email: true
-                        },
-                        pass: {
-                            required: true,
-                            maxlength: 20,
-                            minlength: 3
-                        },
-                        repass: {
-                            required: true,
-                            maxlength: 20,
-                            minlength: 3,
-                            equalTo: "#pass"
-                        }
-                    }
-                });
-            });
-        </script>
         <style>
             .error{
                 color: red;
+            }
+            #logreg-forms .form-signin input {
+                margin-bottom: 2px;
             }
         </style>
         <!-- Favicon  -->
@@ -76,35 +43,17 @@
     </head>
     <body>
         <div class="wel">
-            <h1>Welcome to Aloha Space Shop</h1>
+            <h1>Welcome to KiA Shop</h1>
             <p>Be good, Be bad, Be yourself</p>
         </div>
         <div id="logreg-forms">
-            <form class="form-signin" action="login" method="post" id="formlogin">
-                <h1 class="h3 mb-3 font-weight-normal" style="text-align: center"> Sign in</h1>
 
-                <input name="user" type="email" id="inputEmail" class="form-control" placeholder="Email" autofocus="">
-                <input name="pass" type="password" id="inputPassword" class="form-control" placeholder="Password">
+            <form action="forgotPassword" method="post" class="form-signin" id="formregister">
+                <h1 class="h3 mb-3 font-weight-normal" style="text-align: center"> Forgot password</h1>
+                <input name="email" type="email" id="user-name" class="form-control" placeholder="Your Email" required="" autofocus="">
 
-
-                <div class="form-group form-check">
-                    <!--<input name="remember" value="1" type="checkbox" class="form-check-input" id="exampleCheck1">-->
-                    <a href="ForgotPassword.jsp" style="color: #ffc107"><label class="form-check-label" for="exampleCheck1"><i class="fas fa-question-circle"></i> Forgot password?</label></a>
-                </div>
-                <button class="btn btn-warning btn-block" type="submit"><i class="fas fa-sign-in-alt"></i> Sign in</button>
-                <hr>
-                <button class="btn btn-dark btn-block" type="button" id="btn-signup"><i class="fas fa-user-plus"></i> Sign up New Account</button>
-            </form>
-
-            <form action="signup" method="post" class="form-signup" id="formregister">
-                <h1 class="h3 mb-3 font-weight-normal" style="text-align: center"> Sign up</h1>
-                <input name="user" type="text" id="user-name" class="form-control" placeholder="User name" required="" autofocus="">
-                <input name="email" type="email" id="user-email" class="form-control" placeholder="Email" required="" autofocus="">
-                <input name="pass" type="password" id="pass" class="form-control" placeholder="Password" required autofocus="">
-                <input name="repass" type="password" id="repass" class="form-control" placeholder="Repeat Password" required autofocus="">
-
-                <button class="btn btn-warning btn-block" type="submit"><i class="fas fa-user-plus"></i> Sign Up</button>
-                <a href="#" id="cancel_signup"><i class="fas fa-angle-left"></i> Back</a>
+                <button class="btn btn-warning btn-block" type="submit"><i class="fas fa-user-plus"></i> Send password to email</button>
+                <a href="Login.jsp"><i class="fas fa-angle-left"></i> Back</a>
             </form>
             <br>
 

@@ -204,4 +204,19 @@ public class AccountDAO {
         }
         return list;
     }
+
+    public int getViewed() {
+        int n = 0;
+        String query = "select * from [View]";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            if (rs.next()) {
+                n = rs.getInt(1);
+            }
+        } catch (Exception e) {
+        }
+        return n;
+    }
 }
