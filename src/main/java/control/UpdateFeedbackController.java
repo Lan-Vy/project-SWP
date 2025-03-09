@@ -4,7 +4,7 @@
  */
 package control;
 
-import dao.DAO;
+import dao.FeedbackDAO;
 import entity.Account;
 import entity.Feedback;
 import java.io.IOException;
@@ -40,7 +40,7 @@ public class UpdateFeedbackController extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet UpdateFeedbackController</title>");            
+            out.println("<title>Servlet UpdateFeedbackController</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet UpdateFeedbackController at " + request.getContextPath() + "</h1>");
@@ -75,22 +75,22 @@ public class UpdateFeedbackController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
         try {
-                // Lấy thông tin từ các input fields
-                String productId = request.getParameter("productId");
-                String feedbackId = request.getParameter("feedbackId");
-                String message = request.getParameter("message");
-                String rating = request.getParameter("rating");
+            // Lấy thông tin từ các input fields
+            String productId = request.getParameter("productId");
+            String feedbackId = request.getParameter("feedbackId");
+            String message = request.getParameter("message");
+            String rating = request.getParameter("rating");
 
-                //update feedback
-                DAO dao = new DAO();
-                Feedback feedback = new Feedback();
-                feedback.setId(Integer.parseInt(feedbackId));
-                feedback.setRating(Integer.parseInt(rating));
-                feedback.setFeedbackContent(message);
-                dao.updateFeedback(feedback);
-                response.sendRedirect("productDetail?productID=" + productId);
+            //update feedback
+            FeedbackDAO dao = new FeedbackDAO();
+            Feedback feedback = new Feedback();
+            feedback.setId(Integer.parseInt(feedbackId));
+            feedback.setRating(Integer.parseInt(rating));
+            feedback.setFeedbackContent(message);
+            dao.updateFeedback(feedback);
+            response.sendRedirect("productDetail?productID=" + productId);
         } catch (Exception e) {
             e.printStackTrace();
         }

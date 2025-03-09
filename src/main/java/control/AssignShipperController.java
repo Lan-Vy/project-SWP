@@ -3,8 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 package control;
-
-import dao.DAO;
+import dao.OrderDAO;
 import entity.Account;
 import entity.Order;
 import java.io.IOException;
@@ -38,7 +37,7 @@ public class AssignShipperController extends HttpServlet {
             int orderId = Integer.parseInt(request.getParameter("orderId"));
             int shipperId = Integer.parseInt(request.getParameter("shipperId"));
             
-            DAO dao = new DAO();
+            OrderDAO dao = new OrderDAO();
             dao.assignShipper(new Order(orderId, new Account(shipperId)));
             
             response.setContentType("text/plain");

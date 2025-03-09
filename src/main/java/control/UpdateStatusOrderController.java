@@ -4,7 +4,7 @@
  */
 package control;
 
-import dao.DAO;
+import dao.OrderDAO;
 import entity.Account;
 import entity.Order;
 import java.io.IOException;
@@ -37,12 +37,12 @@ public class UpdateStatusOrderController extends HttpServlet {
         try {
             int orderId = Integer.parseInt(request.getParameter("orderId"));
             int status = Integer.parseInt(request.getParameter("status"));
-            
-            DAO dao = new DAO();
+
+            OrderDAO dao = new OrderDAO();
             dao.updateStatusOrder(new Order(orderId, status));
-            
+
             response.setContentType("text/plain");
-        response.getWriter().write("success");
+            response.getWriter().write("success");
         } catch (Exception e) {
             e.printStackTrace();
         }

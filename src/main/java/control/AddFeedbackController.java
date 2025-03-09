@@ -4,7 +4,7 @@
  */
 package control;
 
-import dao.DAO;
+import dao.FeedbackDAO;
 import entity.Account;
 import entity.Feedback;
 import java.io.IOException;
@@ -89,7 +89,7 @@ public class AddFeedbackController extends HttpServlet {
                 String message = request.getParameter("message");
                 String rating = request.getParameter("rating");
                 //add feedback 
-                DAO dao = new DAO();
+                FeedbackDAO dao = new FeedbackDAO();
                 // Retrieve the user's ID
                 int userId = user.getId();
                  // Create a Feedback object with the user's ID, product ID, rating, and message
