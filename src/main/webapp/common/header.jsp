@@ -1,3 +1,6 @@
+<%@page import="dao.ProductDAO"%>
+<%@page import="entity.Cart"%>
+<%@page import="entity.Product"%>
 <%@page import="java.util.List"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
@@ -61,14 +64,27 @@
         </nav>
         <!-- Button Group -->
 
+       <!-- Button Group -->
+        <%
+            ProductDAO dao = new ProductDAO(); // Get the newest product
+            Product pNew = dao.getNewestProduct();// ID of the newest product
+            int idNew = pNew.getId();// Get the best-selling product
+            int idBest = dao.getBestSeller();// Retrieve the cart from session
+
+            Cart c = (Cart) session.getAttribute("cart"); //Initialize item count
+            int count = 0;
+            if(c!=null){
+                count = c.getItems().size();
+            }
+        %>
         <!-- Button for Bestselling Product -->
         <div class="amado-btn-group mt-30 mb-100">
-            <a href="#" class="btn amado-btn mb-15">Bestseller</a>
-            <a href="#" class="btn amado-btn active">Newest Product</a>
+            <a href="productDetail?productID=<%= idBest%>" class="btn amado-btn mb-15">Bestseller</a>
+            <a href="productDetail?productID=<%= idNew%>" class="btn amado-btn active">Newest Product</a>
         </div>
         <!-- Cart Menu -->
         <div class="cart-fav-search mb-100">
-            <a href="cart" class="cart-nav"><img src="img/core-img/cart.png" alt=""> Cart <span>(0)</span></a>
+            <a href="cart" class="cart-nav"><img src="img/core-img/cart.png" alt=""> Cart <span>(<%= count%>)</span></a>
             <a href="#" class="fav-nav"><img src="img/core-img/favorites.png" alt=""> Favourite</a>
             <!--<a href="#" class=""><img src="img/core-img/search.png" alt=""> Search</a>-->
         </div>
