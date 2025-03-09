@@ -199,4 +199,30 @@ public class OrderDAO {
         }
         return 0;
     }
+
+    public void updateStatusOrder(Order o) {
+        String query = "UPDATE [Order] set status = ? where id = ?";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setInt(1, o.getStatus());
+            ps.setInt(2, o.getId());
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void assignShipper(Order o) {
+        String query = "UPDATE [Order] set shipperID = ?, status = 1 where id = ?";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setInt(1, o.getShipper().getId());
+            ps.setInt(2, o.getId());
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

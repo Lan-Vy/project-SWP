@@ -5,6 +5,8 @@
 package dao;
 
 import context.DBContext;
+import entity.Feedback;
+import entity.OrderDetails;
 import entity.Product;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -317,5 +319,267 @@ public class ProductDAO {
             ps.executeUpdate();
         } catch (Exception e) {
         }
+    }
+
+    public Product getNewestProduct() {
+        String query = "select top 1 *\n"
+                + "from Product where isDeleted != 1\n"
+                + "order by pID desc";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            while (rs.next()) {
+                return new Product(rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getDouble(4),
+                        rs.getString(5),
+                        rs.getString(6),
+                        rs.getInt(7), new SubImageDAO().getAllSubImageByPID(rs.getInt(1) + ""), rs.getInt(8), rs.getInt(9));
+            }
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
+    public int getBestSeller() {
+        String query = "with R as(\n"
+                + "select ProductID,SUM(Quantity) SL\n"
+                + "from Product P, OrderDetails O\n"
+                + "where P.pID = O.ProductID\n"
+                + "group by ProductID\n"
+                + ")\n"
+                + "select top 1 R.ProductID from R where SL = (select MAX(SL) from R)\n"
+                + "order by R.ProductID desc";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            while (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+        }
+        return 0;
+    }
+
+    public List<Integer> getTotalProductBoughtByYear(int year) {
+        List<Integer> list = new ArrayList<>();
+        String query = "WITH Months AS (\n"
+                + "    SELECT 1 AS Month\n"
+                + "    UNION ALL\n"
+                + "    SELECT 2\n"
+                + "    UNION ALL\n"
+                + "    SELECT 3\n"
+                + "    UNION ALL\n"
+                + "    SELECT 4\n"
+                + "    UNION ALL\n"
+                + "    SELECT 5\n"
+                + "    UNION ALL\n"
+                + "    SELECT 6\n"
+                + "    UNION ALL\n"
+                + "    SELECT 7\n"
+                + "    UNION ALL\n"
+                + "    SELECT 8\n"
+                + "    UNION ALL\n"
+                + "    SELECT 9\n"
+                + "    UNION ALL\n"
+                + "    SELECT 10\n"
+                + "    UNION ALL\n"
+                + "    SELECT 11\n"
+                + "    UNION ALL\n"
+                + "    SELECT 12\n"
+                + ")\n"
+                + "SELECT \n"
+                + "    M.Month,\n"
+                + "    ISNULL(SUM(OD.Quantity), 0) AS TotalQuantitySold\n"
+                + "FROM \n"
+                + "    Months M\n"
+                + "LEFT JOIN \n"
+                + "    dbo.[Order] O ON MONTH(O.orderDate) = M.Month AND YEAR(O.orderDate) = ?\n"
+                + "LEFT JOIN \n"
+                + "    dbo.OrderDetails OD ON O.id = OD.OrderID\n"
+                + "GROUP BY \n"
+                + "    M.Month\n"
+                + "ORDER BY \n"
+                + "    M.Month;\n";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setInt(1, year);
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            while (rs.next()) {
+                list.add(rs.getInt(2));
+            }
+
+        } catch (Exception e) {
+        }
+        return list;
+    }
+
+    public List<Integer> getTotalCategoryBoughtByYear(int year) {
+        List<Integer> list = new ArrayList<>();
+        String query = "WITH Months AS (\n"
+                + "    SELECT 1 AS Month\n"
+                + "    UNION ALL\n"
+                + "    SELECT 2\n"
+                + "    UNION ALL\n"
+                + "    SELECT 3\n"
+                + "    UNION ALL\n"
+                + "    SELECT 4\n"
+                + "    UNION ALL\n"
+                + "    SELECT 5\n"
+                + "    UNION ALL\n"
+                + "    SELECT 6\n"
+                + "    UNION ALL\n"
+                + "    SELECT 7\n"
+                + "    UNION ALL\n"
+                + "    SELECT 8\n"
+                + "    UNION ALL\n"
+                + "    SELECT 9\n"
+                + "    UNION ALL\n"
+                + "    SELECT 10\n"
+                + "    UNION ALL\n"
+                + "    SELECT 11\n"
+                + "    UNION ALL\n"
+                + "    SELECT 12\n"
+                + ")\n"
+                + "SELECT \n"
+                + "    M.Month,\n"
+                + "    ISNULL(COUNT(DISTINCT P.cID), 0) AS TotalCategoriesSold\n"
+                + "FROM \n"
+                + "    Months M\n"
+                + "LEFT JOIN \n"
+                + "    dbo.[Order] O ON MONTH(O.orderDate) = M.Month AND YEAR(O.orderDate) = ?\n"
+                + "LEFT JOIN \n"
+                + "    dbo.OrderDetails OD ON O.id = OD.OrderID\n"
+                + "LEFT JOIN \n"
+                + "    dbo.Product P ON OD.ProductID = P.pID\n"
+                + "GROUP BY \n"
+                + "    M.Month\n"
+                + "ORDER BY \n"
+                + "    M.Month;";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setInt(1, year);
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            while (rs.next()) {
+                list.add(rs.getInt(2));
+            }
+
+        } catch (Exception e) {
+        }
+        return list;
+    }
+
+    public List<Integer> getTotalCustomerBoughtByYear(int year) {
+        List<Integer> list = new ArrayList<>();
+        String query = "WITH Months AS (\n"
+                + "    SELECT 1 AS Month\n"
+                + "    UNION ALL\n"
+                + "    SELECT 2\n"
+                + "    UNION ALL\n"
+                + "    SELECT 3\n"
+                + "    UNION ALL\n"
+                + "    SELECT 4\n"
+                + "    UNION ALL\n"
+                + "    SELECT 5\n"
+                + "    UNION ALL\n"
+                + "    SELECT 6\n"
+                + "    UNION ALL\n"
+                + "    SELECT 7\n"
+                + "    UNION ALL\n"
+                + "    SELECT 8\n"
+                + "    UNION ALL\n"
+                + "    SELECT 9\n"
+                + "    UNION ALL\n"
+                + "    SELECT 10\n"
+                + "    UNION ALL\n"
+                + "    SELECT 11\n"
+                + "    UNION ALL\n"
+                + "    SELECT 12\n"
+                + ")\n"
+                + "SELECT \n"
+                + "    M.Month,\n"
+                + "    ISNULL(COUNT(DISTINCT O.accountID), 0) AS TotalCustomers\n"
+                + "FROM \n"
+                + "    Months M\n"
+                + "LEFT JOIN \n"
+                + "    dbo.[Order] O ON MONTH(O.orderDate) = M.Month AND YEAR(O.orderDate) = ?\n"
+                + "GROUP BY \n"
+                + "    M.Month\n"
+                + "ORDER BY \n"
+                + "    M.Month;";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setInt(1, year);
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            while (rs.next()) {
+                list.add(rs.getInt(2));
+            }
+
+        } catch (Exception e) {
+        }
+        return list;
+    }
+
+    public List<Product> getAllProduct() {
+        List<Product> list = new ArrayList<>();
+        String query = "select * from Product where isDeleted != 1";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            while (rs.next()) {
+                list.add(new Product(rs.getInt(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getDouble(4),
+                        rs.getString(5),
+                        rs.getString(6),
+                        rs.getInt(7), new SubImageDAO().getAllSubImageByPID(rs.getInt(1) + ""), rs.getInt(8), rs.getInt(9)));
+            }
+
+        } catch (Exception e) {
+        }
+        return list;
+    }
+
+    public int getNumberItemsSolid() {
+        int n = 0;
+        String query = "select SUM(Quantity) from OrderDetails";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            if (rs.next()) {
+                n = rs.getInt(1);
+            }
+        } catch (Exception e) {
+        }
+        return n;
+    }
+
+    public double getTotalEarnings() {
+        double total = 0;
+        List<OrderDetails> list = new ArrayList<>();
+        String query = "select * from OrderDetails";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
+            while (rs.next()) {
+                list.add(new OrderDetails(rs.getInt(1), rs.getInt(2), rs.getDouble(3), rs.getInt(4)));
+            }
+
+        } catch (Exception e) {
+        }
+        for (OrderDetails o : list) {
+            total += o.getPrice() * o.getQuantity();
+        }
+        return total;
     }
 }
