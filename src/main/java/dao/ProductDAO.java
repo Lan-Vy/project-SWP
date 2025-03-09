@@ -360,6 +360,7 @@ public class ProductDAO {
                 return rs.getInt(1);
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return 0;
     }
