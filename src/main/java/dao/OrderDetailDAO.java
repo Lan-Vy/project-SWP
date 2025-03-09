@@ -47,4 +47,20 @@ public class OrderDetailDAO {
         }
         return null;
     }
+
+    public void insertOrderDetails(int orderID, int productID, double price, int amount) {
+        String query = "INSERT INTO OrderDetails VALUES (?, ?, ?, ?)";
+        try {
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, orderID);
+            ps.setInt(2, productID);
+            ps.setDouble(3, price);
+            ps.setInt(4, amount);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

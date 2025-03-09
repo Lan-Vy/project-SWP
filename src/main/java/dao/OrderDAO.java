@@ -164,4 +164,39 @@ public class OrderDAO {
         }
         return null;
     }
+
+    public void insertOrder(String date, int accountID, String address, String sdt, String name, double total) {
+        String query = "INSERT INTO [Order](orderDate, accountID,addressReceive,sdt,name,totalPrice,status)\n"
+                + "VALUES (?, ?, ?, ?, ?, ?, 0)";
+        try {
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setString(1, date);
+            //ps.setDate(1, (java.sql.Date) date);
+            ps.setInt(2, accountID);
+            ps.setString(3, address);
+            ps.setString(4, sdt);
+            ps.setString(5, name);
+            ps.setDouble(6, total);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public int getOrderID() {
+        String query = "SELECT TOP(1) id from [Order] order BY id DESC";
+        try {
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 }
