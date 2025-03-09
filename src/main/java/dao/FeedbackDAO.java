@@ -58,4 +58,33 @@ public class FeedbackDAO {
         }
         return list;
     }
+
+    public void addFeedback(Feedback f) {
+        String query = "INSERT into Feedback (userId, productId,rating, feedbackContent,feedbackDate)\n"
+                + "VALUES (?, ?, ?, ?, GETDATE())";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setInt(1, f.getUserId());
+            ps.setInt(2, f.getProductId());
+            ps.setInt(3, f.getRating());
+            ps.setString(4, f.getFeedbackContent());
+            ps.executeUpdate();
+        } catch (Exception e) {
+        }
+    }
+
+    public void updateFeedback(Feedback f) {
+        String query = "update Feedback set rating = ?, feedbackContent = ?\n"
+                + "where Id = ?";
+        try {
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setInt(1, f.getRating());
+            ps.setString(2, f.getFeedbackContent());
+            ps.setInt(3, f.getId());
+            ps.executeUpdate();
+        } catch (Exception e) {
+        }
+    }
 }
