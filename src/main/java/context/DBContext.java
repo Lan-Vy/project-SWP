@@ -12,15 +12,8 @@ public class DBContext {
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         return DriverManager.getConnection(url, userID, password);
     }
-    
-    /*Insert your other code right after this comment*/
-   
-    /*Change/update information of your database connection, DO NOT change name of instance variables in this class*/
-//    private final String serverName = "LANVY";
-//    private final String dbName = "Project_Group6";
-//    private final String portNumber = "1433";
     private final String userID = "sa";
-    private final String password = "123";
+    private final String password = "loploplop";
     public static void main(String[] args) {
         try {
             System.out.println(new DBContext().getConnection());
