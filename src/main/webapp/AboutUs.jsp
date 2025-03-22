@@ -42,10 +42,10 @@
                         <div class="column">
                             <div class="card">
                                 <div class="container">
-                                    <h2>Tran Anh Thu</h2>
+                                    <h2>Tran Minh That</h2>
                                     <p class="title">CE181070</p>
                                     <p>Manager</p>
-                                    <p>ThuTACE181070@fpt.edu.vn</p>
+                                    <p>@fpt.edu.vn</p>
                                     <p><button class="button">Contact</button></p>
                                 </div>
                             </div>
@@ -79,10 +79,10 @@
                         <div class="column">
                             <div class="card">
                                 <div class="container">
-                                    <h2>Mai Truong Thanh</h2>
+                                    <h2>Nguyen Tan Trieu</h2>
                                     <p class="title">CE181198</p>
                                     <p>Manager</p>
-                                    <p>ThanhMTCE181198@fpt.edu.vn</p>
+                                    <p>@fpt.edu.vn</p>
                                     <p><button class="button">Contact</button></p>
                                 </div>
                             </div>
@@ -100,17 +100,6 @@
                             </div>
                         </div>
 
-                        <div class="column">
-                            <div class="card">
-                                <div class="container">
-                                    <h2>John Doe</h2>
-                                    <p class="title">Designer</p>
-                                    <p>Manager</p>
-                                    <p>john@example.com</p>
-                                    <p><button class="button">Contact</button></p>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
