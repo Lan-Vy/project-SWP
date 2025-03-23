@@ -11,6 +11,7 @@ import entity.Product;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -177,12 +178,13 @@ public class ProductDAO {
     }
 
     public void addNewProduct(String name, String image, String price,
-            String title, String description, String cid, int amount) {
+            String title, String description, String cid, int amount, String[] sizes) {
+        int productId = -1;
         String query = "INSERT into Product (pName, [image], price, title, [description], cID, pAmount, isDeleted)\n"
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, 0)";
         try {
             conn = new DBContext().getConnection(); //mo ket noi toi sql
-            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);//nem cau lenh query sang sql
             ps.setString(1, name);
             ps.setString(2, image);
             ps.setString(3, price);
@@ -191,7 +193,24 @@ public class ProductDAO {
             ps.setString(6, cid);
             ps.setInt(7, amount);
             ps.executeUpdate();
+            // Lấy ID của sản phẩm vừa chèn vào
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                productId = rs.getInt(1);  // Lấy ID của sản phẩm vừa chèn
+            }
+            // Nếu lấy được productId, chèn size vào bảng product_size
+            if (productId != -1 && sizes != null) {
+                String sizeQuery = "INSERT INTO Product_Size (pID, sizeId) VALUES (?, ?)";
+                PreparedStatement psSize = conn.prepareStatement(sizeQuery);
+
+                for (String size : sizes) {
+                    psSize.setInt(1, productId);
+                    psSize.setInt(2, Integer.parseInt(size));
+                    psSize.executeUpdate();
+                }
+            }
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -224,7 +243,7 @@ public class ProductDAO {
     }
 
     public void updateProduct(String name, String image, String price,
-            String title, String description, String cid, int amount, int pID) {
+            String title, String description, String cid, int amount, int pID, String[] sizes) {
         String query = "UPDATE Product set pName = ?, image = ?, price = ?, title = ?, description = ?, cID = ?, pAmount = ? where pID = ?";
         try {
             conn = new DBContext().getConnection(); //mo ket noi toi sql
@@ -238,7 +257,25 @@ public class ProductDAO {
             ps.setInt(7, amount);
             ps.setInt(8, pID);
             ps.executeUpdate();
+
+            // Bước 2: Xóa tất cả size cũ của sản phẩm trong bảng product_size
+            query = "DELETE FROM Product_Size WHERE pID = ?";
+            PreparedStatement psDelete = conn.prepareStatement(query);
+            psDelete.setInt(1, pID);
+            psDelete.executeUpdate();
+            
+            // Bước 3: Thêm lại size mới vào product_size
+            query = "INSERT INTO Product_Size (pId, sizeId) VALUES (?, ?)";
+            PreparedStatement psInsert = conn.prepareStatement(query);
+            if (sizes != null) {
+                for (String size : sizes) {
+                    psInsert.setInt(1, pID);
+                    psInsert.setInt(2, Integer.parseInt(size)); // Chuyển String thành int
+                    psInsert.executeUpdate();
+                }
+            }
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

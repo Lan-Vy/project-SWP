@@ -280,12 +280,12 @@
                                         </div>
                                         <div class="cart">
                                             <c:if test="${o.amount != 0}">
-                                                <a href="cart?id=${o.id}&action=add" data-toggle="tooltip" data-placement="left" title="Add to Cart"><img src="img/core-img/cart.png" alt=""></a>
-                                                <a href="Shop.jsp" style='font-size:16px;' title="Add to favourite">&#129505;</a>
+                                                <a href="productDetail?productID=${o.id}" data-toggle="tooltip" data-placement="left" title="Add to Cart"><img src="img/core-img/cart.png" alt=""></a>
+                                                <a href="#" style='font-size:16px;' title="Add to favourite">&#129505;</a>
                                             </c:if>
                                             <c:if test="${o.amount == 0}">
                                                 <a href="ShopControl" data-toggle="tooltip" data-placement="left">Sold out</a>
-                                                <a href="FavouriteControl" style='font-size:16px;' title="Add to favourite">&#129505;</a>
+                                                <a href="#" style='font-size:16px;' title="Add to favourite">&#129505;</a>
                                             </c:if>
                                         </div>
                                     </div>

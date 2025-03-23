@@ -54,8 +54,13 @@ public class LoginControl extends HttpServlet {
             session.setAttribute("acc", a);
             // Optionally update the user's viewed status (could be for tracking or analytics)
             dao.updateViewed();
-            // Redirect to the shop control page after successful login
-            response.sendRedirect("ShopControl");
+
+            // Check user role and redirect accordingly
+            if (a.getRole() == 2) { // Admin role
+                response.sendRedirect("dashboard"); // Redirect to Dashboard
+            } else {
+                response.sendRedirect("ShopControl"); // Redirect to ShopControl for other roles
+            }
         }
     }
 

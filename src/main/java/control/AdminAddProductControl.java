@@ -48,11 +48,13 @@ public class AdminAddProductControl extends HttpServlet {
         String description = request.getParameter("description");
         String amount = request.getParameter("amount");
         String category = request.getParameter("category");
+        String[] sizes = request.getParameterValues("size");
+        
         // Create a DAO instance to interact with the database
         ProductDAO dao = new ProductDAO();
         SubImageDAO sdao = new SubImageDAO();
 
-        dao.addNewProduct(name, image, price, title, description, category, Integer.parseInt(amount));
+        dao.addNewProduct(name, image, price, title, description, category, Integer.parseInt(amount), sizes);
         // Retrieve the newly added product ID for adding sub-images
         int pID = dao.getProductIDToAdd();
         // Add each of the sub-images associated with the new product
@@ -60,6 +62,7 @@ public class AdminAddProductControl extends HttpServlet {
         sdao.addNewSubImage(pID + "", subImage2);
         sdao.addNewSubImage(pID + "", subImage3);
         sdao.addNewSubImage(pID + "", subImage4);
+        
         // Set a success message to be displayed
         request.setAttribute("message", "Create success!");
         // Forward the request to ManagerControl to display the success message

@@ -65,16 +65,16 @@
                                                 <a href="#"><img src="${o.image}" alt="Product"></a>
                                             </td>
                                             <td class="cart_product_desc">
-                                                <h5>${o.name}</h5>
+                                                <h5>${o.name} - Size ${o.sizeInCart.size}</h5>
                                             </td>
                                             <td class="price">
                                                 <span>$${o.price}</span>
                                             </td>
                                             <td class="qty">
-                                                <a href="cart?id=${o.id}&action=minus"><button class="btnSub">-</button></a> 
+                                                <a href="cart?id=${o.id}&action=minus&selectedSizes=${o.sizeInCart.id}"><button class="btnSub">-</button></a> 
                                                 <strong>${o.numberInCart}</strong>
-                                                <a href="cart?id=${o.id}&action=add"><button class="btnAdd">+</button></a>
-                                                <a href="cart?id=${o.id}&action=delete" style="margin-left: 100px;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                                <a href="cart?id=${o.id}&action=add&selectedSizes=${o.sizeInCart.id}"><button class="btnAdd">+</button></a>
+                                                <a href="cart?id=${o.id}&action=delete&selectedSizes=${o.sizeInCart.id}" style="margin-left: 100px;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
                                                     <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
                                                     </svg></a>
                                             </td>
@@ -93,7 +93,7 @@
                                 
                                 <c:forEach items="${sessionScope.cart.items}" var="o">
                                 <li>
-                                <span style="padding-left: 30px">${o.name}</span>
+                                <span style="padding-left: 30px">${o.name} (${o.sizeInCart.size})</span>
                                 <span>$${o.price * o.numberInCart}</span>
                                 </li>
                                 </c:forEach>
