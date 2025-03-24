@@ -4,6 +4,7 @@
 <%@page import="java.util.List"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -61,23 +62,23 @@
                                     <!--<a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Delete</span></a>-->
                                 </div>
                             </div>
-                        </div>
-                        <table class="table table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <!--                                <th>
-                                                                        <span class="custom-checkbox">
-                                                                            <input type="checkbox" id="selectAll">
-                                                                            <label for="selectAll"></label>
-                                                                        </span>
-                                                                    </th>-->
-                                    <th >Order ID</th>
-                                    <th >Recipient's Name</th>
-                                    <th>Order Date</th>
-                                    <th >Address Receive</th>
-                                    <th >Phone Number</th>
-                                    <th >Total Price</th>
-                                    <th >Status</th>
+                        </div>    <fmt:setLocale value="vi_VN"/>
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <!--                                <th>
+                                                                    <span class="custom-checkbox">
+                                                                        <input type="checkbox" id="selectAll">
+                                                                        <label for="selectAll"></label>
+                                                                    </span>
+                                                                </th>-->
+                                <th >Order ID</th>
+                                <th >Recipient's Name</th>
+                                <th>Order Date</th>
+                                <th >Address Receive</th>
+                                <th >Phone Number</th>
+                                <th >Total Price</th>
+                                <th >Status</th>
                                     <c:if test="${sessionScope.acc.role == 2}">
                                     <th >Shipper</th>
                                     </c:if>
@@ -101,7 +102,8 @@
                                         ${o.sdt}
                                     </td>
                                     <td>
-                                        ${o.totalPrice}
+                                        <fmt:formatNumber value="${o.totalPrice}" type="number" groupingUsed="true" var="formattedPrice"/>
+                                        ${formattedPrice}
                                     </td>  
                                     <td>
                                         <c:choose>

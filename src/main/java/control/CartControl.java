@@ -5,9 +5,11 @@
  */
 package control;
 
+import dao.CartDAO;
 import dao.ProductDAO;
 import dao.SizeDAO;
-import entity.Cart;
+import entity.Account;
+import entity.CartItem;
 import entity.Product;
 import entity.Size;
 import java.io.IOException;
@@ -102,45 +104,78 @@ public class CartControl extends HttpServlet {
 //        // Forward the request to the Cart.jsp page
 //        request.getRequestDispatcher("Cart.jsp").forward(request, response);
 
-        HttpSession session = request.getSession(true);
+//        HttpSession session = request.getSession(true);
+//
+//        String id = request.getParameter("id");
+//        String action = request.getParameter("action");
+//        String selectedSizes = request.getParameter("selectedSizes"); // Danh sách size (chuỗi "1,2,3")
+//
+//        if (id != null && action != null && selectedSizes != null) {
+//            // Tách chuỗi selectedSizes thành danh sách số nguyên
+//            String[] sizeArray = selectedSizes.split(",");
+//            List<Integer> sizes = new ArrayList<>();
+//            for (String size : sizeArray) {
+//                sizes.add(Integer.parseInt(size.trim()));
+//            }
+//
+//            // Nếu session chưa có giỏ hàng, tạo mới
+//            if (session.getAttribute("cart") == null) {
+//                session.setAttribute("cart", new Cart());
+//            }
+//            Cart cart = (Cart) session.getAttribute("cart");
+//            ProductDAO productDAO = new ProductDAO();
+//            SizeDAO sdao = new SizeDAO();
+//
+//            // Lặp qua từng size và thêm vào giỏ hàng
+//            for (int size : sizes) {
+//                Product product = productDAO.getProductByID(id);
+//                Size s = sdao.getSizeById(size);
+//                product.setSizeInCart(s); // Đặt size cho sản phẩm
+//                
+//                if (action.equalsIgnoreCase("add")) {
+//                    cart.add(product);
+//                } else if (action.equalsIgnoreCase("minus")) {
+//                    cart.minus(product);
+//                } else if (action.equalsIgnoreCase("delete")) {
+//                    cart.remove(Integer.parseInt(id), size);
+//                }
+//            }
+//            session.setAttribute("cart", cart);
+//        }
+//        request.getRequestDispatcher("Cart.jsp").forward(request, response);
+        HttpSession session = request.getSession();
+        Account acc = (Account) session.getAttribute("acc");
+        if (acc != null) {
+            CartDAO cdao = new CartDAO();
+            String id = request.getParameter("id");
+            String action = request.getParameter("action");
+            String selectedSizes = request.getParameter("selectedSizes"); // Danh sách size (chuỗi "1,2,3")
 
-        String id = request.getParameter("id");
-        String action = request.getParameter("action");
-        String selectedSizes = request.getParameter("selectedSizes"); // Danh sách size (chuỗi "1,2,3")
+            if (id != null && action != null && selectedSizes != null) {
+                // Tách chuỗi selectedSizes thành danh sách
+                String[] sizeArray = selectedSizes.split(",");
+                // Lặp qua từng size và thêm vào giỏ hàng
+                for (String sizeStr : sizeArray) {
+                    int size = Integer.parseInt(sizeStr.trim());
+                    int productId = Integer.parseInt(id);
 
-        if (id != null && action != null && selectedSizes != null) {
-            // Tách chuỗi selectedSizes thành danh sách số nguyên
-            String[] sizeArray = selectedSizes.split(",");
-            List<Integer> sizes = new ArrayList<>();
-            for (String size : sizeArray) {
-                sizes.add(Integer.parseInt(size.trim()));
-            }
-
-            // Nếu session chưa có giỏ hàng, tạo mới
-            if (session.getAttribute("cart") == null) {
-                session.setAttribute("cart", new Cart());
-            }
-            Cart cart = (Cart) session.getAttribute("cart");
-            ProductDAO productDAO = new ProductDAO();
-            SizeDAO sdao = new SizeDAO();
-
-            // Lặp qua từng size và thêm vào giỏ hàng
-            for (int size : sizes) {
-                Product product = productDAO.getProductByID(id);
-                Size s = sdao.getSizeById(size);
-                product.setSizeInCart(s); // Đặt size cho sản phẩm
-                
-                if (action.equalsIgnoreCase("add")) {
-                    cart.add(product);
-                } else if (action.equalsIgnoreCase("minus")) {
-                    cart.minus(product);
-                } else if (action.equalsIgnoreCase("delete")) {
-                    cart.remove(Integer.parseInt(id), size);
+                    if (action.equalsIgnoreCase("add")) {
+                        cdao.addToCart(acc.getId(), productId, size);
+                    } else if (action.equalsIgnoreCase("minus")) {
+                        cdao.updateCartQuantity(acc.getId(), productId, size);
+                    } else if (action.equalsIgnoreCase("delete")) {
+                        cdao.removeFromCart(acc.getId(), productId, size);
+                    }
                 }
+
             }
-            session.setAttribute("cart", cart);
+            // Load lại giỏ hàng từ DB sau khi cập nhật
+            List<CartItem> cartItems = cdao.getCartItemByUserId(acc.getId());
+            request.setAttribute("cartItems", cartItems);
+            request.getRequestDispatcher("Cart.jsp").forward(request, response);
+        } else {
+            request.getRequestDispatcher("Login.jsp").forward(request, response);
         }
-        request.getRequestDispatcher("Cart.jsp").forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
