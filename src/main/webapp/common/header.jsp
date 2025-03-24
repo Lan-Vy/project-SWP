@@ -43,12 +43,12 @@
                     <li><a href="OrderHistoryControl">Order History</a></li>
                     </c:if>
                 <!--<li><a href="CheckOut.jsp">Checkout</a></li>-->
-                <c:if test="${sessionScope.acc == null}">
-                    <li><a href="Login.jsp">Checkout</a></li>
-                    </c:if>
-                    <c:if test="${sessionScope.acc != null}">
-                    <li><a href="CheckOut.jsp">Checkout</a></li>
-                    </c:if>
+                <%--<c:if test="${sessionScope.acc == null}">--%>
+                    <!--<li><a href="Login.jsp">Checkout</a></li>-->
+                    <%--</c:if>--%>
+                    <%--<c:if test="${sessionScope.acc != null}">--%>
+                    <!--<li><a href="CheckOut.jsp">Checkout</a></li>-->
+                    <%--</c:if>--%>
 
 
                 <li><a href="AboutUs.jsp">About Us</a></li>

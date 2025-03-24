@@ -87,7 +87,7 @@ public class FeedbackDAO {
         } catch (Exception e) {
         }
     }
-    
+
     public List<Feedback> getFeedbacksByProductId(int productId) {
         List<Feedback> list = new ArrayList<>();
         String query = "select f.*, a.userName from Feedback f\n"
@@ -113,4 +113,21 @@ public class FeedbackDAO {
         return list;
     }
 
+    public boolean isFeedbacked(int userId, int productId) {
+        String query = "select * from Feedback\n"
+                + "  where userId = ? and productId = ?";
+        try {
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, userId);
+            ps.setInt(2, productId);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

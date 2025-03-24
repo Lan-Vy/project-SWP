@@ -56,9 +56,9 @@ public class LoginControl extends HttpServlet {
             dao.updateViewed();
 
             // Check user role and redirect accordingly
-            if (a.getRole() == 2) { // Admin role
+            if (a.getRole() == 2 || a.getRole() == 3) { // Admin role
                 response.sendRedirect("dashboard"); // Redirect to Dashboard
-            } else {
+            }else{
                 response.sendRedirect("ShopControl"); // Redirect to ShopControl for other roles
             }
         }

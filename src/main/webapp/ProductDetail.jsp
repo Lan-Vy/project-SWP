@@ -73,7 +73,6 @@
                         <div class="col-12">
                             <nav aria-label="breadcrumb">
                                 <ol class="breadcrumb mt-50">
-                                    <li class="breadcrumb-item"><a href="HomeControl">Home</a></li>
                                     <li class="breadcrumb-item"><a href="ShopControl">Shop</a></li>
                                     <li class="breadcrumb-item"><a href="ShopControl?pageIndex=1&cID=${o.cid}">${cateName}</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">${detail.name}</li>
@@ -127,7 +126,7 @@
                             <div class="product-meta-data">
                                 <div class="line"></div>
                                 <p class="product-price">$${detail.price}</p>
-                                <a href="product-details.html">
+                                <a href="#">
                                     <h6>${detail.name}</h6>
                                 </a>
                                 <!-- Ratings & Review -->

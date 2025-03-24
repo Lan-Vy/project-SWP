@@ -99,7 +99,7 @@ public class ProductDetailControl extends HttpServlet {
         boolean canFeedback = false;
         // If the user is logged in, check if they have purchased the product
         if (userId != null) {
-            canFeedback = dao.isBought(userId, Integer.parseInt(pID));
+            canFeedback = dao.isBought(userId, Integer.parseInt(pID)) && !fdao.isFeedbacked(userId, Integer.parseInt(pID));
             request.setAttribute("canFeedback", canFeedback);
         }
         // Forward the request to ProductDetail.jsp for rendering

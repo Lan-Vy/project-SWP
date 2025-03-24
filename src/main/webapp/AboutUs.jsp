@@ -46,7 +46,7 @@
                                     <p class="title">CE181070</p>
                                     <p>Manager</p>
                                     <p>@fpt.edu.vn</p>
-                                    <p><button class="button">Contact</button></p>
+                                    <!--<p><button class="button">Contact</button></p>-->
                                 </div>
                             </div>
                         </div>
@@ -58,7 +58,7 @@
                                     <p class="title">CE181347</p>
                                     <p>Manager</p>
                                     <p>vyntlce180757@fpt.edu.vn</p>
-                                    <p><button class="button">Contact</button></p>
+                                    <!--<p><button class="button">Contact</button></p>-->
                                 </div>
                             </div>
                         </div>
@@ -70,7 +70,7 @@
                                     <p class="title">CE181347</p>
                                     <p>Manager</p>
                                     <p>VinhTQCE181347@fpt.edu.vn</p>
-                                    <p><button class="button">Contact</button></p>
+                                    <!--<p><button class="button">Contact</button></p>-->
                                 </div>
                             </div>
                         </div>
@@ -83,7 +83,7 @@
                                     <p class="title">CE181198</p>
                                     <p>Manager</p>
                                     <p>@fpt.edu.vn</p>
-                                    <p><button class="button">Contact</button></p>
+                                    <!--<p><button class="button">Contact</button></p>-->
                                 </div>
                             </div>
                         </div>
@@ -95,7 +95,7 @@
                                     <p class="title">CE180452</p>
                                     <p>Manager</p>
                                     <p>HieuVTCE180452@fpt.edu.vn</p>
-                                    <p><button class="button">Contact</button></p>
+                                    <!--<p><button class="button">Contact</button></p>-->
                                 </div>
                             </div>
                         </div>

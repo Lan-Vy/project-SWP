@@ -6,6 +6,7 @@ package dao;
 
 import context.DBContext;
 import entity.OrderDetails;
+import entity.Size;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,8 +24,9 @@ public class OrderDetailDAO {
     ResultSet rs = null;
 
     public List<OrderDetails> getOrderDetailByOrderID(int orderId) {
-        String query = "SELECT od.*, p.image, p.pName, c.cName from OrderDetails od\n"
+        String query = "SELECT od.*, p.image, p.pName, c.cName, s.size from OrderDetails od\n"
                 + "left join Product p on od.ProductID = p.pID\n"
+                + "left join Size s on s.id = od.SizeID\n"
                 + "left join Category c on p.cID = c.cID\n"
                 + "where OrderID = ?";
         try {
@@ -34,13 +36,16 @@ public class OrderDetailDAO {
             ps.setInt(1, orderId);
             rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
             while (rs.next()) {
-                ls.add(new OrderDetails(rs.getInt(1),
+                OrderDetails od = new OrderDetails(rs.getInt(1),
                         rs.getInt(2),
                         rs.getDouble(3),
                         rs.getInt(4),
-                        rs.getString(5),
                         rs.getString(6),
-                        rs.getString(7)));
+                        rs.getString(7),
+                        rs.getString(8));
+                Size s = new Size(rs.getInt(5), rs.getString(9));
+                od.setSize(s);
+                ls.add(od);
             }
             return ls;
         } catch (Exception e) {
@@ -48,8 +53,8 @@ public class OrderDetailDAO {
         return null;
     }
 
-    public void insertOrderDetails(int orderID, int productID, double price, int amount) {
-        String query = "INSERT INTO OrderDetails VALUES (?, ?, ?, ?)";
+    public void insertOrderDetails(int orderID, int productID, double price, int amount, int sizeId) {
+        String query = "INSERT INTO OrderDetails VALUES (?, ?, ?, ?, ?)";
         try {
             conn = new DBContext().getConnection();
             ps = conn.prepareStatement(query);
@@ -57,6 +62,7 @@ public class OrderDetailDAO {
             ps.setInt(2, productID);
             ps.setDouble(3, price);
             ps.setInt(4, amount);
+            ps.setInt(5, sizeId);
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();

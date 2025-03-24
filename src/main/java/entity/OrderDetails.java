@@ -21,6 +21,7 @@ public class OrderDetails {
     private String categoryName; // Category name of the product
     
     private int sizeId;
+    private Size size;
 
     // Default constructor
     public OrderDetails() {
@@ -121,6 +122,14 @@ public class OrderDetails {
 
     public void setSizeId(int sizeId) {
         this.sizeId = sizeId;
+    }
+
+    public Size getSize() {
+        return size;
+    }
+
+    public void setSize(Size size) {
+        this.size = size;
     }
 
     // Overridden toString method to display order item details

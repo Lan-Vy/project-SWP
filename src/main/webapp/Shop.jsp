@@ -1,5 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%><%@ page import="java.text.NumberFormat, java.util.Locale" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -134,22 +136,22 @@
                     <!-- Single Form Check -->
                     <div class="form-check">
                         <input class="form-check-input" type="radio" value="1" id="amado" name="price" onchange="searchByName()" <c:if test="${priceRange eq '1'}">checked</c:if>/>
-                            <label class="form-check-label" for="amado">Under $300</label>
+                            <label class="form-check-label" for="amado">Under 300K</label>
                         </div>
                         <!-- Single Form Check -->
                         <div class="form-check">
                             <input class="form-check-input" type="radio" value="2" id="furniture" name="price" onchange="searchByName()" <c:if test="${priceRange eq '2'}">checked</c:if>/>
-                            <label class="form-check-label" for="furniture">$300 - $500</label>
+                            <label class="form-check-label" for="furniture">300K - 500K</label>
                         </div>
                         <!-- Single Form Check -->
                         <div class="form-check">
                             <input class="form-check-input" type="radio" value="3" id="factory" name="price" onchange="searchByName()" <c:if test="${priceRange eq '3'}">checked</c:if>/>
-                            <label class="form-check-label" for="factory">$500 - $1000</label>
+                            <label class="form-check-label" for="factory">500K - 1000K</label>
                         </div>
                         <!-- Single Form Check -->
                         <div class="form-check">
                             <input class="form-check-input" type="radio" value="4" id="artdeco" name="price" onchange="searchByName()" <c:if test="${priceRange eq '4'}">checked</c:if>/>
-                            <label class="form-check-label" for="artdeco">$1000 +</label>
+                            <label class="form-check-label" for="artdeco">1000K +</label>
                         </div>
                     </div>
                 </div>
@@ -189,7 +191,7 @@
                                 </div>
                             </div>-->
             </div>
-
+<fmt:setLocale value="vi_VN"/>
             <div class="amado_product_area section-padding-100">
                 <div class="container-fluid">
 
@@ -264,7 +266,8 @@
                                     <!-- Product Meta Data -->
                                     <div class="product-meta-data">
                                         <div class="line"></div>
-                                        <p class="product-price">$${o.price}</p>
+                                        <fmt:formatNumber value="${o.price}" type="number" groupingUsed="true" var="formattedPrice"/>
+                                        <p class="product-price">${formattedPrice} VND</p>
                                         <a href="productDetail?productID=${o.id}">
                                             <h6>${o.name}</h6>
                                         </a>

@@ -110,13 +110,13 @@ public class ProductDAO {
         }
 
         if (priceRange.equals("1")) {
-            query += "and price between 0 and 300";
+            query += "and price between 0 and 300000";
         } else if (priceRange.equals("2")) {
-            query += "and price between 300 and 500";
+            query += "and price between 300000 and 500000";
         } else if (priceRange.equals("3")) {
-            query += "and price between 500 and 1000";
+            query += "and price between 500000 and 1000000";
         } else if (priceRange.equals("4")) {
-            query += "and price > 1000";
+            query += "and price > 1000000";
         }
 
         if (sort != null && sort.equals("asc")) {

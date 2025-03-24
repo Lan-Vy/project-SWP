@@ -94,7 +94,7 @@ public class CheckOutControl extends HttpServlet {
                 // Loop through each product in the cart and insert order details
                 for (Product product : c.getItems()) {
 
-                    oddao.insertOrderDetails(orderID, product.getId(), product.getPrice(), product.getNumberInCart());
+                    oddao.insertOrderDetails(orderID, product.getId(), product.getPrice(), product.getNumberInCart(), product.getSizeInCart().getId());
                 }
                 // Update the product amounts in the inventory based on the order
                 for (Product product : c.getItems()) {

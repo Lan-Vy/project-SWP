@@ -4,6 +4,7 @@
 <%@page import="java.util.List"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -61,19 +62,21 @@
                                 </div>
                             </div>
                         </div>
-                        <table class="table table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th style="width: 100px">Product ID</th>
-                                    <th >Image</th>
-                                    <th >Product Name</th>
-                                    <th>Unit Price</th>
-                                    <th >Category</th>
-                                    <th style="text-align: center">Quantity</th>
+                    <fmt:setLocale value="vi_VN"/>
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width: 100px">Product ID</th>
+                                <th >Image</th>
+                                <th >Product Name</th>
+                                <th >Size</th>
+                                <th>Unit Price</th>
+                                <th >Category</th>
+                                <th style="text-align: center">Quantity</th>
 
-                                </tr>
-                            </thead>
-                            <tbody>
+                            </tr>
+                        </thead>
+                        <tbody>
                             <c:forEach items="${lstOrderDetail}" var="o">
                                 <tr>
 
@@ -86,8 +89,12 @@
                                     <td class="productName" >
                                         <span>${o.productName}</span>
                                     </td>
+                                    <td class="productName" >
+                                        <span>${o.size.size}</span>
+                                    </td>
                                     <td class="price" >
-                                        <span>${o.price}</span>
+                                        <fmt:formatNumber value="${o.price}" type="number" groupingUsed="true" var="formattedPrice"/>
+                                        <span>${formattedPrice}</span>
                                     </td>
                                     <td class="categoryName" >
                                         <span>${o.categoryName}</span>
