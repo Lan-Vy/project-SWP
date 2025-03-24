@@ -4,11 +4,12 @@
  */
 package control;
 
+import dao.CartDAO;
 import dao.OrderDAO;
 import dao.OrderDetailDAO;
 import dao.ProductDAO;
 import entity.Account;
-import entity.Cart;
+import entity.CartItem;
 import entity.Product;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -20,6 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -52,12 +54,16 @@ public class CheckOutVNPayControl extends HttpServlet {
             if (acc != null) {
                 String responseCode = request.getParameter("vnp_ResponseCode");
                 if ("00".equals(responseCode)) {
-                    // Retrieve the shopping cart from the session
-                    Cart c = (Cart) session.getAttribute("cart");
+                    CartDAO cdao = new CartDAO();
+                    List<CartItem> cartItems = cdao.getCartItemByUserId(acc.getId());
+
+                    // Initialize the total variable to track the cart amount
                     double totalPrice = 0;
-                    // Calculate the total price of the items in the cart
-                    if (c != null) {
-                        totalPrice = c.getAmount();
+                    // Check if the cart is not null and calculate the total amount
+                    if (cartItems.size() > 0) {
+                        for (CartItem cartItem : cartItems) {
+                            totalPrice += cartItem.getProduct().getPrice() * cartItem.getQuantity();
+                        }
                     }
                     // If the cart is empty, redirect to the shop
                     if (totalPrice == 0.0) {
@@ -77,8 +83,8 @@ public class CheckOutVNPayControl extends HttpServlet {
                     // Retrieve the order ID for the newly created order
                     int orderID = odao.getOrderID();
                     // Loop through each product in the cart and insert order details
-                    for (Product product : c.getItems()) {
-                        oddao.insertOrderDetails(orderID, product.getId(), product.getPrice(), product.getNumberInCart(), product.getSizeInCart().getId());
+                    for (CartItem cartItem : cartItems) {
+                        oddao.insertOrderDetails(orderID, cartItem.getProduct().getId(), cartItem.getProduct().getPrice(), cartItem.getQuantity(), cartItem.getSize().getId());
                     }
                     // Update the product amounts in the inventory based on the order
 //                    for (Product product : c.getItems()) {
@@ -86,8 +92,8 @@ public class CheckOutVNPayControl extends HttpServlet {
 //                        int reduceAmount = product.getAmount() - product.getNumberInCart();
 //                        pdao.updateAmounProduct(reduceAmount, product.getId());
 //                    }
-                    // Remove the cart from the session after the order is placed
-                    session.removeAttribute("cart");
+                    // remove cart
+                    cdao.removeAllFromCart(acc.getId());
                     // Set a success message to be displayed on the CheckOut.jsp page
                     request.setAttribute("message", "Order successfull!");
                     // Forward the request to CheckOut.jsp to display the success message

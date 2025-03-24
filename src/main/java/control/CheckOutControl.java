@@ -5,11 +5,12 @@
  */
 package control;
 
+import dao.CartDAO;
 import dao.OrderDAO;
 import dao.OrderDetailDAO;
 import dao.ProductDAO;
 import entity.Account;
-import entity.Cart;
+import entity.CartItem;
 import entity.Product;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -51,146 +52,37 @@ public class CheckOutControl extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
         try {
-            // Create a new DAO instance for database operations
-            OrderDAO odao = new OrderDAO();
-            OrderDetailDAO oddao = new OrderDetailDAO();
-            ProductDAO pdao = new ProductDAO();
-            // Retrieve the current session
             HttpSession session = request.getSession();
-            // Get the currently logged-in account from the session
-            Account a = (Account) session.getAttribute("acc");
-            // Retrieve user information from the request parameters
-            String firstname = request.getParameter("firstname");
-            String lastname = request.getParameter("lastname");
-            String address = request.getParameter("address");
-            String phone = request.getParameter("phone");
-            String payment = request.getParameter("payment");
+            Account acc = (Account) session.getAttribute("acc");
+            if (acc != null) {
+                CartDAO cdao = new CartDAO();
+                // Load lại giỏ hàng từ DB sau khi cập nhật
+                List<CartItem> cartItems = cdao.getCartItemByUserId(acc.getId());
 
-            // Retrieve the shopping cart from the session
-            Cart c = (Cart) session.getAttribute("cart");
-            double totalPrice = 0;
-            // Calculate the total price of the items in the cart
-            if (c != null) {
-                totalPrice = c.getAmount();
-            }
-            // If the cart is empty, redirect to the shop
-            if (totalPrice == 0.0) {
-                response.sendRedirect("ShopControl");
-                return;
-            }
-
-            if (payment.equals("cod")) {
-                //payment cod
-                // Get the current date for the order
-                Date date = new Date();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                java.sql.Date dateInsert = java.sql.Date.valueOf(dateFormat.format(date));
-                // Insert the order into the database
-                odao.insertOrder(dateInsert + "", a.getId(), address, phone, firstname + " " + lastname, totalPrice);
-                // Retrieve the order ID for the newly created order
-                int orderID = odao.getOrderID();
-                // Loop through each product in the cart and insert order details
-                for (Product product : c.getItems()) {
-
-                    oddao.insertOrderDetails(orderID, product.getId(), product.getPrice(), product.getNumberInCart(), product.getSizeInCart().getId());
-                }
-                // Update the product amounts in the inventory based on the order
-                for (Product product : c.getItems()) {
-
-                    int reduceAmount = product.getAmount() - product.getNumberInCart();
-                    pdao.updateAmounProduct(reduceAmount, product.getId());
-                }
-                // Remove the cart from the session after the order is placed
-                session.removeAttribute("cart");
-                // Set a success message to be displayed on the CheckOut.jsp page
-                request.setAttribute("message", "Order successfull!");
-                // Forward the request to CheckOut.jsp to display the success message
-                request.getRequestDispatcher("CheckOut.jsp").forward(request, response);
-            } else if (payment.equals("vnpay")) {
-                //vnpay
-                //vnpay
-                String vnp_Version = "2.1.0";
-                String vnp_Command = "pay";
-                String orderType = "other";
-                long amount = (long) (totalPrice * 100);
-                String bankCode = "NCB";
-
-                String vnp_TxnRef = Config.getRandomNumber(8);
-                String vnp_IpAddr = Config.getIpAddress(request);
-
-                String vnp_TmnCode = Config.vnp_TmnCode;
-
-                Map<String, String> vnp_Params = new HashMap<>();
-                vnp_Params.put("vnp_Version", vnp_Version);
-                vnp_Params.put("vnp_Command", vnp_Command);
-                vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
-                vnp_Params.put("vnp_Amount", String.valueOf(amount));
-                vnp_Params.put("vnp_CurrCode", "VND");
-
-                vnp_Params.put("vnp_BankCode", bankCode);
-                vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-                vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_TxnRef);
-                vnp_Params.put("vnp_OrderType", orderType);
-
-                String locate = request.getParameter("language");
-                if (locate != null && !locate.isEmpty()) {
-                    vnp_Params.put("vnp_Locale", locate);
-                } else {
-                    vnp_Params.put("vnp_Locale", "vn");
-                }
-                String returnURL = Config.vnp_ReturnUrl + "?firstname=" + firstname + "&lastname=" + lastname + "&address=" + address +"&phone=" +phone;
-                vnp_Params.put("vnp_ReturnUrl", returnURL);
-                vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
-
-                Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-                String vnp_CreateDate = formatter.format(cld.getTime());
-                vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
-
-                cld.add(Calendar.MINUTE, 15);
-                String vnp_ExpireDate = formatter.format(cld.getTime());
-                vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
-
-                List fieldNames = new ArrayList(vnp_Params.keySet());
-                Collections.sort(fieldNames);
-                StringBuilder hashData = new StringBuilder();
-                StringBuilder query = new StringBuilder();
-                Iterator itr = fieldNames.iterator();
-                while (itr.hasNext()) {
-                    String fieldName = (String) itr.next();
-                    String fieldValue = (String) vnp_Params.get(fieldName);
-                    if ((fieldValue != null) && (fieldValue.length() > 0)) {
-                        //Build hash data
-                        hashData.append(fieldName);
-                        hashData.append('=');
-                        hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
-                        //Build query
-                        query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString()));
-                        query.append('=');
-                        query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
-                        if (itr.hasNext()) {
-                            query.append('&');
-                            hashData.append('&');
-                        }
+                // Initialize the total variable to track the cart amount
+                double total = 0;
+                // Check if the cart is not null and calculate the total amount
+                if (cartItems.size() > 0) {
+                    for (CartItem cartItem : cartItems) {
+                        total += cartItem.getProduct().getPrice() * cartItem.getQuantity();
                     }
                 }
-                String queryUrl = query.toString();
-
-                String vnp_SecureHash = Config.hmacSHA512(Config.secretKey, hashData.toString());
-                queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
-                String paymentUrl = Config.vnp_PayUrl + "?" + queryUrl;
-
-                response.sendRedirect(paymentUrl);
+                if (total == 0.0) {
+                    // If the cart total is 0, redirect to the shop page
+                    response.sendRedirect("ShopControl");
+                } else {
+                    // If there are items in the cart, redirect to the checkout page
+                    request.setAttribute("cartItems", cartItems);
+                    request.getRequestDispatcher("CheckOut.jsp").forward(request, response);
+                }
+            } else {
+                request.getRequestDispatcher("Login.jsp").forward(request, response);
             }
         } catch (Exception e) {
-            // In case of an error, set an error message
-            request.setAttribute("message", "Order fail!");
-            // Forward the request back to CheckOut.jsp to display the error message
-            request.getRequestDispatcher("CheckOut.jsp").forward(request, response);
+            e.printStackTrace();
         }
-
+        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -219,7 +111,148 @@ public class CheckOutControl extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        response.setContentType("text/html;charset=UTF-8");
+        try {
+            // Create a new DAO instance for database operations
+            OrderDAO odao = new OrderDAO();
+            OrderDetailDAO oddao = new OrderDetailDAO();
+            ProductDAO pdao = new ProductDAO();
+            // Retrieve the current session
+            HttpSession session = request.getSession();
+            // Get the currently logged-in account from the session
+            Account a = (Account) session.getAttribute("acc");
+            // Retrieve user information from the request parameters
+            String firstname = request.getParameter("firstname");
+            String lastname = request.getParameter("lastname");
+            String address = request.getParameter("address");
+            String phone = request.getParameter("phone");
+            String payment = request.getParameter("payment");
+            
+            CartDAO cdao = new CartDAO();
+            List<CartItem> cartItems = cdao.getCartItemByUserId(a.getId());
+
+            // Initialize the total variable to track the cart amount
+            double totalPrice = 0;
+            // Check if the cart is not null and calculate the total amount
+            if (cartItems.size() > 0) {
+                for (CartItem cartItem : cartItems) {
+                    totalPrice += cartItem.getProduct().getPrice() * cartItem.getQuantity();
+                }
+            }
+            // If the cart is empty, redirect to the shop
+            if (totalPrice == 0.0) {
+                response.sendRedirect("ShopControl");
+                return;
+            }
+            
+            if (payment.equals("cod")) {
+                //payment cod
+                // Get the current date for the order
+                Date date = new Date();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                java.sql.Date dateInsert = java.sql.Date.valueOf(dateFormat.format(date));
+                // Insert the order into the database
+                odao.insertOrder(dateInsert + "", a.getId(), address, phone, firstname + " " + lastname, totalPrice);
+                // Retrieve the order ID for the newly created order
+                int orderID = odao.getOrderID();
+                // Loop through each product in the cart and insert order details
+                for (CartItem cartItem : cartItems) {
+                    oddao.insertOrderDetails(orderID, cartItem.getProduct().getId(), cartItem.getProduct().getPrice(), cartItem.getQuantity(), cartItem.getSize().getId());
+                }
+                // Update the product amounts in the inventory based on the order
+//                for (Product product : c.getItems()) {
+//
+//                    int reduceAmount = product.getAmount() - product.getNumberInCart();
+//                    pdao.updateAmounProduct(reduceAmount, product.getId());
+//                }
+// remove cart
+                cdao.removeAllFromCart(a.getId());
+                // Set a success message to be displayed on the CheckOut.jsp page
+                request.setAttribute("message", "Order successfull!");
+                // Forward the request to CheckOut.jsp to display the success message
+                request.getRequestDispatcher("CheckOut.jsp").forward(request, response);
+            } else if (payment.equals("vnpay")) {
+                //vnpay
+                //vnpay
+                String vnp_Version = "2.1.0";
+                String vnp_Command = "pay";
+                String orderType = "other";
+                long amount = (long) (totalPrice * 100);
+                String bankCode = "NCB";
+                
+                String vnp_TxnRef = Config.getRandomNumber(8);
+                String vnp_IpAddr = Config.getIpAddress(request);
+                
+                String vnp_TmnCode = Config.vnp_TmnCode;
+                
+                Map<String, String> vnp_Params = new HashMap<>();
+                vnp_Params.put("vnp_Version", vnp_Version);
+                vnp_Params.put("vnp_Command", vnp_Command);
+                vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
+                vnp_Params.put("vnp_Amount", String.valueOf(amount));
+                vnp_Params.put("vnp_CurrCode", "VND");
+                
+                vnp_Params.put("vnp_BankCode", bankCode);
+                vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
+                vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_TxnRef);
+                vnp_Params.put("vnp_OrderType", orderType);
+                
+                String locate = request.getParameter("language");
+                if (locate != null && !locate.isEmpty()) {
+                    vnp_Params.put("vnp_Locale", locate);
+                } else {
+                    vnp_Params.put("vnp_Locale", "vn");
+                }
+                String returnURL = Config.vnp_ReturnUrl + "?firstname=" + firstname + "&lastname=" + lastname + "&address=" + address + "&phone=" + phone;
+                vnp_Params.put("vnp_ReturnUrl", returnURL);
+                vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
+                
+                Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+                String vnp_CreateDate = formatter.format(cld.getTime());
+                vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
+                
+                cld.add(Calendar.MINUTE, 15);
+                String vnp_ExpireDate = formatter.format(cld.getTime());
+                vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
+                
+                List fieldNames = new ArrayList(vnp_Params.keySet());
+                Collections.sort(fieldNames);
+                StringBuilder hashData = new StringBuilder();
+                StringBuilder query = new StringBuilder();
+                Iterator itr = fieldNames.iterator();
+                while (itr.hasNext()) {
+                    String fieldName = (String) itr.next();
+                    String fieldValue = (String) vnp_Params.get(fieldName);
+                    if ((fieldValue != null) && (fieldValue.length() > 0)) {
+                        //Build hash data
+                        hashData.append(fieldName);
+                        hashData.append('=');
+                        hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                        //Build query
+                        query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString()));
+                        query.append('=');
+                        query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                        if (itr.hasNext()) {
+                            query.append('&');
+                            hashData.append('&');
+                        }
+                    }
+                }
+                String queryUrl = query.toString();
+                
+                String vnp_SecureHash = Config.hmacSHA512(Config.secretKey, hashData.toString());
+                queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
+                String paymentUrl = Config.vnp_PayUrl + "?" + queryUrl;
+                
+                response.sendRedirect(paymentUrl);
+            }
+        } catch (Exception e) {
+            // In case of an error, set an error message
+            request.setAttribute("message", "Order fail!");
+            // Forward the request back to CheckOut.jsp to display the error message
+            request.getRequestDispatcher("CheckOut.jsp").forward(request, response);
+        }
     }
 
     /**

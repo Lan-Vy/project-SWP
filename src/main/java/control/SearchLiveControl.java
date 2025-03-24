@@ -106,8 +106,8 @@ public class SearchLiveControl extends HttpServlet {
             // Check product availability and generate appropriate action links
             if (o.getAmount() != 0) {
                 product
-                        += "                                                <a href=\"cart?id=" + o.getId() + "&action=add\" data-toggle=\"tooltip\" data-placement=\"left\" title=\"Add to Cart\"><img src=\"img/core-img/cart.png\" alt=\"\"></a>\n"
-                        + "                                                <a href=\"Shop.jsp\" style='font-size:16px;' title=\"Add to favourite\">&#129505;</a>\n";
+                        += "                                                <a href=\"productDetail?productID=" + o.getId() + "&action=add\" data-toggle=\"tooltip\" data-placement=\"left\" title=\"Add to Cart\"><img src=\"img/core-img/cart.png\" alt=\"\"></a>\n"
+                        + "                                                <a href=\"#\" style='font-size:16px;' title=\"Add to favourite\">&#129505;</a>\n";
             } else {
 
                 product += "                                                <a href=\"ShopControl\" data-toggle=\"tooltip\" data-placement=\"left\">Sold out</a>\n"

@@ -4,9 +4,9 @@
     Author     : Admin
 --%>
 
-<%@page import="entity.Cart"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -33,9 +33,9 @@
     <body>
         <!-- Search Wrapper Area Start -->
         <%--<jsp:include page="common/search.jsp"></jsp:include>--%>
-            <!-- Search Wrapper Area End -->
+        <!-- Search Wrapper Area End -->
 
-            <!-- ##### Main Content Wrapper Start ##### -->
+        <!-- ##### Main Content Wrapper Start ##### -->
         <jsp:include page="common/header.jsp"></jsp:include>
             <!-- Header Area End -->
 
@@ -46,35 +46,36 @@
                             <div class="cart-title mt-50">
                                 <h2>Shopping Cart</h2>
                             </div>
-
-                            <div class="cart-table clearfix">
-                                <table class="table table-responsive">
-                                    <thead>
-                                        <tr>
-                                            <th></th>
-                                            <th>Name</th>
-                                            <th>Price</th>
-                                            <th>Quantity</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    <c:forEach items="${sessionScope.cart.items}" var="o">
+                        <fmt:setLocale value="vi_VN"/>
+                        <div class="cart-table clearfix">
+                            <table class="table table-responsive">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Name</th>
+                                        <th>Price</th>
+                                        <th>Quantity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach items="${cartItems}" var="o">
                                         <tr>
 
                                             <td class="cart_product_img">
-                                                <a href="#"><img src="${o.image}" alt="Product"></a>
+                                                <a href="#"><img src="${o.product.image}" alt="Product"></a>
                                             </td>
                                             <td class="cart_product_desc">
-                                                <h5>${o.name} - Size ${o.sizeInCart.size}</h5>
+                                                <h5>${o.product.name} - Size ${o.size.size}</h5>
                                             </td>
                                             <td class="price">
-                                                <span>$${o.price}</span>
+                                                <fmt:formatNumber value="${o.product.price}" type="number" groupingUsed="true" var="formattedPrice"/>
+                                                <span>${formattedPrice}</span>
                                             </td>
                                             <td class="qty">
-                                                <a href="cart?id=${o.id}&action=minus&selectedSizes=${o.sizeInCart.id}"><button class="btnSub">-</button></a> 
-                                                <strong>${o.numberInCart}</strong>
-                                                <a href="cart?id=${o.id}&action=add&selectedSizes=${o.sizeInCart.id}"><button class="btnAdd">+</button></a>
-                                                <a href="cart?id=${o.id}&action=delete&selectedSizes=${o.sizeInCart.id}" style="margin-left: 100px;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                                <a href="cart?id=${o.product.id}&action=minus&selectedSizes=${o.size.id}"><button class="btnSub">-</button></a> 
+                                                <strong>${o.quantity}</strong>
+                                                <a href="cart?id=${o.product.id}&action=add&selectedSizes=${o.size.id}"><button class="btnAdd">+</button></a>
+                                                <a href="cart?id=${o.product.id}&action=delete&selectedSizes=${o.size.id}" style="margin-left: 100px;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
                                                     <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
                                                     </svg></a>
                                             </td>
@@ -90,27 +91,22 @@
                             <h5>Cart Total</h5>
                             <ul class="summary-table">
                                 <li><span>Subtotal:</span> <span></span></li>
-                                
-                                <c:forEach items="${sessionScope.cart.items}" var="o">
-                                <li>
-                                <span style="padding-left: 30px">${o.name} (${o.sizeInCart.size})</span>
-                                <span>$${o.price * o.numberInCart}</span>
-                                </li>
+                                    <c:set var="totalPrice" value="0" />
+                                    <c:forEach items="${cartItems}" var="o">
+                                    <li>
+                                        <span style="padding-left: 30px">${o.product.name} (${o.size.size})</span>
+                                        <fmt:formatNumber value="${o.product.price * o.quantity}" type="number" groupingUsed="true" var="formattedPrice"/>
+                                        <span>${formattedPrice}</span>
+                                    </li>
+                                    <c:set var="totalPrice" value="${totalPrice + (o.product.price * o.quantity)}" />
                                 </c:forEach>
-                                
-                                <li><span>delivery:</span> <span>Free</span></li>
-                                <%
-                                Cart c = (Cart) session.getAttribute("cart");
-                                double total = 0;
-                                if(c != null){
-                                	total = c.getAmount();
-                                }
 
-                                %>
-                                <li><span>total:</span> <span>$<%=total %></span></li>
+                                <li><span>delivery:</span> <span>Free</span></li>
+                                    <fmt:formatNumber value="${totalPrice}" type="number" groupingUsed="true" var="formattedTotalPrice"/>
+                                <li><span>total:</span> <span>${formattedTotalPrice}</span></li>
                             </ul>
                             <div class="cart-btn mt-100">
-                                <a href="BuyControl" class="btn amado-btn w-100">Checkout</a>
+                                <a href="CheckOut" class="btn amado-btn w-100">Checkout</a>
                             </div>
                         </div>
                     </div>

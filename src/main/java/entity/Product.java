@@ -65,6 +65,13 @@ public class Product {
         this.isDeleted = isDeleted;
     }
 
+    public Product(int id, String name, String image, double price) {
+        this.id = id;
+        this.name = name;
+        this.image = image;
+        this.price = price;
+    }
+
     // Getter for numberInCart
     public int getNumberInCart() {
         return numberInCart;

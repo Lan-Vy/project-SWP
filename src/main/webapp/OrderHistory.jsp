@@ -1,6 +1,6 @@
 
 
-<%@page import="entity.Cart"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -49,23 +49,23 @@
                 <div class="cart-title mt-50">
                     <h2>Order History</h2>
                 </div>
-
-                <div>
-                    <table style="width:1100px">
-                        <thead style="background-color: #f5f7fa">
-                            <tr>
-                                <th >Order ID</th>
-                                <th >Recipient's Name</th>
-                                <th>Order Date</th>
-                                <th >Address Receive</th>
-                                <th >Phone Number</th>
-                                <th >Total Price</th>
-                                <th >Status</th>
-                                <th >Shipper</th>
-                                <th style="text-align: center">Detail</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+            <fmt:setLocale value="vi_VN"/>
+            <div>
+                <table style="width:1100px">
+                    <thead style="background-color: #f5f7fa">
+                        <tr>
+                            <th >Order ID</th>
+                            <th >Recipient's Name</th>
+                            <th>Order Date</th>
+                            <th >Address Receive</th>
+                            <th >Phone Number</th>
+                            <th >Total Price</th>
+                            <th >Status</th>
+                            <th >Shipper</th>
+                            <th style="text-align: center">Detail</th>
+                        </tr>
+                    </thead>
+                    <tbody>
                         <c:forEach items="${lstOrder}" var="o">
                             <tr>
 
@@ -85,7 +85,8 @@
                                     <span>${o.sdt}</span>
                                 </td>
                                 <td class="totalPrice" >
-                                    <span>${o.totalPrice}</span>
+                                    <fmt:formatNumber value="${o.totalPrice}" type="number" groupingUsed="true" var="formattedPrice"/>
+                                    <span>${formattedPrice}</span>
                                 </td>  
                                 <td>
                                     <c:choose>

@@ -4,8 +4,8 @@
     Author     : Admin
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@page import="entity.Cart"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -48,68 +48,71 @@
                                     <h2>Checkout</h2>
                                 </div>
 
-                            <form action="CheckOut" method="post">
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <input type="text" class="form-control" id="first_name" value="" placeholder="First Name" required name="firstname">
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <input type="text" class="form-control" id="last_name" value="" placeholder="Last Name" required name="lastname">
-                                    </div>
-                                    <div class="col-12 mb-3">
-                                        <input type="text" class="form-control" id="company" placeholder="Receiving Address" value="" required name="address">
-                                    </div>
-                                    <div class="col-12 mb-3">
-                                        <input type="text" class="form-control" id="email" placeholder="Phone Number" value="" required name="phone">
-                                    </div>
+                                <form action="CheckOut" method="post">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <input type="text" class="form-control" id="first_name" value="" placeholder="First Name" required name="firstname">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <input type="text" class="form-control" id="last_name" value="" placeholder="Last Name" required name="lastname">
+                                        </div>
+                                        <div class="col-12 mb-3">
+                                            <input type="text" class="form-control" id="company" placeholder="Receiving Address" value="" required name="address">
+                                        </div>
+                                        <div class="col-12 mb-3">
+                                            <input type="text" class="form-control" id="email" placeholder="Phone Number" value="" required name="phone">
+                                        </div>
 
-                                    <!--                                    <div class="col-12 mb-3">
-                                                                            <textarea name="comment" class="form-control w-100" id="comment" cols="30" rows="10" placeholder="Leave a comment about your order"></textarea>
-                                                                        </div>
-                                    
-                                                                        <div class="col-12">
-                                                                            <div class="custom-control custom-checkbox d-block mb-2">
-                                                                                <input type="checkbox" class="custom-control-input" id="customCheck2">
-                                                                                <label class="custom-control-label" for="customCheck2">Create an accout</label>
+                                        <!--                                    <div class="col-12 mb-3">
+                                                                                <textarea name="comment" class="form-control w-100" id="comment" cols="30" rows="10" placeholder="Leave a comment about your order"></textarea>
                                                                             </div>
-                                                                            <div class="custom-control custom-checkbox d-block">
-                                                                                <input type="checkbox" class="custom-control-input" id="customCheck3">
-                                                                                <label class="custom-control-label" for="customCheck3">Ship to a different address</label>
-                                                                            </div>
-                                                                        </div>-->
-                                </div>
-                                <!--                                    </form>-->
+                                        
+                                                                            <div class="col-12">
+                                                                                <div class="custom-control custom-checkbox d-block mb-2">
+                                                                                    <input type="checkbox" class="custom-control-input" id="customCheck2">
+                                                                                    <label class="custom-control-label" for="customCheck2">Create an accout</label>
+                                                                                </div>
+                                                                                <div class="custom-control custom-checkbox d-block">
+                                                                                    <input type="checkbox" class="custom-control-input" id="customCheck3">
+                                                                                    <label class="custom-control-label" for="customCheck3">Ship to a different address</label>
+                                                                                </div>
+                                                                            </div>-->
+                                    </div>
+                                    <!--                                    </form>-->
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-12 col-lg-4">
-                        <div class="cart-summary">
-                            <h5>Cart Total</h5>
+                        <div class="col-12 col-lg-4">
+                            <div class="cart-summary">
+                                <h5>Cart Total</h5><fmt:setLocale value="vi_VN"/>
                             <ul class="summary-table">
 
+                                <li><span>Subtotal:</span> <span></span></li>
+                                    <c:set var="totalPrice" value="0" />
+                                    <c:forEach items="${cartItems}" var="o">
+                                    <li>
+                                        <span style="padding-left: 30px">${o.product.name} (${o.size.size})</span>
+                                        <fmt:formatNumber value="${o.product.price * o.quantity}" type="number" groupingUsed="true" var="formattedPrice"/>
+                                        <span>${formattedPrice}</span>
+                                    </li>
+                                    <c:set var="totalPrice" value="${totalPrice + (o.product.price * o.quantity)}" />
+                                </c:forEach>
 
                                 <li><span>delivery:</span> <span>Free</span></li>
-                                    <%
-                                        Cart c = (Cart) session.getAttribute("cart");
-                                        double total = 0;
-                                        if (c != null) {
-                                            total = c.getAmount();
-                                        }
-
-                                    %>
-                                <li><span>total:</span> <span>$<%=total%></span></li>
+                                    <fmt:formatNumber value="${totalPrice}" type="number" groupingUsed="true" var="formattedTotalPrice"/>
+                                <li><span>total:</span> <span>${formattedTotalPrice}</span></li>
                             </ul>
 
                             <div class="payment-method">
-                                
-<!--                                <div class="custom-control mr-sm-2">
-                                    <input type="radio" name="cod" class="custom-control-input" id="cod" checked="">
-                                    <label class="custom-control-label" for="cod">Cash on Delivery</label>
-                                </div>
-                              
-                                <div class="custom-control mr-sm-2">
-                                    <input type="radio" name="vnpay" class="custom-control-input" id="vnpay">
-                                    <label class="custom-control-label" for="paypal">VNPay <img class="ml-15" src="img/core-img/paypal.png" alt=""></label>
-                                </div>-->
+
+                                <!--                                <div class="custom-control mr-sm-2">
+                                                                    <input type="radio" name="cod" class="custom-control-input" id="cod" checked="">
+                                                                    <label class="custom-control-label" for="cod">Cash on Delivery</label>
+                                                                </div>
+                                                              
+                                                                <div class="custom-control mr-sm-2">
+                                                                    <input type="radio" name="vnpay" class="custom-control-input" id="vnpay">
+                                                                    <label class="custom-control-label" for="paypal">VNPay <img class="ml-15" src="img/core-img/paypal.png" alt=""></label>
+                                                                </div>-->
                                 <div>
                                     <input type="radio" name="payment" id="cod" value="cod" checked="" style="margin-right: 10px"><label for="cod">Cash on Delivery</label><br>
                                     <input type="radio" name="payment" id="vnpay" value="vnpay" style="margin-right: 10px"><label for="vnpay">VNPay <img class="ml-15" src="img/core-img/paypal.png" alt=""></label>
@@ -149,12 +152,12 @@
         <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <c:if test="${message != null}">
         <script type="text/javascript">
-                    toastr.success(`${message}`, 'Success', {timeOut: 1000});
+            toastr.success(`${message}`, 'Success', {timeOut: 1000});
         </script>
     </c:if>
     <c:if test="${errorMessage != null}">
         <script type="text/javascript">
-                    toastr.error(`${errorMessage}`, 'Error', {timeOut: 1000});
+            toastr.error(`${errorMessage}`, 'Error', {timeOut: 1000});
         </script>
     </c:if>
 </body>
