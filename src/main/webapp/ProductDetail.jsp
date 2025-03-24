@@ -3,6 +3,9 @@
     Created on : Jan 13, 2021, 2:09:11 PM
     Author     : Admin
 --%>
+<%@page import="entity.Size"%>
+<%@page import="java.util.List"%>
+<%@page import="dao.SizeDAO"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -29,6 +32,32 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="css/core-style.css">
         <!-- <link rel="stylesheet" href="style.css"> -->
+        <style>
+            #sizeContainer {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .size-option {
+                padding: 10px 15px;
+                border: 1px solid #000;
+                cursor: pointer;
+                border-radius: 5px;
+                transition: 0.3s;
+            }
+
+            .size-option:hover {
+                background-color: #ddd;
+            }
+
+            .size-option.selected {
+                background-color: #fbb710; /* Màu cam khi chọn */
+                color: white;
+                border-color: #fbb710;
+            }
+
+        </style>
     </head>
     <body>
 
@@ -44,7 +73,6 @@
                         <div class="col-12">
                             <nav aria-label="breadcrumb">
                                 <ol class="breadcrumb mt-50">
-                                    <li class="breadcrumb-item"><a href="HomeControl">Home</a></li>
                                     <li class="breadcrumb-item"><a href="ShopControl">Shop</a></li>
                                     <li class="breadcrumb-item"><a href="ShopControl?pageIndex=1&cID=${o.cid}">${cateName}</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">${detail.name}</li>
@@ -98,7 +126,7 @@
                             <div class="product-meta-data">
                                 <div class="line"></div>
                                 <p class="product-price">$${detail.price}</p>
-                                <a href="product-details.html">
+                                <a href="#">
                                     <h6>${detail.name}</h6>
                                 </a>
                                 <!-- Ratings & Review -->
@@ -115,19 +143,47 @@
                                     </div>
                                 </div>
                                 <!-- Avaiable -->
-                                <p class="avaibility"><i class="fa fa-circle"></i> In Stock</p>
-                            </div>
+                                <c:if test="${o.detail != 0}">
+                                    <p class="avaibility"><i class="fa fa-circle"></i> In Stock</p></c:if>
+                                <c:if test="${o.detail == 0}">
+                                    <p class="avaibility"><i class="fa fa-circle" style="color: red"></i> Out Stock</p></c:if>
+                                </div>
 
-                            <div class="short_overview my-5">
-                                <p>${detail.description}</p>
+                                <div class="short_overview my-5">
+                                    <p>${detail.description}</p>
                             </div>
 
 
                             <!-- Add to Cart Form -->
-                            <form class="cart clearfix" method="post" action="">
-
-                                <a href="cart?id=${detail.id}&action=add"><button type="button" name="addtocart" value="${detail.id}" class="btn amado-btn">Add to cart</button></a>
-                            </form>
+                            <!--                            <form class="cart clearfix" method="post" action="">
+                                                            <div class="form-group">
+                                                                <label>Size</label>
+                                                                <select name="size" class="form-control" id="sizeSelect">
+                            <%--<c:forEach items="${listSize}" var="o">--%>
+                                <option value="${o.id}">${o.size}</option>
+                            <%--</c:forEach>--%>
+                        </select>
+                        <small style="color: red; display: none;" id="sizeError">Please select at least one size.</small>
+                    </div>
+                    <a href="cart?id=${detail.id}&action=add"><button type="button" name="addtocart" value="${detail.id}" class="btn amado-btn">Add to cart</button></a>
+                </form>-->
+                            <c:if test="${o.detail != 0}">
+                                <form class="cart clearfix" method="post" action="cart">
+                                    <div class="form-group">
+                                        <label>Size</label>
+                                        <div id="sizeContainer">
+                                            <c:forEach items="${listSize}" var="o">
+                                                <div class="size-option" data-size="${o.id}">${o.size}</div>
+                                            </c:forEach>
+                                        </div>
+                                        <input type="hidden" name="selectedSizes" id="selectedSizes">
+                                        <input type="hidden" name="action" value="add">
+                                        <input type="hidden" name="id" value="${detail.id}">
+                                        <small style="color: red; display: none;" id="sizeError">Please select at least one size.</small>
+                                    </div>
+                                    <button type="submit" name="addtocart" value="${detail.id}" class="btn amado-btn">Add to cart</button>
+                                </form>
+                            </c:if>
 
                         </div>
                     </div>
@@ -271,6 +327,45 @@
                                                             console.error(`Element not found for feedback ID: ${feedbackId}`);
                                                         }
                                                     }
+
+                                                    document.addEventListener("DOMContentLoaded", function () {
+                                                        const sizeOptions = document.querySelectorAll(".size-option");
+                                                        const selectedSizesInput = document.getElementById("selectedSizes");
+                                                        const sizeError = document.getElementById("sizeError");
+                                                        let selectedSizes = [];
+
+                                                        sizeOptions.forEach(option => {
+                                                            option.addEventListener("click", function () {
+                                                                const sizeId = this.getAttribute("data-size");
+
+                                                                if (selectedSizes.includes(sizeId)) {
+                                                                    // Nếu đã chọn, bỏ chọn
+                                                                    selectedSizes = selectedSizes.filter(id => id !== sizeId);
+                                                                    this.classList.remove("selected");
+                                                                } else {
+                                                                    // Nếu chưa chọn, thêm vào danh sách
+                                                                    selectedSizes.push(sizeId);
+                                                                    this.classList.add("selected");
+                                                                }
+
+                                                                // Cập nhật input ẩn
+                                                                selectedSizesInput.value = selectedSizes.join(",");
+
+                                                                // Ẩn lỗi nếu có size được chọn
+                                                                if (selectedSizes.length > 0) {
+                                                                    sizeError.style.display = "none";
+                                                                }
+                                                            });
+                                                        });
+
+                                                        document.querySelector("form").addEventListener("submit", function (event) {
+                                                            if (selectedSizes.length === 0) {
+                                                                sizeError.style.display = "block";
+                                                                event.preventDefault(); // Ngăn form submit nếu chưa chọn size
+                                                            }
+                                                        });
+                                                    });
+
 
     </script>
 </body>

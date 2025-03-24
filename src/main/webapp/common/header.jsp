@@ -34,21 +34,21 @@
             <ul>
                 <!--<li><a href="HomeControl">Home</a></li>-->
                 <li><a href="ShopControl">Shop</a></li>
-                    <c:if test="${sessionScope.acc != null && (sessionScope.acc.role == 2 || sessionScope.acc.role == 3)}">
-                    <li><a href="dashboard"> Dashboard</a></li>
-                    </c:if>
+                    <%--<c:if test="${sessionScope.acc != null && (sessionScope.acc.role == 2 || sessionScope.acc.role == 3)}">--%>
+                    <!--<li><a href="dashboard"> Dashboard</a></li>-->
+                    <%--</c:if>--%>
                 <!--<li><a href="ProductDetail.jsp">Product</a></li>-->
                 <li><a href="cart">Cart</a></li>
                     <c:if test="${sessionScope.acc != null}">
                     <li><a href="OrderHistoryControl">Order History</a></li>
                     </c:if>
                 <!--<li><a href="CheckOut.jsp">Checkout</a></li>-->
-                <c:if test="${sessionScope.acc == null}">
-                    <li><a href="Login.jsp">Checkout</a></li>
-                    </c:if>
-                    <c:if test="${sessionScope.acc != null}">
-                    <li><a href="CheckOut.jsp">Checkout</a></li>
-                    </c:if>
+                <%--<c:if test="${sessionScope.acc == null}">--%>
+                    <!--<li><a href="Login.jsp">Checkout</a></li>-->
+                    <%--</c:if>--%>
+                    <%--<c:if test="${sessionScope.acc != null}">--%>
+                    <!--<li><a href="CheckOut.jsp">Checkout</a></li>-->
+                    <%--</c:if>--%>
 
 
                 <li><a href="AboutUs.jsp">About Us</a></li>
@@ -57,7 +57,7 @@
                     <li><a href="Login.jsp">Login</a></li>
                     </c:if>
                     <c:if test="${sessionScope.acc != null}">
-                    <li><a href="Profile">Profile</a></li>
+                    <li><a href="Profile">Hi, ${sessionScope.acc.userName}</a></li>
                     <li><a href="logout">Logout</a></li>
                     </c:if>
             </ul>

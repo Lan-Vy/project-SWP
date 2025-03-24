@@ -18,6 +18,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
  *
@@ -71,6 +73,7 @@ public class SearchLiveControl extends HttpServlet {
         // Prepare product HTML for response
         PrintWriter out = response.getWriter();
         String product = "";
+        NumberFormat formatter = NumberFormat.getInstance(new Locale("vi", "VN"));
         for (Product o : list) {
             product += "     <div class=\"col-12 col-sm-6 col-md-12 col-xl-6\">\n"
                     + "                            <div class=\"single-product-wrapper\">\n"
@@ -85,7 +88,7 @@ public class SearchLiveControl extends HttpServlet {
                     + "                                    <!-- Product Meta Data -->\n"
                     + "                                    <div class=\"product-meta-data\">\n"
                     + "                                        <div class=\"line\"></div>\n"
-                    + "                                        <p class=\"product-price\">$" + o.getPrice() + "</p>\n"
+                    + "                                        <p class=\"product-price\">" + formatter.format(o.getPrice()) + " VND</p>\n"
                     + "                                        <a href=\"productDetail?productID=" + o.getId() + "\">\n"
                     + "                                            <h6>" + o.getName() + "</h6>\n"
                     + "                                        </a>\n"

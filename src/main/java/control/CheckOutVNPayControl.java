@@ -78,15 +78,14 @@ public class CheckOutVNPayControl extends HttpServlet {
                     int orderID = odao.getOrderID();
                     // Loop through each product in the cart and insert order details
                     for (Product product : c.getItems()) {
-
-                        oddao.insertOrderDetails(orderID, product.getId(), product.getPrice(), product.getNumberInCart());
+                        oddao.insertOrderDetails(orderID, product.getId(), product.getPrice(), product.getNumberInCart(), product.getSizeInCart().getId());
                     }
                     // Update the product amounts in the inventory based on the order
-                    for (Product product : c.getItems()) {
-
-                        int reduceAmount = product.getAmount() - product.getNumberInCart();
-                        pdao.updateAmounProduct(reduceAmount, product.getId());
-                    }
+//                    for (Product product : c.getItems()) {
+//
+//                        int reduceAmount = product.getAmount() - product.getNumberInCart();
+//                        pdao.updateAmounProduct(reduceAmount, product.getId());
+//                    }
                     // Remove the cart from the session after the order is placed
                     session.removeAttribute("cart");
                     // Set a success message to be displayed on the CheckOut.jsp page

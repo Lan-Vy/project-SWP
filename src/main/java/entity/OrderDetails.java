@@ -19,6 +19,9 @@ public class OrderDetails {
     private String image; // URL or path to the product image
     private String productName; // Name of the product
     private String categoryName; // Category name of the product
+    
+    private int sizeId;
+    private Size size;
 
     // Default constructor
     public OrderDetails() {
@@ -111,6 +114,22 @@ public class OrderDetails {
     // Setter for categoryName
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    public int getSizeId() {
+        return sizeId;
+    }
+
+    public void setSizeId(int sizeId) {
+        this.sizeId = sizeId;
+    }
+
+    public Size getSize() {
+        return size;
+    }
+
+    public void setSize(Size size) {
+        this.size = size;
     }
 
     // Overridden toString method to display order item details

@@ -8,10 +8,11 @@ package control;
 import dao.CategoryDAO;
 import dao.FeedbackDAO;
 import dao.ProductDAO;
+import dao.SizeDAO;
 import dao.SubImageDAO;
 import entity.Account;
 import entity.Feedback;
-import entity.Product;
+import entity.*;
 import entity.SubImage;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -74,6 +75,10 @@ public class ProductDetailControl extends HttpServlet {
                 image3 = listImage.get(3).getImage();
             }
         }
+        
+        SizeDAO sizeDAO = new SizeDAO();
+        List<Size> listSize = sizeDAO.getAllSizeByProductId(Integer.parseInt(pID));
+
         // Set the product detail, category name, category ID, and images as request attributes
         request.setAttribute("detail", p);
         request.setAttribute("cateName", cname);
@@ -82,6 +87,7 @@ public class ProductDetailControl extends HttpServlet {
         request.setAttribute("image1", image1);
         request.setAttribute("image2", image2);
         request.setAttribute("image3", image3);
+        request.setAttribute("listSize", listSize);
         // Fetch feedback associated with the product and set it as a request attribute
         List<Feedback> feedbacks = fdao.getFeedbacksByProductId(Integer.parseInt(pID));
         request.setAttribute("feedbacks", feedbacks);
@@ -93,7 +99,7 @@ public class ProductDetailControl extends HttpServlet {
         boolean canFeedback = false;
         // If the user is logged in, check if they have purchased the product
         if (userId != null) {
-            canFeedback = dao.isBought(userId, Integer.parseInt(pID));
+            canFeedback = dao.isBought(userId, Integer.parseInt(pID)) && !fdao.isFeedbacked(userId, Integer.parseInt(pID));
             request.setAttribute("canFeedback", canFeedback);
         }
         // Forward the request to ProductDetail.jsp for rendering

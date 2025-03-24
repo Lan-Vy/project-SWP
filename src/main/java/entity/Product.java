@@ -28,6 +28,9 @@ public class Product {
     private int amount; // Quantity of the product in stock
 
     private int numberInCart; // Number of this product in the shopping cart
+    private Size sizeInCart; // size of this product in the shopping cart
+    
+//    private List<Size> sizes;
 
     // Default constructor
     public Product() {
@@ -170,6 +173,22 @@ public class Product {
     // Setter for isDeleted
     public void setIsDeleted(int isDeleted) {
         this.isDeleted = isDeleted;
+    }
+
+//    public List<Size> getSizes() {
+//        return sizes;
+//    }
+//
+//    public void setSizes(List<Size> sizes) {
+//        this.sizes = sizes;
+//    }
+
+    public Size getSizeInCart() {
+        return sizeInCart;
+    }
+
+    public void setSizeInCart(Size sizeInCart) {
+        this.sizeInCart = sizeInCart;
     }
 
     // Overridden toString method to display product information

@@ -3,6 +3,7 @@
 <%@page import="entity.Cart"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -39,9 +40,9 @@
     <body>
         <!-- Search Wrapper Area Start -->
         <%--<jsp:include page="common/search.jsp"></jsp:include>--%>
-            <!-- Search Wrapper Area End -->
+        <!-- Search Wrapper Area End -->
 
-            <!-- ##### Main Content Wrapper Start ##### -->
+        <!-- ##### Main Content Wrapper Start ##### -->
         <jsp:include page="common/header.jsp"></jsp:include>
             <!-- Header Area End -->
 
@@ -52,20 +53,21 @@
                 <div class="cart-title mt-50">
                     <h2>Order Detail</h2>
                 </div>
-
-                <div >
-                    <table style="width:1100px">
-                        <thead style="background-color: #f5f7fa">
-                            <tr>
-                                <th style="width: 100px">Product ID</th>
-                                <th >Image</th>
-                                <th >Product Name</th>
-                                <th>Unit Price</th>
-                                <th >Category</th>
-                                <th style="text-align: center">Quantity</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+            <fmt:setLocale value="vi_VN"/>
+            <div >
+                <table style="width:1100px">
+                    <thead style="background-color: #f5f7fa">
+                        <tr>
+                            <th style="width: 100px">Product ID</th>
+                            <th >Image</th>
+                            <th >Product Name</th>
+                            <th >Size</th>
+                            <th>Unit Price</th>
+                            <th>Category</th>
+                            <th style="text-align: center">Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
                         <c:forEach items="${lstOrderDetail}" var="o">
                             <tr>
 
@@ -78,8 +80,12 @@
                                 <td class="productName" >
                                     <span>${o.productName}</span>
                                 </td>
+                                <td class="productName" >
+                                    <span>${o.size.size}</span>
+                                </td>
                                 <td class="price" >
-                                    <span>${o.price}</span>
+                                    <fmt:formatNumber value="${o.price}" type="number" groupingUsed="true" var="formattedPrice"/>
+                                    <span>${formattedPrice}</span>
                                 </td>
                                 <td class="categoryName" >
                                     <span>${o.categoryName}</span>
