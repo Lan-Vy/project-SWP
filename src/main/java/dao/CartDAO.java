@@ -52,7 +52,8 @@ public class CartDAO {
         return list;
     }
 
-    public void addToCart(int userId, int productId, int size) {
+    public boolean addToCart(int userId, int productId, int size) {
+         boolean addCart = false;
         String query = "MERGE INTO CartItems AS target "
                 + "USING (SELECT ? AS userId, ? AS productId, ? AS sizeId) AS source "
                 + "ON target.userId = source.userId AND target.productId = source.productId AND target.sizeId = source.sizeId "
@@ -69,10 +70,13 @@ public class CartDAO {
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
+            return addCart = false;
         }
+        return addCart = true;
     }
 
-    public void updateCartQuantity(int userId, int productId, int size) {
+    public boolean updateCartQuantity(int userId, int productId, int size) {
+        boolean updateCart = false;
         String query = "UPDATE CartItems SET quantity = quantity - 1 "
                 + "WHERE userId = ? AND productId = ? AND sizeId = ? AND quantity > 1;";
         String deleteQuery = "DELETE FROM CartItems WHERE userId = ? AND productId = ? AND sizeId = ? AND quantity = 1;";
@@ -91,10 +95,13 @@ public class CartDAO {
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
+            return updateCart = false;
         }
+        return updateCart = true;
     }
 
-    public void removeFromCart(int userId, int productId, int size) {
+    public boolean removeFromCart(int userId, int productId, int size) {
+        boolean removeCart = false;
         String query = "DELETE FROM CartItems WHERE userId = ? AND productId = ? AND sizeId = ?";
         try {
             conn = new DBContext().getConnection();
@@ -105,7 +112,9 @@ public class CartDAO {
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
+            return removeCart = false;
         }
+        return removeCart = true;
     }
     
     public void removeAllFromCart(int userId) {
