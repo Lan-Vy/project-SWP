@@ -5,9 +5,13 @@
  */
 package control;
 
+import dao.CartDAO;
 import dao.ProductDAO;
-import entity.Cart;
+import dao.SizeDAO;
+import entity.Account;
+import entity.CartItem;
 import entity.Product;
+import entity.Size;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -38,56 +42,48 @@ public class CartControl extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        HttpSession session = request.getSession(true);
-        // Get the product ID and action from the request parameters
-        String id = request.getParameter("id");
-        String action = request.getParameter("action");
-        // Check if both id and action are not null
-        if (!(id == null && action == null)) {
-            // If the action is to add a product to the cart
-            if (action != null && action.equalsIgnoreCase("add")) {
-                // Check if the cart does not exist in the session
-                if (session.getAttribute("cart") == null) {
-                    // Initialize a new cart with an empty product list
-                    List<Product> lst = new ArrayList<>();
-                    session.setAttribute("cart", new Cart(lst));
+        HttpSession session = request.getSession();
+        Account acc = (Account) session.getAttribute("acc");
+        if (acc != null) {
+            CartDAO cdao = new CartDAO();
+            String id = request.getParameter("id");
+            String action = request.getParameter("action");
+            String selectedSizes = request.getParameter("selectedSizes"); // Danh sách size (chuỗi "1,2,3")
+
+            if (id != null && action != null && selectedSizes != null) {
+                // Tách chuỗi selectedSizes thành danh sách
+                String[] sizeArray = selectedSizes.split(",");
+                // Lặp qua từng size và thêm vào giỏ hàng
+                for (String sizeStr : sizeArray) {
+                    int size = Integer.parseInt(sizeStr.trim());
+                    int productId = Integer.parseInt(id);
+
+                    if (action.equalsIgnoreCase("add")) {
+                        boolean ok ;
+                       ok = cdao.addToCart(acc.getId(), productId, size);
+                       if(!ok){
+                            System.out.print("add to cart failed");}
+                    } else if (action.equalsIgnoreCase("minus")) {
+                        boolean ok ;
+                        ok=cdao.updateCartQuantity(acc.getId(), productId, size);
+                        if(!ok){
+                            System.out.print("update to cart failed");}
+                    } else if (action.equalsIgnoreCase("delete")) {
+                        boolean ok ;
+                        ok =cdao.removeFromCart(acc.getId(), productId, size);
+                        if(!ok){
+                            System.out.print("delete to cart failed");}
+                    }
                 }
-                // Retrieve the product from the database using its ID
-                Product p = new ProductDAO().getProductByID(id);
-                // Get the cart from the session
-                Cart c = (Cart) session.getAttribute("cart");
-                // Add the product to the cart
-                c.add(new Product(p.getId(), p.getName(), p.getImage(), p.getPrice(),
-                        p.getTitle(), p.getDescription(), p.getCateID(), p.getSubImage(),
-                        p.getAmount(), 1, p.getIsDeleted()));
-                // Update the cart in the session
-                session.setAttribute("cart", c);
+
             }
+            // Load lại giỏ hàng từ DB sau khi cập nhật
+            List<CartItem> cartItems = cdao.getCartItemByUserId(acc.getId());
+            request.setAttribute("cartItems", cartItems);
+            request.getRequestDispatcher("Cart.jsp").forward(request, response);
+        } else {
+            request.getRequestDispatcher("Login.jsp").forward(request, response);
         }
-        // If the action is to decrease the quantity of a product
-        if (action != null && action.equalsIgnoreCase("minus")) {
-            // Retrieve the product from the database
-            Product p = new ProductDAO().getProductByID(id);
-            // Get the cart from the session
-            Cart c = (Cart) session.getAttribute("cart");
-            // Decrease the quantity of the product in the cart
-            c.minus(new Product(p.getId(), p.getName(), p.getImage(), p.getPrice(),
-                    p.getTitle(), p.getDescription(), p.getCateID(), p.getSubImage(),
-                    p.getAmount(), p.getIsDeleted()));
-            // Update the cart in the session
-            session.setAttribute("cart", c);
-            // If the action is to delete a product from the cart
-        } else if (action != null && action.equalsIgnoreCase("delete")) {
-            // Get the cart from the session
-            Cart c = (Cart) session.getAttribute("cart");
-            // Remove the product with the specified ID from the cart
-            c.remove(Integer.parseInt(id));
-            // Update the cart in the session
-            session.setAttribute("cart", c);
-        }
-        // Forward the request to the Cart.jsp page
-        request.getRequestDispatcher("Cart.jsp").forward(request, response);
-//        response.sendRedirect("order");
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
