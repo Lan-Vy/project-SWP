@@ -1,8 +1,3 @@
-<%-- 
-    Document   : ManagerProduct
-    Created on : Jan 13, 2021, 2:08:03 PM
-    Author     : Admin
---%>
 
 <%@page import="dao.AccountDAO"%>
 <%@page import="entity.Category"%>
