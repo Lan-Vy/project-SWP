@@ -1,8 +1,4 @@
-<%-- 
-    Document   : ProductDetail
-    Created on : Jan 13, 2021, 2:09:11 PM
-    Author     : Admin
---%>
+
 <%@page import="entity.Size"%>
 <%@page import="java.util.List"%>
 <%@page import="dao.SizeDAO"%>
