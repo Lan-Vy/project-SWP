@@ -1,8 +1,3 @@
-<%-- 
-    Document   : CheckOut
-    Created on : Jan 13, 2021, 2:05:49 PM
-    Author     : Admin
---%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
