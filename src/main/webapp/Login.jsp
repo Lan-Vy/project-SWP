@@ -1,3 +1,4 @@
+<%@page import="utils.Constants"%>
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -93,6 +94,7 @@
                 </div>
                 <button class="btn btn-warning btn-block" type="submit"><i class="fas fa-sign-in-alt"></i> Sign in</button>
                 <hr>
+                <a class="btn btn-warning" style="margin-bottom: 16px" href="https://accounts.google.com/o/oauth2/auth?scope=email%20profile%20openid&redirect_uri=<%= Constants.GOOGLE_REDIRECT_URI%>&response_type=code&client_id=<%= Constants.GOOGLE_CLIENT_ID%>&approval_prompt=force"><i class="fas fa-user-plus"></i></i>Login by Google</a>
                 <button class="btn btn-dark btn-block" type="button" id="btn-signup"><i class="fas fa-user-plus"></i> Sign up New Account</button>
             </form>
 

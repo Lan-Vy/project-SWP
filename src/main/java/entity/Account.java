@@ -22,6 +22,11 @@ public class Account {
     public Account() {
     }
 
+    public Account(String userName, String email) {
+        this.userName = userName;
+        this.email = email;
+    }
+
     public Account(int id, String userName) {
         this.id = id;
         this.userName = userName;
