@@ -15,6 +15,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -95,24 +96,27 @@ public class AdminUpdateCategoryControl extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        request.setCharacterEncoding("UTF-8");
-        // Retrieve the 'name' parameter from the request (the new name for the category)
-        String name = request.getParameter("name");
-        // Retrieve the 'cid' parameter from the request (the ID of the category to update)
-        String cId = request.getParameter("cid");
-        // Create an instance of the DAO to perform database operations
-        CategoryDAO dao = new CategoryDAO();
-        // Call the updateCategory method of the DAO to update the category name in the database
-        dao.updateCategory(name, Integer.parseInt(cId));
-        // Set a success message as a request attribute to be displayed after the update
+   @Override
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    response.setContentType("text/html;charset=UTF-8");
+    request.setCharacterEncoding("UTF-8");
+
+    String name = request.getParameter("name");
+    String cId = request.getParameter("cid");
+    CategoryDAO dao = new CategoryDAO();
+    int categoryId = Integer.parseInt(cId);
+ 
+    if (dao.isCategoryNameExistsExceptCurrent(name.trim(), categoryId)) {
+        request.setAttribute("errorMessage", "Category name already exists!");
+    } else {
+        dao.updateCategory(name.trim(), categoryId);
         request.setAttribute("message", "Update success!");
-        // Forward the request and response to the ManagerCategoryControl servlet to display the updated category list
-        request.getRequestDispatcher("ManagerCategoryControl").forward(request, response);
     }
+
+    request.getRequestDispatcher("ManagerCategoryControl").forward(request, response);
+}
+
 
     /**
      * Returns a short description of the servlet.
@@ -125,3 +129,5 @@ public class AdminUpdateCategoryControl extends HttpServlet {
     }// </editor-fold>
 
 }
+
+

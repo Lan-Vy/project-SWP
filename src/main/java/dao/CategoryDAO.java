@@ -60,6 +60,37 @@ public class CategoryDAO {
         }
         return list;
     }
+public boolean isCategoryNameExists(String name) {
+    String query = "SELECT COUNT(*) FROM Category WHERE cName = ?";
+    try {
+        conn = new DBContext().getConnection();
+        ps = conn.prepareStatement(query);
+        ps.setString(1, name);
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getInt(1) > 0;
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+public boolean isCategoryNameExistsExceptCurrent(String name, int currentId) {
+    String query = "SELECT COUNT(*) FROM Category WHERE cName = ? AND cID != ?";
+    try {
+        conn = new DBContext().getConnection();
+        ps = conn.prepareStatement(query);
+        ps.setString(1, name);
+        ps.setInt(2, currentId);
+        rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getInt(1) > 0;
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return false;
+}
 
     public void addNewCategory(String name) {
         String query = "INSERT into Category (cName)\n"
@@ -131,3 +162,5 @@ public class CategoryDAO {
         return null;
     }
 }
+
+

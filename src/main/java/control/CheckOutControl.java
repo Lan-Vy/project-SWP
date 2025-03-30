@@ -156,9 +156,20 @@ public class CheckOutControl extends HttpServlet {
                 // Retrieve the order ID for the newly created order
                 int orderID = odao.getOrderID();
                 // Loop through each product in the cart and insert order details
-                for (CartItem cartItem : cartItems) {
-                    oddao.insertOrderDetails(orderID, cartItem.getProduct().getId(), cartItem.getProduct().getPrice(), cartItem.getQuantity(), cartItem.getSize().getId());
-                }
+                // Loop through each product in the cart, insert order details và cập nhật tồn kho
+for (CartItem cartItem : cartItems) {
+    int productId = cartItem.getProduct().getId();
+    int quantity = cartItem.getQuantity();
+    double price = cartItem.getProduct().getPrice();
+    int sizeId = cartItem.getSize().getId();
+
+    // Thêm chi tiết đơn hàng
+    oddao.insertOrderDetails(orderID, productId, price, quantity, sizeId);
+
+    // Trừ tồn kho sản phẩm
+    pdao.updateProductQuantity(productId, quantity);
+}
+
                 // Update the product amounts in the inventory based on the order
 //                for (Product product : c.getItems()) {
 //

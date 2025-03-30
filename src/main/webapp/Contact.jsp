@@ -8,7 +8,7 @@
         <meta name="description" content="">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>Aloha Space Shop - Be good, Be bad, Be yourself | Contact</title>
+        <title>Revolt Athletics | Contact</title>
 
         <!-- Favicon  -->
         <link rel="icon" href="img/core-img/favicon2.ico">

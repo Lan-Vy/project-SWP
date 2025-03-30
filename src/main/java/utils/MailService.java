@@ -23,7 +23,7 @@ public class MailService {
     public static void sendMail(String to, String sub, String message) {
         // Sender's email credentials
         final String user = "vinhtran5114@gmail.com";
-        final String pass = "euvb fdaa dgfw ufso";// Application-specific password
+        final String pass = "dsqs nwqp fyrp oiaa";// Application-specific password
         // Properties for configuring the email server
         Properties pros = new Properties();
         pros.put("mail.smtp.host", "smtp.gmail.com");// SMTP server address

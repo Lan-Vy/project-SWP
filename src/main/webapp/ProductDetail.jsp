@@ -1,14 +1,10 @@
-<%-- 
-    Document   : ProductDetail
-    Created on : Jan 13, 2021, 2:09:11 PM
-    Author     : Admin
---%>
 <%@page import="entity.Size"%>
 <%@page import="java.util.List"%>
 <%@page import="dao.SizeDAO"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -21,7 +17,7 @@
         <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
         <!-- Title  -->
-        <title>Aloha Space Shop - Be good, Be bad, Be yourself | Product Details</title>
+        <title>Revolt Athletics | Product Details</title>
 
         <!-- Favicon  -->
         <link rel="icon" href="img/core-img/favicon2.ico">
@@ -33,6 +29,12 @@
         <link rel="stylesheet" href="css/core-style.css">
         <!-- <link rel="stylesheet" href="style.css"> -->
         <style>
+            .product-stock {
+    font-weight: 500;
+    color: #333;
+    margin-top: 5px;
+}
+
             #sizeContainer {
                 display: flex;
                 flex-wrap: wrap;
@@ -125,23 +127,26 @@
                             <!-- Product Meta Data -->
                             <div class="product-meta-data">
                                 <div class="line"></div>
-                                <p class="product-price">$${detail.price}</p>
+                                <p class="product-price">${detail.price}VND</p>
+                                <p class="product-stock">Amount: ${detail.amount}</p>
+
                                 <a href="#">
                                     <h6>${detail.name}</h6>
                                 </a>
                                 <!-- Ratings & Review -->
-                                <div class="ratings-review mb-15 d-flex align-items-center justify-content-between">
-                                    <div class="ratings">
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                    </div>
-                                    <div class="review">
-                                        <a href="#">Write A Review</a>
-                                    </div>
-                                </div>
+                                <div class=" mb-15 d-flex align-items-center justify-content-between">
+    <div class="ratings">
+        <c:forEach var="i" begin="1" end="5">
+            <i class="fa fa-star" <c:if test="${i <= avgRating}">style="color: gold !important"</c:if>></i>
+        </c:forEach>
+    </div>
+    <div class="review">
+        <a href="#review">Write A Review</a>
+    </div>
+</div>
+<p style="font-size: 14px; margin-top: -10px;">Average rating: 
+    <fmt:formatNumber value="${avgRating}" type="number" maxFractionDigits="1" /> / 5
+</p>
                                 <!-- Avaiable -->
                                 <c:if test="${o.detail != 0}">
                                     <p class="avaibility"><i class="fa fa-circle"></i> In Stock</p></c:if>
@@ -167,7 +172,8 @@
                     </div>
                     <a href="cart?id=${detail.id}&action=add"><button type="button" name="addtocart" value="${detail.id}" class="btn amado-btn">Add to cart</button></a>
                 </form>-->
-                            <c:if test="${o.detail != 0}">
+                            <c:if test="${detail.amount>0}">
+                                
                                 <form class="cart clearfix" method="post" action="cart">
                                     <div class="form-group">
                                         <label>Size</label>
@@ -184,6 +190,8 @@
                                     <button type="submit" name="addtocart" value="${detail.id}" class="btn amado-btn">Add to cart</button>
                                 </form>
                             </c:if>
+                            
+                            
 
                         </div>
                     </div>
@@ -370,3 +378,5 @@
     </script>
 </body>
 </html>
+
+

@@ -1,8 +1,5 @@
-<%-- 
-    Document   : CheckOut
-    Created on : Jan 13, 2021, 2:05:49 PM
-    Author     : Admin
---%>
+
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -18,7 +15,7 @@
         <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
         <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
         <!-- Title  -->
-        <title>Aloha Space Shop - Be good, Be bad, Be yourself | Checkout</title>
+        <title>Revolt Athletics | Checkout</title>
 
         <!-- Favicon  -->
         <link rel="icon" href="img/core-img/favicon2.ico">
@@ -60,7 +57,9 @@
                                             <input type="text" class="form-control" id="company" placeholder="Receiving Address" value="" required name="address">
                                         </div>
                                         <div class="col-12 mb-3">
-                                            <input type="text" class="form-control" id="email" placeholder="Phone Number" value="" required name="phone">
+                                          <input type="text" class="form-control" id="phone" placeholder="Phone Number" value="" required name="phone" pattern="^(03|05|07|08|09)[0-9]{8}$" title="Phone number must start with 03, 05, 07, 08, or 09 and have exactly 10 digits.">
+
+
                                         </div>
 
                                         <!--                                    <div class="col-12 mb-3">

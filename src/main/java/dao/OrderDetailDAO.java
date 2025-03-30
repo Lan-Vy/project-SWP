@@ -52,6 +52,18 @@ public class OrderDetailDAO {
         }
         return null;
     }
+public void updateProductQuantity(int productId, int quantityPurchased) {
+    String sql = "UPDATE Product SET quantity = quantity - ? WHERE pID = ?";
+    try {
+        conn = new DBContext().getConnection();
+        ps = conn.prepareStatement(sql);
+        ps.setInt(1, quantityPurchased);
+        ps.setInt(2, productId);
+        ps.executeUpdate();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
 
     public void insertOrderDetails(int orderID, int productID, double price, int amount, int sizeId) {
         String query = "INSERT INTO OrderDetails VALUES (?, ?, ?, ?, ?)";

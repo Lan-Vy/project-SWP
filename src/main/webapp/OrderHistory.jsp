@@ -15,7 +15,7 @@
         <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
         <!-- Title  -->
-        <title>Aloha Space Shop - Be good, Be bad, Be yourself | Order History</title>
+        <title>Revolt Athletics | Order History</title>
 
         <!-- Favicon  -->
         <link rel="icon" href="img/core-img/favicon2.ico">

@@ -278,6 +278,26 @@ public class ProductDAO {
             e.printStackTrace();
         }
     }
+public void updateProductQuantity(int productId, int quantityPurchased) {
+    String sql = "UPDATE Product SET pAmount = pAmount - ? WHERE pID = ?";
+    try {
+        conn = new DBContext().getConnection();
+        ps = conn.prepareStatement(sql);
+        ps.setInt(1, quantityPurchased);
+        ps.setInt(2, productId);
+        ps.executeUpdate();
+    } catch (Exception e) {
+        e.printStackTrace();
+    } finally {
+        try {
+            if (ps != null) ps.close();
+            if (conn != null) conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
 
     public List<Product> getProductByCid(String cid) {
         List<Product> list = new ArrayList<>();

@@ -12,7 +12,7 @@
         <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
         <!-- Title  -->
-        <title>Aloha Space Shop - Be good, Be bad, Be yourself | Profile</title>
+        <title>Revolt Athletics | Profile</title>
 
         <!-- Favicon  -->
         <link rel="icon" href="img/core-img/favicon2.ico">
@@ -23,7 +23,7 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
         <!--<link href="css/login.css" rel="stylesheet" type="text/css" />-->
-        <title>Aloha Space Shop - Be good, Be bad, Be yourself | Login</title>
+        <title>Revolt Athletics | Login</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>

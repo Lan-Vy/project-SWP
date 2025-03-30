@@ -78,6 +78,7 @@
                                     <th>Name</th>
                                     <th>Image</th>
                                     <th>Price</th>
+                                    <th>Quantity</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -95,7 +96,9 @@
                                     <td>
                                         <img src="${o.image}">
                                     </td>
-                                    <td>${o.price} $</td>
+                                    <td>${o.price} VND</td>
+                                   <td>${o.amount}</td>
+
                                     <td>
                                         <!--                                    <a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>-->
                                         <a onclick="editProduct(${o.id})" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>

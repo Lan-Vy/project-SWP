@@ -14,7 +14,7 @@
         <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
         <!-- Title  -->
-        <title>Aloha Space Shop - Be good, Be bad, Be yourself | Shop</title>
+        <title>Revolt Athletics | Shop</title>
 
         <!-- Favicon  -->
         <link rel="icon" href="img/core-img/favicon2.ico">
@@ -25,6 +25,26 @@
         <link rel="stylesheet" href="css/core-style.css">
         <!--<link rel="stylesheet" href="style.css">--> 
         <style>
+            .product-description {
+                align-items: flex-start !important; /* Đảm bảo các phần tử con bắt đầu từ trên */
+            }
+
+            .product-meta-data {
+                width: 70%;
+            }
+
+            .ratings-cart {
+                width: 30%;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+            }
+
+            .ratings {
+                display: flex;
+                justify-content: flex-end;
+                margin-bottom: 5px;
+            }
             .searchbar{
                 margin-bottom: auto;
                 margin-top: auto;
@@ -73,6 +93,26 @@
                 content: '\e254'; /* Unicode character for your custom icon */
                 margin-right: 5px; /* Adjust spacing between icon and text */
             }
+            .sold-out-overlay {
+                position: absolute;
+                top: 40%;
+                left: 50%;
+                transform: translate(-50%, -50%) rotate(-10deg);
+                background-color: rgba(255, 0, 0, 0.8);
+                color: white;
+                font-size: 18px;
+                font-weight: bold;
+                padding: 8px 16px;
+                border-radius: 8px;
+                z-index: 2;
+                pointer-events: none;
+                text-transform: uppercase;
+            }
+
+            .product-img-wrapper {
+                position: relative;
+            }
+
         </style>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     </head>
@@ -191,29 +231,21 @@
                                 </div>
                             </div>-->
             </div>
-<fmt:setLocale value="vi_VN"/>
-            <div class="amado_product_area section-padding-100">
-                <div class="container-fluid">
+        <fmt:setLocale value="vi_VN"/>
+        <div class="amado_product_area section-padding-100">
+            <div class="container-fluid">
 
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="product-topbar d-xl-flex align-items-end justify-content-between">
-                                <!-- Total Products -->
-                                <div class="total-products">
-                                    <p>Showing</p>
-                                    <div class="view d-flex">
-                                        <a href="#"><i class="fa fa-th-large" aria-hidden="true"></i></a>
-                                        <a href="#"><i class="fa fa-bars" aria-hidden="true"></i></a>
-                                    </div>
-                                </div>
-                                <!-- search -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="product-topbar d-xl-flex align-items-end justify-content-between">
+                           
 
-                                <div class="container h-100 text-search">
-                                    <div class="d-flex justify-content-center h-50 mr-15">
-                                        <div class="searchbar">
-                                            <input oninput="searchByName()" class="search_input" type="text" name="txtSearch"
-                                                   placeholder="Search..." value="${searchValue}" id="txtSearch"> <a href="#"
-                                            class="search_icon"><img src="img/core-img/search.png"
+                            <div class="container h-100 text-search">
+                                <div class="d-flex justify-content-center h-50 mr-15">
+                                    <div class="searchbar">
+                                        <input oninput="searchByName()" class="search_input" type="text" name="txtSearch"
+                                               placeholder="Search..." value="${searchValue}" id="txtSearch"> <a href="#"
+                                               class="search_icon"><img src="img/core-img/search.png"
                                                                  alt="" /></a>
                                     </div>
                                 </div>
@@ -255,11 +287,15 @@
                         <div class="col-12 col-sm-6 col-md-12 col-xl-6">
                             <div class="single-product-wrapper">
                                 <!-- Product Image -->
-                                <div class="product-img">
-                                    <img src="${o.image}" alt="">
-                                    <!-- Hover Thumb -->
-                                    <!--<img class="hover-img" src="img/product-img/product5.jpg" alt="">-->
+                                <div class="product-img-wrapper">
+                                    <div class="product-img">
+                                        <img src="${o.image}" alt="">
+                                        <c:if test="${o.amount == 0}">
+                                            <div class="sold-out-overlay">SOLD OUT</div>
+                                        </c:if>
+                                    </div>
                                 </div>
+
 
                                 <!-- Product Description -->
                                 <div class="product-description d-flex align-items-center justify-content-between">
@@ -274,21 +310,15 @@
                                     </div>
                                     <!-- Ratings & Cart -->
                                     <div class="ratings-cart text-right">
-                                        <div class="ratings">
-                                            <i class="fa fa-star" aria-hidden="true"></i>
-                                            <i class="fa fa-star" aria-hidden="true"></i>
-                                            <i class="fa fa-star" aria-hidden="true"></i>
-                                            <i class="fa fa-star" aria-hidden="true"></i>
-                                            <i class="fa fa-star" aria-hidden="true"></i>
-                                        </div>
+                                        
                                         <div class="cart">
                                             <c:if test="${o.amount != 0}">
                                                 <a href="productDetail?productID=${o.id}" data-toggle="tooltip" data-placement="left" title="Add to Cart"><img src="img/core-img/cart.png" alt=""></a>
-                                                <a href="#" style='font-size:16px;' title="Add to favourite">&#129505;</a>
+                                                
                                             </c:if>
                                             <c:if test="${o.amount == 0}">
                                                 <a href="ShopControl" data-toggle="tooltip" data-placement="left">Sold out</a>
-                                                <a href="#" style='font-size:16px;' title="Add to favourite">&#129505;</a>
+                                                
                                             </c:if>
                                         </div>
                                     </div>

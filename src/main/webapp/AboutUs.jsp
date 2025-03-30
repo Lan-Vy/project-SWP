@@ -1,8 +1,3 @@
-<%-- 
-    Document   : ProductDetail
-    Created on : Jan 13, 2021, 2:09:11 PM
-    Author     : Admin
---%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -12,7 +7,7 @@
         <meta name="description" content="">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>Aloha Space Shop - Be good, Be bad, Be yourself | About Us</title>
+        <title>Revolt Athletics | About Us</title>
 
         <!-- Favicon  -->
         <link rel="icon" href="img/core-img/favicon2.ico">
@@ -35,7 +30,7 @@
 
                     <div class="about-section">
                         <h1>About Us</h1>
-                        <p>Welcome to Aloha Space Shop, where style meets comfort. Since our founding in [Year], we’ve been dedicated to providing high-quality footwear for every occasion. Our carefully curated collection features the latest trends alongside timeless classics, ensuring that you find the perfect pair every time. At Step Ahead Shoes, we believe that the right shoes can transform your day.</p>
+                        <p>Welcome to Revolt Athletics Shop, where style meets comfort. Since our founding in 2025, we’ve been dedicated to providing high-quality footwear for every occasion. Our carefully curated collection features the latest trends alongside timeless classics, ensuring that you find the perfect pair every time. At Step Ahead Shoes, we believe that the right shoes can transform your day.</p>
                     </div>
                     <h2 style="text-align:center; margin-top: 16px;">Our Team</h2>
                     <div class="row">

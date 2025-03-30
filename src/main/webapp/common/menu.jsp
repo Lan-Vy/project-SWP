@@ -5,19 +5,17 @@
     <div class="container-fluid">
         <div class="navbar-header">
             <c:if test="${sessionScope.acc != null}">
-                 <li class="<%= currentPage.contains("ShopControl") ? "active" : ""%>">
+                <li class="<%= currentPage.contains("ShopControl") ? "active" : ""%>">
                     <a class="navbar-brand" 
-                       href="<c:choose>
-                             <c:when test='${sessionScope.acc.role == 3}'>ShopControl</c:when>
-                             <c:otherwise>#</c:otherwise>
-                           </c:choose>"
+                       href="javascript:void(0);" 
                        <c:choose>
                            <c:when test='${sessionScope.acc.role != 3}'>
                                style="color: grey; pointer-events: none;"
+                               onclick="return false;"
                            </c:when>
                            <c:otherwise></c:otherwise>
                        </c:choose>>
-                        Aloha Space Shop
+                        Revoilt Athentic Shop
                     </a>
                 </li>
             </c:if>

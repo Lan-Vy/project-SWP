@@ -13,7 +13,7 @@ public class DBContext {
         return DriverManager.getConnection(url, userID, password);
     }
     private final String userID = "sa";
-    private final String password = "123";
+    private final String password = "loploplop";
     public static void main(String[] args) {
         try {
             System.out.println(new DBContext().getConnection());

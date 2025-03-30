@@ -22,7 +22,7 @@
                     <p class="contact">
                         <i class="fa fa-facebook-square"> Facebook: https://www.facebook.com/profile.php?id=100039253665301&mibextid=kFxxJD</i><br>
                         <i class="fa fa-phone-square" aria-hidden="true"> Phone: 0987654321</i><br>
-                        <i class="fa fa-envelope-square" aria-hidden="true"> Gmail: lanvyne@gmail.com</i><br>
+                        <i class="fa fa-envelope-square" aria-hidden="true"> Gmail: vinhtran5114@gmail.com</i><br>
                         <i class="fa fa-home" aria-hidden="true"> Address: *** - Can Tho - Viet Nam</i>
                     </p>
                 </div>

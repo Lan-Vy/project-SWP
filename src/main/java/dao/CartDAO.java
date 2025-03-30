@@ -52,27 +52,61 @@ public class CartDAO {
         return list;
     }
 
-    public void addToCart(int userId, int productId, int size) {
-        String query = "MERGE INTO CartItems AS target "
-                + "USING (SELECT ? AS userId, ? AS productId, ? AS sizeId) AS source "
-                + "ON target.userId = source.userId AND target.productId = source.productId AND target.sizeId = source.sizeId "
-                + "WHEN MATCHED THEN "
-                + "    UPDATE SET quantity = target.quantity + 1 "
-                + "WHEN NOT MATCHED THEN "
-                + "    INSERT (userId, productId, sizeId, quantity) VALUES (source.userId, source.productId, source.sizeId, 1);";
+    public boolean addToCart(int userId, int productId, int size) {
+        boolean addCart = false;
+
+        String checkExistQuery = "SELECT ci.quantity, p.pAmount FROM Product p\n"
+                + "LEFT JOIN CartItems ci ON ci.userId = ? AND ci.productId = p.pID AND ci.sizeId = ?\n"
+                + "WHERE p.pID = ?";
+
+        String updateQuery = "UPDATE CartItems SET quantity = quantity + 1 "
+                + "WHERE userId = ? AND productId = ? AND sizeId = ?";
+
+        String insertQuery = "INSERT INTO CartItems (userId, productId, sizeId, quantity) VALUES (?, ?, ?, 1)";
+
         try {
             conn = new DBContext().getConnection();
-            ps = conn.prepareStatement(query);
+            ps = conn.prepareStatement(checkExistQuery);
             ps.setInt(1, userId);
-            ps.setInt(2, productId);
-            ps.setInt(3, size);
-            ps.executeUpdate();
+            ps.setInt(2, size);
+            ps.setInt(3, productId);
+
+            rs = ps.executeQuery();
+
+            int currentQuantity = 0;
+            int availableStock = 0;
+
+            if (rs.next()) {
+                currentQuantity = rs.getInt("quantity"); // nếu không có thì sẽ là 0
+                availableStock = rs.getInt("pAmount");
+
+                // Check nếu số lượng trong cart nhỏ hơn hàng tồn kho
+                if (currentQuantity < availableStock) {
+                    if (currentQuantity > 0) {
+                        ps = conn.prepareStatement(updateQuery);
+                        ps.setInt(1, userId);
+                        ps.setInt(2, productId);
+                        ps.setInt(3, size);
+                    } else {
+                        ps = conn.prepareStatement(insertQuery);
+                        ps.setInt(1, userId);
+                        ps.setInt(2, productId);
+                        ps.setInt(3, size);
+                    }
+                    ps.executeUpdate();
+                    addCart = true;
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
+            addCart = false;
         }
+
+        return addCart;
     }
 
-    public void updateCartQuantity(int userId, int productId, int size) {
+    public boolean updateCartQuantity(int userId, int productId, int size) {
+        boolean updateCart = false;
         String query = "UPDATE CartItems SET quantity = quantity - 1 "
                 + "WHERE userId = ? AND productId = ? AND sizeId = ? AND quantity > 1;";
         String deleteQuery = "DELETE FROM CartItems WHERE userId = ? AND productId = ? AND sizeId = ? AND quantity = 1;";
@@ -82,19 +116,25 @@ public class CartDAO {
             ps.setInt(1, userId);
             ps.setInt(2, productId);
             ps.setInt(3, size);
-            ps.executeUpdate();
+            int rowsUpdated = ps.executeUpdate();
 
-            ps = conn.prepareStatement(deleteQuery);
-            ps.setInt(1, userId);
-            ps.setInt(2, productId);
-            ps.setInt(3, size);
-            ps.executeUpdate();
+            if (rowsUpdated == 0) {
+                ps = conn.prepareStatement(deleteQuery);
+                ps.setInt(1, userId);
+                ps.setInt(2, productId);
+                ps.setInt(3, size);
+                ps.executeUpdate();
+            }
+            updateCart = true;
         } catch (Exception e) {
             e.printStackTrace();
+            return updateCart = false;
         }
+        return updateCart = true;
     }
 
-    public void removeFromCart(int userId, int productId, int size) {
+    public boolean removeFromCart(int userId, int productId, int size) {
+        boolean removeCart = false;
         String query = "DELETE FROM CartItems WHERE userId = ? AND productId = ? AND sizeId = ?";
         try {
             conn = new DBContext().getConnection();
@@ -105,9 +145,11 @@ public class CartDAO {
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
+            return removeCart = false;
         }
+        return removeCart = true;
     }
-    
+
     public void removeAllFromCart(int userId) {
         String query = "DELETE FROM CartItems WHERE userId = ?";
         try {

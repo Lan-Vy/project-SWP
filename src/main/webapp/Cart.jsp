@@ -1,8 +1,4 @@
-<%-- 
-    Document   : Cart
-    Created on : Jan 13, 2021, 2:04:21 PM
-    Author     : Admin
---%>
+
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -19,7 +15,7 @@
         <!-- The above 4 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
         <!-- Title  -->
-        <title>Aloha Space Shop - Be good, Be bad, Be yourself | Cart</title>
+        <title>Revolt Athletics | Cart</title>
 
         <!-- Favicon  -->
         <link rel="icon" href="img/core-img/favicon2.ico">
@@ -94,9 +90,10 @@
                                     <c:set var="totalPrice" value="0" />
                                     <c:forEach items="${cartItems}" var="o">
                                     <li>
-                                        <span style="padding-left: 30px">${o.product.name} (${o.size.size})</span>
-                                        <fmt:formatNumber value="${o.product.price * o.quantity}" type="number" groupingUsed="true" var="formattedPrice"/>
-                                        <span>${formattedPrice}</span>
+                                        <span style="padding-left: 20px">${o.product.name} (${o.size.size}) </span>
+<fmt:formatNumber value="${o.product.price}" type="number" groupingUsed="true" var="formattedPrice"/>
+<span style="white-space: nowrap;">${formattedPrice} <span style="font-size: smaller; display: inline;">x${o.quantity}</span></span>
+
                                     </li>
                                     <c:set var="totalPrice" value="${totalPrice + (o.product.price * o.quantity)}" />
                                 </c:forEach>

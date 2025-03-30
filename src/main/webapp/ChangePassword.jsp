@@ -12,14 +12,14 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-                <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
+        <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
         <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
         <link href="css/login.css" rel="stylesheet" type="text/css" />
-        <title>Aloha Space Shop - Be good, Be bad, Be yourself | Forgot password</title>
+        <title>Revolt Athletics | Forgot password</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.17.0/jquery.validate.min.js"></script>
@@ -30,18 +30,18 @@
                     rules: {
                         oldPass: {
                             required: true,
-                            maxlength: 20,
-                            minlength: 3
+                            maxlength: 15,
+                            minlength: 8
                         },
                         pass: {
                             required: true,
-                            maxlength: 20,
-                            minlength: 3
+                            maxlength: 15,
+                            minlength: 8
                         },
                         repass: {
                             required: true,
-                            maxlength: 20,
-                            minlength: 3,
+                            maxlength: 15,
+                            minlength: 8,
                             equalTo: "#pass"
                         }
                     }
@@ -61,18 +61,18 @@
     </head>
     <body>
         <div class="wel">
-            <h1>Welcome to Aloha Space Shop</h1>
-            <p>Be good, Be bad, Be yourself</p>
+            <h1>Revolt Athletics Shop</h1>
         </div>
         <div id="logreg-forms">
 
             <form action="ChangePassword" method="post" class="form-signin" id="formregister">
                 <h1 class="h3 mb-3 font-weight-normal" style="text-align: center"> Change password</h1>
                 <input name="oldPass" type="password" id="oldpass" class="form-control" placeholder="Old Password" required autofocus="">
-                <input name="pass" type="password" id="pass" class="form-control" placeholder="New Password" required autofocus="">
-                <input name="repass" type="password" id="repass" class="form-control" placeholder="Repeat New Password" required autofocus="">
+                <input name="pass" type="password" id="pass" class="form-control" placeholder="New Password" required autofocus="" >
+                <input name="repass" type="password" id="repass" class="form-control" placeholder="Repeat New Password" required autofocus="" pattern=".{8,15}" minlength="8" maxlength="15" 
+                       title="Password must be between 8 and 15 characters long>
 
-                <button class="btn btn-warning btn-block" type="submit"><i class="fas fa-user-plus"></i> Change password</button>
+                       <button class="btn btn-warning btn-block" type="submit"><i class="fas fa-user-plus"></i> Change password</button>
                 <a href="Profile"><i class="fas fa-angle-left"></i> Back</a>
             </form>
             <br>

@@ -1,9 +1,5 @@
-<%-- 
-    Document   : ManagerProduct
-    Created on : Jan 13, 2021, 2:08:03 PM
-    Author     : Admin
---%>
 
+<%@page import="java.text.DecimalFormat"%>
 <%@page import="dao.AccountDAO"%>
 <%@page import="entity.Category"%>
 <%@page import="java.util.List"%>
@@ -32,6 +28,52 @@
                 width: 100px;
                 height: 100px;
             }
+         .overview-item {
+        background-color: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        min-height: 160px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease-in-out;
+    }
+
+    .overview-box {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .overview-box .icon {
+        font-size: 36px;
+        color: #666;
+    }
+
+    .overview-box .text h2 {
+        font-size: 25px;
+        font-weight: 600;
+        color: #333;
+      
+    }
+.overview-box .text {
+    text-align: center;
+    width: 100%;
+}
+    .overview-box .text span {
+        font-size: 35px;
+        color: #333;
+    }
+
+    .overview-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .row.m-t-25 > .col-lg-3 {
+        margin-bottom: 30px;
+    }
         </style>
     </head>
     <body>
@@ -41,22 +83,24 @@
             <div class="main-content">
                 <div class="section__content section__content--p30">
                     <div class="container-fluid">
-                         <jsp:include page="common/menu.jsp"></jsp:include>
-                        <div class="row m-t-25">
-                            <div class="col-sm-6 col-lg-3">
-                                <div class="overview-item overview-item--c1">
-                                    <div class="overview__inner">
-                                        <div class="overview-box clearfix">
-                                            <div class="icon">
-                                                <i class="zmdi zmdi-account-o"></i>
-                                            </div>
-                                            <div class="text">
+                        <jsp:include page="common/menu.jsp"></jsp:include>
+                        
+                            <div class="row m-t-25">
+                                <div class="col-sm-6 col-lg-3">
+                                    <div class="overview-item overview-item--c1">
+                                        <div class="overview__inner">
+                                            <div class="overview-box clearfix">
+                                                <div class="icon">
+                                                    <i class="zmdi zmdi-account-o"></i>
+                                                </div>
+                                                <div class="text">
                                                 <%
                                                     AccountDAO dao = new AccountDAO();
                                                     int viewed = dao.getViewed();
                                                 %>
-                                                <h2><%= viewed%></h2>
+                                                
                                                 <span>View</span>
+                                                <h2><%= viewed%></h2>
                                             </div>
                                         </div>
                                         <div class="overview-chart">
@@ -73,8 +117,9 @@
                                                 <i class="zmdi zmdi-shopping-cart"></i>
                                             </div>
                                             <div class="text">
-                                                <h2>${numberI}</h2>
+                                                
                                                 <span>Items solid</span>
+                                                <h2>${numberI}</h2>
                                             </div>
                                         </div>
                                         <div class="overview-chart">
@@ -91,8 +136,9 @@
                                                 <i class="zmdi zmdi-calendar-note"></i>
                                             </div>
                                             <div class="text">
-                                                <h2>${numberP}</h2>
+                                                
                                                 <span>Product</span>
+                                                <h2>${numberP}</h2>
                                             </div>
                                         </div>
                                         <div class="overview-chart">
@@ -109,8 +155,20 @@
                                                 <i class="zmdi zmdi-money"></i>
                                             </div>
                                             <div class="text">
-                                                <h2>$${totalE}</h2>
+                                                <%
+                                                    // Ensure totalE is a number, for example, Double or Integer
+                                                    Double totalE = (Double) request.getAttribute("totalE"); // Assuming totalE is passed as an attribute
+                                                    if (totalE == null) {
+                                                        totalE = 0.0;  // Default value if totalE is null
+                                                    }
+
+                                                    // Format the totalE to include commas as thousands separators
+                                                    DecimalFormat df = new DecimalFormat("#,###");
+                                                    String formattedTotalE = df.format(totalE);
+                                                %>
+                                                
                                                 <span>Total earnings</span>
+                                                <h2><%= formattedTotalE%> VND</h2>
                                             </div>
                                         </div>
                                         <div class="overview-chart">
@@ -123,6 +181,7 @@
                     </div>
                 </div>
             </div>
+               </div>                               
             <!-- END MAIN CONTENT-->
 
 
@@ -131,7 +190,7 @@
             <!-- list------------------------------------------------------------------- -->
             <div class="container">
                 <canvas id="myChart" style="width:100%;"></canvas>
-                
+
                 <canvas id="myChart2" style="width:100%;margin-top: 60px"></canvas>
                 <canvas id="myChart3" style="width:100%;margin-top: 60px"></canvas>
             </div>
@@ -186,7 +245,7 @@
                         }
                     }
                 });
-                
+
                 var yValues3 = [];
                 <c:forEach items="${totalCustomerBoughtByMonth}" var="t">
                 yValues3.push(`${t}`);

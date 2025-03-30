@@ -59,6 +59,22 @@ public class FeedbackDAO {
         return list;
     }
 
+    public double getAverageRatingByProductId(int productId) {
+        String query = "SELECT AVG(CAST(rating AS FLOAT)) FROM Feedback WHERE productId = ?";
+        try {
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, productId);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble(1); // Giá trị AVG có thể là số thực (ví dụ: 4.3)
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     public void addFeedback(Feedback f) {
         String query = "INSERT into Feedback (userId, productId,rating, feedbackContent,feedbackDate)\n"
                 + "VALUES (?, ?, ?, ?, GETDATE())";

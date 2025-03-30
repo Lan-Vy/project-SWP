@@ -75,7 +75,7 @@ public class ProductDetailControl extends HttpServlet {
                 image3 = listImage.get(3).getImage();
             }
         }
-        
+
         SizeDAO sizeDAO = new SizeDAO();
         List<Size> listSize = sizeDAO.getAllSizeByProductId(Integer.parseInt(pID));
 
@@ -91,6 +91,8 @@ public class ProductDetailControl extends HttpServlet {
         // Fetch feedback associated with the product and set it as a request attribute
         List<Feedback> feedbacks = fdao.getFeedbacksByProductId(Integer.parseInt(pID));
         request.setAttribute("feedbacks", feedbacks);
+        double avgRating = fdao.getAverageRatingByProductId(Integer.parseInt(pID));
+        request.setAttribute("avgRating", avgRating);
         // Retrieve the current session and check if the user is logged in
         HttpSession session = request.getSession();
         Account customer = (Account) session.getAttribute("acc");
