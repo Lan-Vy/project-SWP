@@ -18,6 +18,8 @@ public class Order {
     private double totalPrice; // Total price of the order
     private int status; //0: Pending 1: Processing 2: Shipping 3: Completed
     private Account shipper;
+    
+    private boolean isFeedbacked;
 
     // Default constructor
     public Order() {
@@ -130,6 +132,15 @@ public class Order {
         this.shipper = shipper;
     }
 
+    public boolean isIsFeedbacked() {
+        return isFeedbacked;
+    }
+
+    public void setIsFeedbacked(boolean isFeedbacked) {
+        this.isFeedbacked = isFeedbacked;
+    }
+
+    
     // Overridden toString method to display order information
     @Override
     public String toString() {

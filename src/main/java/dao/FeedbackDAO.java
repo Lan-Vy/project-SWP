@@ -24,9 +24,9 @@ public class FeedbackDAO {
 
     public List<Feedback> searchFBWithPaging(String txtSearch, Integer pageIndex, Integer pageSize) {
         List<Feedback> list = new ArrayList<>();
-        String query = "select f.*, a.userName, p.pName from Feedback f\n"
+        String query = "select f.*, a.userName from Feedback f\n"
                 + "left join Account a on f.UserId = a.uID\n"
-                + "left join Product p on p.pID = f.ProductId where ? = '' or p.pName like ?";
+                + "left join  [Order] o on o.id = f.orderId where ( ? = '' or f.feedbackContent like ? ) ";
         if (pageIndex != null && pageSize != null) {
             query += " ORDER BY f.Id desc OFFSET\n"
                     + "                    (?*?-?) ROWS FETCH NEXT ? ROWS ONLY";
@@ -50,8 +50,9 @@ public class FeedbackDAO {
                         rs.getInt(4),
                         rs.getString(5),
                         rs.getTimestamp(6));
-                f.setUserName(rs.getString(7));
-                f.setProductName(rs.getString(8));
+                f.setReplyUserId(rs.getInt(7));
+                f.setReplyFeedbackContent(rs.getString(8));
+                f.setUserName(rs.getString(9));
                 list.add(f);
             }
         } catch (Exception e) {
@@ -60,7 +61,11 @@ public class FeedbackDAO {
     }
 
     public double getAverageRatingByProductId(int productId) {
-        String query = "SELECT AVG(CAST(rating AS FLOAT)) FROM Feedback WHERE productId = ?";
+        String query = "select distinct AVG(CAST(rating AS FLOAT)) from Feedback f\n"
+                + "left join Account a on f.UserId = a.uID\n"
+                + "left join [Order] o on o.id = f.orderId\n"
+                + "left join OrderDetails od on od.OrderID = o.id\n"
+                + "where od.ProductID = ?\n";
         try {
             conn = new DBContext().getConnection();
             ps = conn.prepareStatement(query);
@@ -76,13 +81,13 @@ public class FeedbackDAO {
     }
 
     public void addFeedback(Feedback f) {
-        String query = "INSERT into Feedback (userId, productId,rating, feedbackContent,feedbackDate)\n"
+        String query = "INSERT into Feedback (userId, orderId,rating, feedbackContent,feedbackDate)\n"
                 + "VALUES (?, ?, ?, ?, GETDATE())";
         try {
             conn = new DBContext().getConnection(); //mo ket noi toi sql
             ps = conn.prepareStatement(query);//nem cau lenh query sang sql
             ps.setInt(1, f.getUserId());
-            ps.setInt(2, f.getProductId());
+            ps.setInt(2, f.getOrderId());
             ps.setInt(3, f.getRating());
             ps.setString(4, f.getFeedbackContent());
             ps.executeUpdate();
@@ -106,9 +111,11 @@ public class FeedbackDAO {
 
     public List<Feedback> getFeedbacksByProductId(int productId) {
         List<Feedback> list = new ArrayList<>();
-        String query = "select f.*, a.userName from Feedback f\n"
+        String query = "select distinct f.*, a.userName from Feedback f\n"
                 + "left join Account a on f.UserId = a.uID\n"
-                + "where f.productId = ? order by f.feedbackDate";
+                + "left join [Order] o on o.id = f.orderId\n"
+                + "left join OrderDetails od on od.OrderID = o.id\n"
+                + "where od.ProductID = ? order by f.feedbackDate";
         try {
             conn = new DBContext().getConnection(); //mo ket noi toi sql
             ps = conn.prepareStatement(query);//nem cau lenh query sang sql
@@ -121,7 +128,9 @@ public class FeedbackDAO {
                         rs.getInt(4),
                         rs.getString(5),
                         rs.getTimestamp(6));
-                f.setUserName(rs.getString(7));
+                f.setReplyUserId(rs.getInt(7));
+                f.setReplyFeedbackContent(rs.getString(8));
+                f.setUserName(rs.getString(9));
                 list.add(f);
             }
         } catch (Exception e) {
@@ -129,21 +138,18 @@ public class FeedbackDAO {
         return list;
     }
 
-    public boolean isFeedbacked(int userId, int productId) {
-        String query = "select * from Feedback\n"
-                + "  where userId = ? and productId = ?";
+    public void addReplyFeedback(Feedback f) {
+         String query = "update Feedback set replyUserId = ?, replyContent = ?\n"
+                + "where Id = ?";
         try {
-            conn = new DBContext().getConnection();
-            ps = conn.prepareStatement(query);
-            ps.setInt(1, userId);
-            ps.setInt(2, productId);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                return true;
-            }
+            conn = new DBContext().getConnection(); //mo ket noi toi sql
+            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
+            ps.setInt(1, f.getReplyUserId());
+            ps.setString(2, f.getReplyFeedbackContent());
+            ps.setInt(3, f.getId());
+            ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return false;
     }
 }

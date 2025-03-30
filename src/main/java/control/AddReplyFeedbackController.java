@@ -1,12 +1,12 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 package control;
 
+import dao.FeedbackDAO;
 import entity.Account;
-import entity.Cart;
+import entity.Feedback;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -20,8 +20,8 @@ import jakarta.servlet.http.HttpSession;
  *
  * @author Admin
  */
-@WebServlet(name = "BuyControl", urlPatterns = {"/BuyControl"})
-public class BuyControl extends HttpServlet {
+@WebServlet(name = "AddReplyFeedbackController", urlPatterns = {"/add-reply"})
+public class AddReplyFeedbackController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,31 +35,27 @@ public class BuyControl extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        // Retrieve the current HTTP session
-        HttpSession session = request.getSession();
-        // Get the account object from the session (if logged in)
-        Account a = (Account) session.getAttribute("acc");
-
-        // Initialize the Cart object from the session
-        Cart c = (Cart) session.getAttribute("cart");
-        // Initialize the total variable to track the cart amount
-        double total = 0;
-        // Check if the cart is not null and calculate the total amount
-        if (c != null) {
-            total = c.getAmount();
-        }
-        // Check if the user is not logged in
-        if (a == null) {
-            response.sendRedirect("Login.jsp");
-            // If the user is logged in, check the total amount in the cart
-        } else {
-            if (total == 0.0) {
-                // If the cart total is 0, redirect to the shop page
-                response.sendRedirect("ShopControl");
+        try {
+            String feedbackId = request.getParameter("feedbackId");
+            String replyMessage = request.getParameter("replyMessage");
+            // Get the current session
+            HttpSession session = request.getSession();
+            // Retrieve the user account from the session
+            Account user = (Account) session.getAttribute("acc");
+            // Check if the user is logged in
+            if (user != null) {
+                FeedbackDAO fdao = new FeedbackDAO();
+                Feedback f = new Feedback(Integer.parseInt(feedbackId), user.getId(), replyMessage);
+                fdao.addReplyFeedback(f);
+                request.setAttribute("message", "Reply success!");
+                request.getRequestDispatcher("ManagerFeedbackController").forward(request, response);
             } else {
-                // If there are items in the cart, redirect to the checkout page
-                response.sendRedirect("CheckOut.jsp");
+                // If the user is not logged in, redirect to the login page
+                response.sendRedirect("login");
             }
+        } catch (Exception e) {
+            request.setAttribute("message", "Reply fail! " + e.getMessage());
+            request.getRequestDispatcher("ManagerFeedbackController").forward(request, response);
         }
     }
 

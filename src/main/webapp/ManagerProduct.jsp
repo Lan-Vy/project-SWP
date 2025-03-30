@@ -77,6 +77,7 @@
                                     <th>ID</th>
                                     <th>Name</th>
                                     <th>Image</th>
+                                    <th>Size</th>
                                     <th>Price</th>
                                     <th>Quantity</th>
                                     <th>Actions</th>
@@ -96,13 +97,14 @@
                                     <td>
                                         <img src="${o.image}">
                                     </td>
+                                    <td>${o.size.size}</td>
                                     <td>${o.price} VND</td>
-                                   <td>${o.amount}</td>
+                                    <td>${o.amount}</td>
 
                                     <td>
                                         <!--                                    <a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>-->
-                                        <a onclick="editProduct(${o.id})" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-                                        <a href="delete?deletePID=${o.id}" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+                                        <a onclick="editProduct(${o.id}, ${o.size.id})" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
+                                        <a href="delete?deletePID=${o.id}&sizeId=${o.size.id}" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
                                     </td>
                                 </tr>
                             </c:forEach> 
@@ -294,14 +296,15 @@
                         </div>-->
             <script src="js/manager.js" type="text/javascript"></script>
             <script>
-                            function editProduct(param) {
+                            function editProduct(param, sizeId) {
                                 var id = param;
                                 console.log(id);
                                 $.ajax({
                                     url: "/Project_Group6/UpdateProductControl",
                                     type: "get", //send it throung get method
                                     data: {
-                                        id: id
+                                        id: id,
+                                        sizeId: sizeId
                                     },
                                     success: function (data) {
                                         var row = document.getElementById("editEmployeeModal");
@@ -327,17 +330,17 @@
                     errorMsg.style.display = "none";
                     return true;
                 }
-                function validateFormEdit() {
-                    let sizeSelect = document.getElementById("sizeSelectEdit");
-                    let errorMsg = document.getElementById("sizeEditError");
-
-                    if (sizeSelect.selectedOptions.length === 0) {
-                        errorMsg.style.display = "block"; // Hiển thị lỗi
-                        return false; // Ngăn submit form
-                    }
-                    errorMsg.style.display = "none";
-                    return true;
-                }
+//                function validateFormEdit() {
+//                    let sizeSelect = document.getElementById("sizeSelectEdit");
+//                    let errorMsg = document.getElementById("sizeEditError");
+//
+//                    if (sizeSelect.selectedOptions.length === 0) {
+//                        errorMsg.style.display = "block"; // Hiển thị lỗi
+//                        return false; // Ngăn submit form
+//                    }
+//                    errorMsg.style.display = "none";
+//                    return true;
+//                }
             </script>
             <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
             <c:if test="${message != null}">

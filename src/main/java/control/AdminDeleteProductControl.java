@@ -42,10 +42,11 @@ public class AdminDeleteProductControl extends HttpServlet {
             SubImageDAO sdao = new SubImageDAO();
             // Retrieve the product ID parameter from the request for the product to be deleted
             String pid = request.getParameter("deletePID");
+            String sizeId = request.getParameter("sizeId");
             // Call the DAO method to delete associated sub-images of the product
             sdao.deleteSubImage(pid);
             // Call the DAO method to delete the product itself
-            dao.deleteProduct(pid);
+            dao.deleteProduct(pid, sizeId);
             // Set a success message indicating the deletion was successful
             request.setAttribute("message", "Delete success!");
             // Forward the request to ManagerControl to display the result

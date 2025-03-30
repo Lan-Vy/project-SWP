@@ -14,29 +14,36 @@ public class Feedback {
 
     private int id;
     private int userId;
-    private int productId;
+    private int orderId;
     private int rating;
     private String feedbackContent;
     private Date feedbackDate;
     
     private String userName;
-    private String productName;
+    private int replyUserId;
+    private String replyFeedbackContent;
 
     public Feedback() {
     }
 
-    public Feedback(int id, int userId, int productId, int rating, String feedbackContent, Date feedbackDate) {
+    public Feedback(int id, int replyUserId, String replyFeedbackContent) {
+        this.id = id;
+        this.replyUserId = replyUserId;
+        this.replyFeedbackContent = replyFeedbackContent;
+    }
+
+    public Feedback(int id, int userId, int orderId, int rating, String feedbackContent, Date feedbackDate) {
         this.id = id;
         this.userId = userId;
-        this.productId = productId;
+        this.orderId = orderId;
         this.rating = rating;
         this.feedbackContent = feedbackContent;
         this.feedbackDate = feedbackDate;
     }
     
-    public Feedback(int userId, int productId, int rating, String feedbackContent) {
+    public Feedback(int userId, int orderId, int rating, String feedbackContent) {
         this.userId = userId;
-        this.productId = productId;
+        this.orderId = orderId;
         this.rating = rating;
         this.feedbackContent = feedbackContent;
     }
@@ -57,12 +64,12 @@ public class Feedback {
         this.userId = userId;
     }
 
-    public int getProductId() {
-        return productId;
+    public int getOrderId() {
+        return orderId;
     }
 
-    public void setProductId(int productId) {
-        this.productId = productId;
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
     }
 
     public int getRating() {
@@ -97,13 +104,20 @@ public class Feedback {
         this.userName = userName;
     }
 
-    public String getProductName() {
-        return productName;
+    public String getReplyFeedbackContent() {
+        return replyFeedbackContent;
     }
 
-    public void setProductName(String productName) {
-        this.productName = productName;
+    public void setReplyFeedbackContent(String replyFeedbackContent) {
+        this.replyFeedbackContent = replyFeedbackContent;
     }
-    
-    
+
+    public int getReplyUserId() {
+        return replyUserId;
+    }
+
+    public void setReplyUserId(int replyUserId) {
+        this.replyUserId = replyUserId;
+    }
+
 }

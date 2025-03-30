@@ -35,17 +35,12 @@ public class AddFeedbackController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet AddFeedbackController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet AddFeedbackController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+        try {
+            String orderId = request.getParameter("orderId");
+            request.setAttribute("orderId", orderId);
+            request.getRequestDispatcher("Feedback.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -85,26 +80,28 @@ public class AddFeedbackController extends HttpServlet {
             // Check if the user is logged in
             if (user != null) {
                 //input fields
-                String productId = request.getParameter("productId");
-                String message = request.getParameter("message");
+                String orderId = request.getParameter("orderId");
+                String message = request.getParameter("messageContent");
                 String rating = request.getParameter("rating");
                 //add feedback 
                 FeedbackDAO dao = new FeedbackDAO();
                 // Retrieve the user's ID
                 int userId = user.getId();
-                 // Create a Feedback object with the user's ID, product ID, rating, and message
-                Feedback feedback = new Feedback(userId, Integer.parseInt(productId), Integer.parseInt(rating), message);
+                // Create a Feedback object with the user's ID, product ID, rating, and message
+                Feedback feedback = new Feedback(userId, Integer.parseInt(orderId), Integer.parseInt(rating), message);
                 // Add the feedback to the database
                 dao.addFeedback(feedback);
                 // Redirect the user back to the product detail page with the product ID
-                response.sendRedirect("productDetail?productID=" + productId);
+                request.setAttribute("message", "Feedback success!");
+                request.getRequestDispatcher("OrderHistoryControl").forward(request, response);
             } else {
-                 // If the user is not logged in, redirect to the login page
+                // If the user is not logged in, redirect to the login page
                 response.sendRedirect("login");
             }
         } catch (Exception e) {
             // Print the stack trace for any exceptions that occur
-            e.printStackTrace();
+            request.setAttribute("errorMessage", "Feedback fail! " + e.getMessage());
+            request.getRequestDispatcher("OrderHistoryControl").forward(request, response);
         }
     }
 

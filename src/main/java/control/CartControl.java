@@ -48,14 +48,14 @@ public class CartControl extends HttpServlet {
             CartDAO cdao = new CartDAO();
             String id = request.getParameter("id");
             String action = request.getParameter("action");
-            String selectedSizes = request.getParameter("selectedSizes"); // Danh sách size (chuỗi "1,2,3")
+            String sizeId = request.getParameter("sizeId"); // Danh sách size (chuỗi "1,2,3")
 
-            if (id != null && action != null && selectedSizes != null) {
+            if (id != null && action != null) {
                 // Tách chuỗi selectedSizes thành danh sách
-                String[] sizeArray = selectedSizes.split(",");
+//                String[] sizeArray = selectedSizes.split(",");
                 // Lặp qua từng size và thêm vào giỏ hàng
-                for (String sizeStr : sizeArray) {
-                    int size = Integer.parseInt(sizeStr.trim());
+//                for (String sizeStr : sizeArray) {
+                    int size = Integer.parseInt(sizeId);
                     int productId = Integer.parseInt(id);
 
                     if (action.equalsIgnoreCase("add")) {
@@ -74,7 +74,7 @@ public class CartControl extends HttpServlet {
                         if(!ok){
                             System.out.print("delete to cart failed");}
                     }
-                }
+//                }
 
             }
             // Load lại giỏ hàng từ DB sau khi cập nhật

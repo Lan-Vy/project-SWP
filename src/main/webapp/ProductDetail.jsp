@@ -30,10 +30,10 @@
         <!-- <link rel="stylesheet" href="style.css"> -->
         <style>
             .product-stock {
-    font-weight: 500;
-    color: #333;
-    margin-top: 5px;
-}
+                font-weight: 500;
+                color: #333;
+                margin-top: 5px;
+            }
 
             #sizeContainer {
                 display: flex;
@@ -58,6 +58,12 @@
                 color: white;
                 border-color: #fbb710;
             }
+            .size-option.disabled {
+                opacity: 0.5;
+                pointer-events: none;
+                cursor: not-allowed;
+                background-color: grey
+            }
 
         </style>
     </head>
@@ -66,17 +72,17 @@
         <!-- ##### Main Content Wrapper Start ##### -->
         <jsp:include page="common/header.jsp"></jsp:include>
             <!-- Header Area End -->
+        <fmt:setLocale value="vi_VN"/>
+        <!-- Product Details Area Start -->
+        <div class="single-product-area section-padding-100 clearfix">
+            <div class="container-fluid">
 
-            <!-- Product Details Area Start -->
-            <div class="single-product-area section-padding-100 clearfix">
-                <div class="container-fluid">
-
-                    <div class="row">
-                        <div class="col-12">
-                            <nav aria-label="breadcrumb">
-                                <ol class="breadcrumb mt-50">
-                                    <li class="breadcrumb-item"><a href="ShopControl">Shop</a></li>
-                                    <li class="breadcrumb-item"><a href="ShopControl?pageIndex=1&cID=${o.cid}">${cateName}</a></li>
+                <div class="row">
+                    <div class="col-12">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb mt-50">
+                                <li class="breadcrumb-item"><a href="ShopControl">Shop</a></li>
+                                <li class="breadcrumb-item"><a href="ShopControl?pageIndex=1&cID=${o.cid}">${cateName}</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">${detail.name}</li>
                             </ol>
                         </nav>
@@ -124,10 +130,12 @@
                     </div>
                     <div class="col-12 col-lg-5">
                         <div class="single_product_desc">
+                            <input class="form-control" id="productId" type="hidden" value="${detail.id}">
                             <!-- Product Meta Data -->
                             <div class="product-meta-data">
                                 <div class="line"></div>
-                                <p class="product-price">${detail.price}VND</p>
+                                <fmt:formatNumber value="${detail.price}" type="number" groupingUsed="true" var="formattedPrice"/>
+                                <p class="product-price">${formattedPrice} VND</p>
                                 <p class="product-stock">Amount: ${detail.amount}</p>
 
                                 <a href="#">
@@ -135,64 +143,45 @@
                                 </a>
                                 <!-- Ratings & Review -->
                                 <div class=" mb-15 d-flex align-items-center justify-content-between">
-    <div class="ratings">
-        <c:forEach var="i" begin="1" end="5">
-            <i class="fa fa-star" <c:if test="${i <= avgRating}">style="color: gold !important"</c:if>></i>
-        </c:forEach>
-    </div>
-    <div class="review">
-        <a href="#review">Write A Review</a>
-    </div>
-</div>
-<p style="font-size: 14px; margin-top: -10px;">Average rating: 
-    <fmt:formatNumber value="${avgRating}" type="number" maxFractionDigits="1" /> / 5
-</p>
+                                    <div class="ratings">
+                                        <c:forEach var="i" begin="1" end="5">
+                                            <i class="fa fa-star" <c:if test="${i <= avgRating}">style="color: gold !important"</c:if>></i>
+                                        </c:forEach>
+                                    </div>
+                                    <div class="review">
+                                        <a href="#review">Write A Review</a>
+                                    </div>
+                                </div>
+                                <p style="font-size: 14px; margin-top: -10px;">Average rating: 
+                                    <fmt:formatNumber value="${avgRating}" type="number" maxFractionDigits="1" /> / 5
+                                </p>
                                 <!-- Avaiable -->
-                                <c:if test="${o.detail != 0}">
+                                <c:if test="${detail.amount > 0}">
                                     <p class="avaibility"><i class="fa fa-circle"></i> In Stock</p></c:if>
-                                <c:if test="${o.detail == 0}">
+                                <c:if test="${detail.amount == 0}">
                                     <p class="avaibility"><i class="fa fa-circle" style="color: red"></i> Out Stock</p></c:if>
                                 </div>
 
                                 <div class="short_overview my-5">
                                     <p>${detail.description}</p>
                             </div>
-
-
-                            <!-- Add to Cart Form -->
-                            <!--                            <form class="cart clearfix" method="post" action="">
-                                                            <div class="form-group">
-                                                                <label>Size</label>
-                                                                <select name="size" class="form-control" id="sizeSelect">
-                            <%--<c:forEach items="${listSize}" var="o">--%>
-                                <option value="${o.id}">${o.size}</option>
-                            <%--</c:forEach>--%>
-                        </select>
-                        <small style="color: red; display: none;" id="sizeError">Please select at least one size.</small>
-                    </div>
-                    <a href="cart?id=${detail.id}&action=add"><button type="button" name="addtocart" value="${detail.id}" class="btn amado-btn">Add to cart</button></a>
-                </form>-->
-                            <c:if test="${detail.amount>0}">
-                                
-                                <form class="cart clearfix" method="post" action="cart">
-                                    <div class="form-group">
-                                        <label>Size</label>
-                                        <div id="sizeContainer">
-                                            <c:forEach items="${listSize}" var="o">
-                                                <div class="size-option" data-size="${o.id}">${o.size}</div>
-                                            </c:forEach>
-                                        </div>
-                                        <input type="hidden" name="selectedSizes" id="selectedSizes">
-                                        <input type="hidden" name="action" value="add">
-                                        <input type="hidden" name="id" value="${detail.id}">
-                                        <small style="color: red; display: none;" id="sizeError">Please select at least one size.</small>
+                            <form class="cart clearfix" method="post" action="cart">
+                                <div class="form-group">
+                                    <label>Size</label>
+                                    <div id="sizeContainer">
+                                        <c:forEach items="${listSize}" var="o">
+                                            <div class="size-option ${o.id == detail.size.id && detail.amount > 0 ? 'selected' : ''} ${o.quantity == 0 ? 'disabled' : ''}" data-size="${o.id}">${o.size}</div>
+                                        </c:forEach>
                                     </div>
+                                    <input type="hidden" name="sizeId" id="sizeId" value="${detail.size.id}">
+                                    <input type="hidden" name="action" value="add">
+                                    <input type="hidden" name="id" value="${detail.id}">
+                                    <small style="color: red; display: none;" id="sizeError">Please select at least one size.</small>
+                                </div>
+                                <c:if test="${detail.amount > 0}">
                                     <button type="submit" name="addtocart" value="${detail.id}" class="btn amado-btn">Add to cart</button>
-                                </form>
-                            </c:if>
-                            
-                            
-
+                                </c:if>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -201,7 +190,7 @@
 
             <div class="tab-pane fade show active" id="review" role="tabpanel" aria-labelledby="review-tab" style="margin-top: 30px">
                 <div class="row">
-                    <div class="col-lg-6">
+                    <div class="col-lg-12">
                         <h4>Feedbacks</h4>
                         <div class="review_list">
                             <c:forEach items="${feedbacks}" var="f">
@@ -222,13 +211,21 @@
                                     </div>
                                     <p id="content-${f.id}">${f.feedbackContent}</p>
 
-
+                                    <!-- Hiển thị reply của feedback này -->
+                                    <c:if test="${f.replyUserId > 0}">
+                                        <div class="replies" style="margin-left: 50px; border-left: 2px solid #ccc; padding-left: 15px;">
+                                            <div class="reply_item">
+                                                <p><strong>(Revolt Athletics):</strong> ${f.replyFeedbackContent}</p>
+                                            </div>
+                                        </div>
+                                    </c:if>
 
                                     <!-- Edit Form (Hidden by default) -->
                                     <div id="editForm-${f.id}" style="display: none;">
                                         <form action="update-feedback" method="post">
                                             <input type="hidden" name="feedbackId" value="${f.id}">
                                             <input class="form-control" name="productId" type="hidden" value="${detail.id}">
+                                            <input class="form-control" name="sizeId" type="hidden" value="${detail.size.id}">
                                             <!-- Rating Dropdown -->
                                             <div class="form-group">
                                                 <p>Edit Your Rating:</p>
@@ -255,35 +252,6 @@
                                     </div>
                                 </div>
                             </c:forEach>
-                        </div>
-                    </div>
-
-                    <!-- Add a New Review Section -->
-                    <div class="col-lg-6">
-                        <div class="review_box">
-                            <h4>Add a Review</h4>
-                            <p style="color: red">*Only people who have purchased this product can review it.</p>
-                            <form action="add-feedback" class="form-contact form-review mt-3" method="post">
-                                <input class="form-control" name="productId" type="hidden" value="${detail.id}">
-                                <div class="form-group">
-                                    <p>Your Rating:</p>
-                                    <select style="margin-bottom: 16px" class="form-group" name="rating">
-                                        <option value="5">5 stars</option>
-                                        <option value="4">4 stars</option>
-                                        <option value="3">3 stars</option>
-                                        <option value="2">2 stars</option>
-                                        <option value="1">1 star</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <textarea class="form-control different-control w-100" name="message" cols="30" rows="5" placeholder="Enter Message" required></textarea>
-                                </div>
-                                <div class="form-group text-center text-md-right mt-3">
-                                    <c:if test="${canFeedback != null && canFeedback == true}">
-                                        <button type="submit" class="btn amado-btn">Submit Now</button>
-                                    </c:if>
-                                </div>
-                            </form>
                         </div>
                     </div>
                 </div>
@@ -335,45 +303,41 @@
                                                             console.error(`Element not found for feedback ID: ${feedbackId}`);
                                                         }
                                                     }
-
                                                     document.addEventListener("DOMContentLoaded", function () {
                                                         const sizeOptions = document.querySelectorAll(".size-option");
-                                                        const selectedSizesInput = document.getElementById("selectedSizes");
-                                                        const sizeError = document.getElementById("sizeError");
-                                                        let selectedSizes = [];
+                                                        const productId = document.getElementById("productId").value; // Input chứa productId
+                                                        const sizeIdInput = document.getElementById("sizeId"); // Input ẩn để lưu sizeId
+                                                        let selectedSize = sizeIdInput.value; // Giá trị mặc định từ server
+
+                                                        // Highlight size ban đầu (nếu có)
+                                                        sizeOptions.forEach(option => {
+                                                            if (option.getAttribute("data-size") === selectedSize) {
+                                                                option.classList.add("selected");
+                                                            }
+                                                        });
 
                                                         sizeOptions.forEach(option => {
                                                             option.addEventListener("click", function () {
                                                                 const sizeId = this.getAttribute("data-size");
 
-                                                                if (selectedSizes.includes(sizeId)) {
-                                                                    // Nếu đã chọn, bỏ chọn
-                                                                    selectedSizes = selectedSizes.filter(id => id !== sizeId);
+                                                                // Nếu đã chọn trước đó, bỏ chọn
+                                                                if (selectedSize === sizeId) {
                                                                     this.classList.remove("selected");
+                                                                    selectedSize = null;
+                                                                    sizeIdInput.value = ""; // Xóa giá trị input
                                                                 } else {
-                                                                    // Nếu chưa chọn, thêm vào danh sách
-                                                                    selectedSizes.push(sizeId);
+                                                                    // Bỏ chọn tất cả trước khi chọn mới
+                                                                    sizeOptions.forEach(opt => opt.classList.remove("selected"));
                                                                     this.classList.add("selected");
-                                                                }
+                                                                    selectedSize = sizeId;
+                                                                    sizeIdInput.value = selectedSize; // Gán giá trị mới vào input
 
-                                                                // Cập nhật input ẩn
-                                                                selectedSizesInput.value = selectedSizes.join(",");
-
-                                                                // Ẩn lỗi nếu có size được chọn
-                                                                if (selectedSizes.length > 0) {
-                                                                    sizeError.style.display = "none";
+                                                                    // Chuyển hướng trang (dùng href)
+                                                                    window.location.href = "productDetail?productID=" + productId + "&sizeId=" + selectedSize;
                                                                 }
                                                             });
                                                         });
-
-                                                        document.querySelector("form").addEventListener("submit", function (event) {
-                                                            if (selectedSizes.length === 0) {
-                                                                sizeError.style.display = "block";
-                                                                event.preventDefault(); // Ngăn form submit nếu chưa chọn size
-                                                            }
-                                                        });
                                                     });
-
 
     </script>
 </body>

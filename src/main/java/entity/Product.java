@@ -31,6 +31,8 @@ public class Product {
     private Size sizeInCart; // size of this product in the shopping cart
     
 //    private List<Size> sizes;
+    
+    private Size size;
 
     // Default constructor
     public Product() {
@@ -48,6 +50,42 @@ public class Product {
         this.subImage = subImage;
         this.amount = amount;
         this.isDeleted = isDeleted;
+    }
+    
+    public Product(int id, String name, String image, double price, String title, String description, int cateID, List<SubImage> subImage, int amount, Size s) {
+        this.id = id;
+        this.name = name;
+        this.image = image;
+        this.price = price;
+        this.title = title;
+        this.description = description;
+        this.cateID = cateID;
+        this.subImage = subImage;
+        this.amount = amount;
+        this.size = s;
+    }
+    
+    public Product(int id, String name, String image, double price, String title, String description, int cateID, List<SubImage> subImage, int isDeleted) {
+        this.id = id;
+        this.name = name;
+        this.image = image;
+        this.price = price;
+        this.title = title;
+        this.description = description;
+        this.cateID = cateID;
+        this.subImage = subImage;
+        this.isDeleted = isDeleted;
+    }
+    
+     public Product(int id, String name, String image, double price, String title, String description, int cateID, List<SubImage> subImage) {
+        this.id = id;
+        this.name = name;
+        this.image = image;
+        this.price = price;
+        this.title = title;
+        this.description = description;
+        this.cateID = cateID;
+        this.subImage = subImage;
     }
 
     // Constructor to initialize Product with all fields, including numberInCart
@@ -196,6 +234,14 @@ public class Product {
 
     public void setSizeInCart(Size sizeInCart) {
         this.sizeInCart = sizeInCart;
+    }
+
+    public Size getSize() {
+        return size;
+    }
+
+    public void setSize(Size size) {
+        this.size = size;
     }
 
     // Overridden toString method to display product information

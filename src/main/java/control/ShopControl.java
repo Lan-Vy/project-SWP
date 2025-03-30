@@ -53,7 +53,7 @@ public class ShopControl extends HttpServlet {
             // Set category ID to the first category if not provided
             cID = (cID == null || cID.equals("")) ? lsNewsType.get(0).getId() + "" : Integer.parseInt(cID) + "";
             // Calculate the total number of pages based on the total products found
-            int pageSize = getPageSize(6, new ProductDAO().search(txtSearch, cID, priceRange).size());
+            int pageSize = getPageSize(6, new ProductDAO().search2(txtSearch, cID, priceRange).size());
             // Get the requested page index from the request, defaulting to 1 if not provided
             String index = request.getParameter("pageIndex");
             int pageIndex = 0;
@@ -63,7 +63,7 @@ public class ShopControl extends HttpServlet {
                 pageIndex = Integer.parseInt(index);
             }
             // Retrieve the list of products matching the search criteria with pagination
-            List<Product> ls = new ProductDAO().searchWithPaging(txtSearch, pageIndex, 6, cID, sort, priceRange);
+            List<Product> ls = new ProductDAO().searchWithPaging2(txtSearch, pageIndex, 6, cID, sort, priceRange);
             // Set various attributes for the request to be used in the JSP
             request.setAttribute("totalPage", pageSize);
             request.setAttribute("numberProduct", 6);

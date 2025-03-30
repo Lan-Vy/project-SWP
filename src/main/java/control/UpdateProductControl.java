@@ -61,9 +61,10 @@ public class UpdateProductControl extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         request.setCharacterEncoding("UTF-8");
         String id = request.getParameter("id");
+        String sizeId = request.getParameter("sizeId");
 
         ProductDAO dao = new ProductDAO();
-        Product product = dao.getProductByID(id);
+        Product product = dao.getProductByIDAndSize(id, sizeId);
         List<Category> listC = new CategoryDAO().getAllCategory();
 
         String select = "";
@@ -76,23 +77,22 @@ public class UpdateProductControl extends HttpServlet {
             }
         }
 
-        SizeDAO sizeDAO = new SizeDAO();
-        List<Size> listSize = sizeDAO.getAllSize();
-        // Lấy danh sách size của sản phẩm đang edit
-        List<Size> selectedSizes = sizeDAO.getAllSizeByProductId(Integer.parseInt(id));
-
-        // Chuyển danh sách selectedSizes thành Set để tra cứu nhanh hơn
-        Set<Integer> selectedSizeIds = selectedSizes.stream()
-                .map(Size::getId)
-                .collect(Collectors.toSet());
-
-        String selectSize = "";
-
-        for (Size size : listSize) {
-            String selected = selectedSizeIds.contains(size.getId()) ? " selected" : "";
-            selectSize += "<option value=\"" + size.getId() + "\"" + selected + ">" + size.getSize()+ "</option>\n";
-        }
-
+//        SizeDAO sizeDAO = new SizeDAO();
+//        List<Size> listSize = sizeDAO.getAllSize();
+//        // Lấy danh sách size của sản phẩm đang edit
+//        List<Size> selectedSizes = sizeDAO.getAllSizeByProductId(Integer.parseInt(id));
+//
+//        // Chuyển danh sách selectedSizes thành Set để tra cứu nhanh hơn
+//        Set<Integer> selectedSizeIds = selectedSizes.stream()
+//                .map(Size::getId)
+//                .collect(Collectors.toSet());
+//
+//        String selectSize = "";
+//
+//        for (Size size : listSize) {
+//            String selected = selectedSizeIds.contains(size.getId()) ? " selected" : "";
+//            selectSize += "<option value=\"" + size.getId() + "\"" + selected + ">" + size.getSize() + "</option>\n";
+//        }
         PrintWriter out = response.getWriter();
         out.println("<div class=\"modal-dialog\">\n"
                 + "                    <div class=\"modal-content\">\n"
@@ -104,6 +104,7 @@ public class UpdateProductControl extends HttpServlet {
                 + "                            <div class=\"modal-body\">\n"
                 + "                                \n"
                 + "                                    <input name=\"pID\" type=\"hidden\" class=\"form-control\" value=\"" + product.getId() + "\">\n"
+                + "                                    <input name=\"size\" type=\"hidden\" class=\"form-control\" value=\"" + product.getSize().getId() + "\">\n"
                 + "                                <div class=\"form-group\">\n"
                 + "                                    <label>Name</label>\n"
                 + "                                    <input name=\"name\" type=\"text\" class=\"form-control\" required value=\"" + product.getName() + "\">\n"
@@ -156,11 +157,9 @@ public class UpdateProductControl extends HttpServlet {
                 + "                                    </select>"
                 + "                                </div>\n"
                 + "                                \n"
-                         + "                                <div class=\"form-group\">\n"
+                + "                                <div class=\"form-group\">\n"
                 + "                                    <label>Size</label>\n"
-                + "                                    <select name=\"size\" class=\"form-control\" multiple id=\"sizeSelectEdit\">\n"
-                + selectSize
-                + "                                    </select><small style=\"color: red; display: none;\" id=\"sizeEditError\">Please select at least one size.</small>"
+                + "                                    <input name=\"sizeText\" type=\"text\" class=\"form-control\" required readonly value=\"" + product.getSize().getSize() + "\">\n"
                 + "                                </div>\n"
                 + "                                \n"
                 + "                            </div>\n"
@@ -198,7 +197,8 @@ public class UpdateProductControl extends HttpServlet {
         String description = request.getParameter("description");
         String amount = request.getParameter("amount");
         String category = request.getParameter("category");
-        String[] sizes = request.getParameterValues("size");
+//        String[] sizes = request.getParameterValues("size");
+        String sizeId = request.getParameter("size");
 
         ProductDAO dao = new ProductDAO();
         SubImageDAO sdao = new SubImageDAO();
@@ -218,7 +218,7 @@ public class UpdateProductControl extends HttpServlet {
         sdao.updateSubImage(s1.getpID() + "", s1.getImage() + "", s1.getSubImageID() + "");
         sdao.updateSubImage(s2.getpID() + "", s2.getImage() + "", s2.getSubImageID() + "");
         sdao.updateSubImage(s3.getpID() + "", s3.getImage() + "", s3.getSubImageID() + "");
-        dao.updateProduct(name, image, price, title, description, category, Integer.parseInt(amount), Integer.parseInt(pID), sizes);
+        dao.updateProduct(name, image, price, title, description, category, Integer.parseInt(amount), Integer.parseInt(pID), sizeId);
         request.setAttribute("message", "Update success!");
         request.getRequestDispatcher("ManagerControl").forward(request, response);
     }

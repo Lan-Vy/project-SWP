@@ -42,14 +42,14 @@ public class SizeDAO {
     
     public List<Size> getAllSizeByProductId(int productId) {
         List<Size> list = new ArrayList<>();
-        String query = "select * from Size s join Product_Size ps on s.id = ps.sizeId where ps.pID = ?";
+        String query = "select s.*, ps.quantity from Size s join Product_Size ps on s.id = ps.sizeId where ps.pID = ? and ps.isDeleted != 1";
         try {
             conn = new DBContext().getConnection(); //mo ket noi toi sql
             ps = conn.prepareStatement(query);//nem cau lenh query sang sql
             ps.setInt(1, productId);
             rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
             while (rs.next()) {
-                list.add(new Size(rs.getInt(1), rs.getString(2)));
+                list.add(new Size(rs.getInt(1), rs.getString(2),rs.getInt(3)));
             }
 
         } catch (Exception e) {

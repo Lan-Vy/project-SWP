@@ -139,7 +139,8 @@ public class OrderDAO {
     }
 
     public List<Order> getOrderHistoryByAccountID(int accID) {
-        String query = "SELECT o.*,a.uID,a.userName from [Order] o left join Account a on o.shipperID = a.uID where o.accountID = ?";
+        String query = "SELECT o.*,a.uID,a.userName, f.Id from [Order] o left join Account a on o.shipperID = a.uID \n"
+                + "left join Feedback f on o.id = f.orderId where o.accountID = ? order by o.id desc";
         try {
             List<Order> ls = new ArrayList<>();
             conn = new DBContext().getConnection();
@@ -157,6 +158,8 @@ public class OrderDAO {
                 o.setStatus(rs.getInt("status"));
                 Account shipper = new Account(rs.getInt("uID"), rs.getString("userName"));
                 o.setShipper(shipper);
+                boolean isFeedbacked = rs.getInt(12) != 0 || !rs.wasNull();
+                o.setIsFeedbacked(isFeedbacked);
                 ls.add(o);
             }
             return ls;

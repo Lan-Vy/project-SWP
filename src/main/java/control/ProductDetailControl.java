@@ -45,13 +45,14 @@ public class ProductDetailControl extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         // Retrieve the product ID from the request parameters
         String pID = request.getParameter("productID");
+        String sizeId = request.getParameter("sizeId");
         // Create a new DAO instance to interact with the database
         FeedbackDAO fdao = new FeedbackDAO();
         ProductDAO dao = new ProductDAO();
         CategoryDAO cdao = new CategoryDAO();
         SubImageDAO sidao = new SubImageDAO();
         // Fetch the product details based on the product ID
-        Product p = dao.getProductByID(pID);
+        Product p = dao.getProductByIDAndSize(pID, sizeId);
         // Get the category ID of the product
         int cid = p.getCateID();
         // Retrieve the category name using the category ID
@@ -93,17 +94,17 @@ public class ProductDetailControl extends HttpServlet {
         request.setAttribute("feedbacks", feedbacks);
         double avgRating = fdao.getAverageRatingByProductId(Integer.parseInt(pID));
         request.setAttribute("avgRating", avgRating);
-        // Retrieve the current session and check if the user is logged in
-        HttpSession session = request.getSession();
-        Account customer = (Account) session.getAttribute("acc");
-        Integer userId = customer == null ? null : customer.getId();
-        // Initialize a boolean to check if the user can leave feedback
-        boolean canFeedback = false;
-        // If the user is logged in, check if they have purchased the product
-        if (userId != null) {
-            canFeedback = dao.isBought(userId, Integer.parseInt(pID)) && !fdao.isFeedbacked(userId, Integer.parseInt(pID));
-            request.setAttribute("canFeedback", canFeedback);
-        }
+//        // Retrieve the current session and check if the user is logged in
+//        HttpSession session = request.getSession();
+//        Account customer = (Account) session.getAttribute("acc");
+//        Integer userId = customer == null ? null : customer.getId();
+//        // Initialize a boolean to check if the user can leave feedback
+//        boolean canFeedback = false;
+//        // If the user is logged in, check if they have purchased the product
+//        if (userId != null) {
+//            canFeedback = dao.isBought(userId, Integer.parseInt(pID)) && !fdao.isFeedbacked(userId, Integer.parseInt(pID));
+//            request.setAttribute("canFeedback", canFeedback);
+//        }
         // Forward the request to ProductDetail.jsp for rendering
         request.getRequestDispatcher("ProductDetail.jsp").forward(request, response);
     }

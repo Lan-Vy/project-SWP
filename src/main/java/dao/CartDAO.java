@@ -27,10 +27,12 @@ public class CartDAO {
 
     public List<CartItem> getCartItemByUserId(int userId) {
         List<CartItem> list = new ArrayList<>();
-        String query = "select p.*, s.*, ci.quantity, ci.id from CartItems ci\n"
+        String query = "select distinct p.pID, p.pName, p.image, ps.price, s.*, ci.quantity, ci.id \n"
+                + "from CartItems ci\n"
                 + "left join Product p on ci.productId = p.pID\n"
+                + "left join Product_Size ps on p.pID = ps.pID\n"
                 + "left join Size s on ci.sizeId = s.id\n"
-                + "where ci.userId = ? and p.isDeleted = 0 and p.pAmount > 0";
+                + "where ci.userId = ? and ps.isDeleted = 0 and ps.quantity > 0 and ps.quantity >= ci.quantity";
         try {
             conn = new DBContext().getConnection(); //mo ket noi toi sql
             ps = conn.prepareStatement(query);//nem cau lenh query sang sql
@@ -41,8 +43,8 @@ public class CartDAO {
                         rs.getString(2),
                         rs.getString(3),
                         rs.getDouble(4));
-                Size s = new Size(rs.getInt(10), rs.getString(11));
-                CartItem ci = new CartItem(rs.getInt(13), rs.getInt(12), p, s);
+                Size s = new Size(rs.getInt(5), rs.getString(6));
+                CartItem ci = new CartItem(rs.getInt(8), rs.getInt(7), p, s);
                 list.add(ci);
             }
 
@@ -55,9 +57,10 @@ public class CartDAO {
     public boolean addToCart(int userId, int productId, int size) {
         boolean addCart = false;
 
-        String checkExistQuery = "SELECT ci.quantity, p.pAmount FROM Product p\n"
-                + "LEFT JOIN CartItems ci ON ci.userId = ? AND ci.productId = p.pID AND ci.sizeId = ?\n"
-                + "WHERE p.pID = ?";
+        String checkExistQuery = "SELECT distinct p.pID, ci.quantity, ps.quantity FROM Product p\n" +
+"left join Product_Size ps on p.pID = ps.pID\n" +
+"LEFT JOIN CartItems ci ON ci.userId = ? AND ci.productId = p.pID AND ci.sizeId = ?\n" +
+"WHERE p.pID = ?";
 
         String updateQuery = "UPDATE CartItems SET quantity = quantity + 1 "
                 + "WHERE userId = ? AND productId = ? AND sizeId = ?";
@@ -77,8 +80,8 @@ public class CartDAO {
             int availableStock = 0;
 
             if (rs.next()) {
-                currentQuantity = rs.getInt("quantity"); // nếu không có thì sẽ là 0
-                availableStock = rs.getInt("pAmount");
+                currentQuantity = rs.getInt(2); // nếu không có thì sẽ là 0
+                availableStock = rs.getInt(3);
 
                 // Check nếu số lượng trong cart nhỏ hơn hàng tồn kho
                 if (currentQuantity < availableStock) {

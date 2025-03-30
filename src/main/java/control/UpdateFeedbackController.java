@@ -80,6 +80,7 @@ public class UpdateFeedbackController extends HttpServlet {
             // Lấy thông tin từ các input fields
             String productId = request.getParameter("productId");
             String feedbackId = request.getParameter("feedbackId");
+            String sizeId = request.getParameter("sizeId");
             String message = request.getParameter("message");
             String rating = request.getParameter("rating");
 
@@ -90,7 +91,7 @@ public class UpdateFeedbackController extends HttpServlet {
             feedback.setRating(Integer.parseInt(rating));
             feedback.setFeedbackContent(message);
             dao.updateFeedback(feedback);
-            response.sendRedirect("productDetail?productID=" + productId);
+            response.sendRedirect("productDetail?productID=" + productId + "&sizeId=" + sizeId);
         } catch (Exception e) {
             e.printStackTrace();
         }

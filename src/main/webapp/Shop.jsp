@@ -117,30 +117,12 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     </head>
     <body>
-        <!-- Search Wrapper Area Start -->
-        <%--<jsp:include page="common/search.jsp"></jsp:include>--%>
-        <!-- Search Wrapper Area End -->
 
         <!-- ##### Main Content Wrapper Start ##### -->
         <jsp:include page="common/header.jsp"></jsp:include>
             <!-- Header Area End -->
 
             <div class="shop_sidebar_area">
-
-
-                <!--                <div class="widget catagory mb-50">
-                                     Widget Title 
-                                    <h6 class="widget-title mb-30">Catagories</h6>
-                
-                                      Catagories  
-                                    <div class="catagories-menu">
-                                        <ul id="categoryMenu">
-            <%--<c:forEach items="${listC}" var="o">--%>
-                <li class="${tag == o.id ? "active":""}"><a href="ShopControl?pageIndex=1&txtSearch=${searchValue}&cID=${o.id}&priceRange=${priceRange}">${o.name}</a></li>
-            <%--</c:forEach>--%>
-    </ul>
-</div>
-</div>-->
 
             <div class="widget catagory mb-50">
                 <!-- Widget Title -->
@@ -195,41 +177,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- ##### Single Widget ##### -->
-                <!--            <div class="widget color mb-50">
-                                 Widget Title 
-                                <h6 class="widget-title mb-30">Color</h6>
-                
-                                <div class="widget-desc">
-                                    <ul class="d-flex">
-                                        <li>
-                                            <a href="#" class="color1"></a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="color2"></a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="color3"></a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="color4"></a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="color5"></a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="color6"></a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="color7"></a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="color8"></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>-->
             </div>
         <fmt:setLocale value="vi_VN"/>
         <div class="amado_product_area section-padding-100">
@@ -258,24 +205,11 @@
                                     <p>Price</p>
                                     <form action="#" method="get">
                                         <select name="select" id="sortByPrice" onchange="searchByName()">
-                                            <!--                                            <option value="value">Oldest</option>
-                                                                                        <option value="value">Newest</option>
-                                                                                        <option value="value">Popular</option>-->
                                             <option value="asc" ${sort eq "asc" ? "selected" : ""}>Asc</option>
                                             <option value="desc" ${sort eq "desc" ? "selected" : ""}>Desc</option>
                                         </select>
                                     </form>
                                 </div>
-                                <!--                                <div class="view-product d-flex align-items-center">
-                                                                    <p>View</p>
-                                                                    <form action="ShopControl" method="post">
-                                                                        <select name="viewPage" id="viewProduct" onchange="this.form.submit()">
-                                <%--<c:forEach items="${listView}" var="o">--%>
-                                    <option ${numberProduct == o?"selected":""} value="${o}">${o}</option>
-                                <%--</c:forEach>--%>
-                            </select>
-                        </form>
-                    </div>-->
                             </div>
                         </div>
                     </div>
@@ -304,7 +238,7 @@
                                         <div class="line"></div>
                                         <fmt:formatNumber value="${o.price}" type="number" groupingUsed="true" var="formattedPrice"/>
                                         <p class="product-price">${formattedPrice} VND</p>
-                                        <a href="productDetail?productID=${o.id}">
+                                        <a href="productDetail?productID=${o.id}&sizeId=${o.size.id}">
                                             <h6>${o.name}</h6>
                                         </a>
                                     </div>
@@ -313,7 +247,7 @@
                                         
                                         <div class="cart">
                                             <c:if test="${o.amount != 0}">
-                                                <a href="productDetail?productID=${o.id}" data-toggle="tooltip" data-placement="left" title="Add to Cart"><img src="img/core-img/cart.png" alt=""></a>
+                                                <a href="productDetail?productID=${o.id}&sizeId=${o.size.id}" data-toggle="tooltip" data-placement="left" title="Add to Cart"><img src="img/core-img/cart.png" alt=""></a>
                                                 
                                             </c:if>
                                             <c:if test="${o.amount == 0}">

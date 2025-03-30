@@ -68,10 +68,10 @@
                                                 <span>${formattedPrice}</span>
                                             </td>
                                             <td class="qty">
-                                                <a href="cart?id=${o.product.id}&action=minus&selectedSizes=${o.size.id}"><button class="btnSub">-</button></a> 
+                                                <a href="cart?id=${o.product.id}&action=minus&sizeId=${o.size.id}"><button class="btnSub">-</button></a> 
                                                 <strong>${o.quantity}</strong>
-                                                <a href="cart?id=${o.product.id}&action=add&selectedSizes=${o.size.id}"><button class="btnAdd">+</button></a>
-                                                <a href="cart?id=${o.product.id}&action=delete&selectedSizes=${o.size.id}" style="margin-left: 100px;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                                <a href="cart?id=${o.product.id}&action=add&sizeId=${o.size.id}"><button class="btnAdd">+</button></a>
+                                                <a href="cart?id=${o.product.id}&action=delete&sizeId=${o.size.id}" style="margin-left: 100px;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
                                                     <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
                                                     </svg></a>
                                             </td>
@@ -91,8 +91,8 @@
                                     <c:forEach items="${cartItems}" var="o">
                                     <li>
                                         <span style="padding-left: 20px">${o.product.name} (${o.size.size}) </span>
-<fmt:formatNumber value="${o.product.price}" type="number" groupingUsed="true" var="formattedPrice"/>
-<span style="white-space: nowrap;">${formattedPrice} <span style="font-size: smaller; display: inline;">x${o.quantity}</span></span>
+                                        <fmt:formatNumber value="${o.product.price}" type="number" groupingUsed="true" var="formattedPrice"/>
+                                        <span style="white-space: nowrap;">${formattedPrice} <span style="font-size: smaller; display: inline;">x${o.quantity}</span></span>
 
                                     </li>
                                     <c:set var="totalPrice" value="${totalPrice + (o.product.price * o.quantity)}" />

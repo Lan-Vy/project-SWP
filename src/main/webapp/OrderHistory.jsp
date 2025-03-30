@@ -16,7 +16,7 @@
 
         <!-- Title  -->
         <title>Revolt Athletics | Order History</title>
-
+        <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
         <!-- Favicon  -->
         <link rel="icon" href="img/core-img/favicon2.ico">
 
@@ -63,6 +63,7 @@
                             <th >Status</th>
                             <th >Shipper</th>
                             <th style="text-align: center">Detail</th>
+                            <th style="text-align: center">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -114,6 +115,11 @@
                                 <td style="text-align: center">
                                     <a href="OrderDetailControl?orderId=${o.id}"><i class="material-icons" data-toggle="tooltip" title="Detail">&#xe24c;</i>
                                 </td>
+                                <td style="text-align: center">
+                                    <c:if test="${o.status == 3 && o.isFeedbacked == false}">
+                                        <a href="add-feedback?orderId=${o.id}" class="btn btn-sm btn-success">Feedback</a>
+                                    </c:if>
+                                </td>
                             </tr>
                         </c:forEach>
                     </tbody>
@@ -133,17 +139,28 @@
 
     <!-- ##### Footer Area Start ##### -->
     <jsp:include page="common/footer.jsp"></jsp:include>
-    <!-- ##### Footer Area End ##### -->
+        <!-- ##### Footer Area End ##### -->
 
-    <!-- ##### jQuery (Necessary for All JavaScript Plugins) ##### -->
-    <script src="js/jquery/jquery-2.2.4.min.js"></script>
-    <!-- Popper js -->
-    <script src="js/popper.min.js"></script>
-    <!-- Bootstrap js -->
-    <script src="js/bootstrap.min.js"></script>
-    <!-- Plugins js -->
-    <script src="js/plugins.js"></script>
-    <!-- Active js -->
-    <script src="js/active.js"></script>
+        <!-- ##### jQuery (Necessary for All JavaScript Plugins) ##### -->
+        <script src="js/jquery/jquery-2.2.4.min.js"></script>
+        <!-- Popper js -->
+        <script src="js/popper.min.js"></script>
+        <!-- Bootstrap js -->
+        <script src="js/bootstrap.min.js"></script>
+        <!-- Plugins js -->
+        <script src="js/plugins.js"></script>
+        <!-- Active js -->
+        <script src="js/active.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <c:if test="${message != null}">
+        <script type="text/javascript">
+            toastr.success(`${message}`, 'Success', {timeOut: 1000});
+        </script>
+    </c:if>
+    <c:if test="${errorMessage != null}">
+        <script type="text/javascript">
+            toastr.error(`${errorMessage}`, 'Error', {timeOut: 1000});
+        </script>
+    </c:if>
 </body>
 </html>

@@ -60,7 +60,7 @@ public class SearchLiveControl extends HttpServlet {
         String priceRange = request.getParameter("priceRange");
         priceRange = (priceRange == null || priceRange.equals("")) ? "0" : priceRange;
         // Calculate the total number of pages based on the number of products
-        int pageSize = getPageSize(6, new ProductDAO().search(txtSearch, cID, priceRange).size());
+        int pageSize = getPageSize(6, new ProductDAO().search2(txtSearch, cID, priceRange).size());
         String index = request.getParameter("pageIndex");
         int pageIndex = 0;
         if (index == null) {
@@ -69,7 +69,7 @@ public class SearchLiveControl extends HttpServlet {
             pageIndex = Integer.parseInt(index);
         }
         // Retrieve the list of products based on search criteria and pagination
-        List<Product> list = new ProductDAO().searchWithPaging(txtSearch, pageIndex, 6, cID, sort, priceRange);
+        List<Product> list = new ProductDAO().searchWithPaging2(txtSearch, pageIndex, 6, cID, sort, priceRange);
         // Prepare product HTML for response
         PrintWriter out = response.getWriter();
         String product = "";
@@ -79,9 +79,11 @@ public class SearchLiveControl extends HttpServlet {
                     + "                            <div class=\"single-product-wrapper\">\n"
                     + "                                <!-- Product Image -->\n"
                     + "                                <div class=\"product-img\">\n"
-                    + "                                    <img src=\"" + o.getImage() + "\" alt=\"\">\n"
-                    + "\n"
-                    + "                                </div>\n"
+                    + "                                    <img src=\"" + o.getImage() + "\" alt=\"\">\n";
+            if (o.getAmount() == 0) {
+                product += "<div class=\"sold-out-overlay\">SOLD OUT</div>\n";
+            }
+            product += "                                </div>\n"
                     + "\n"
                     + "                                <!-- Product Description -->\n"
                     + "                                <div class=\"product-description d-flex align-items-center justify-content-between\">\n"
@@ -89,29 +91,20 @@ public class SearchLiveControl extends HttpServlet {
                     + "                                    <div class=\"product-meta-data\">\n"
                     + "                                        <div class=\"line\"></div>\n"
                     + "                                        <p class=\"product-price\">" + formatter.format(o.getPrice()) + " VND</p>\n"
-                    + "                                        <a href=\"productDetail?productID=" + o.getId() + "\">\n"
+                    + "                                        <a href=\"productDetail?productID=" + o.getId() + "&sizeId="+o.getSize().getId()+"\">\n"
                     + "                                            <h6>" + o.getName() + "</h6>\n"
                     + "                                        </a>\n"
                     + "                                    </div>\n"
                     + "                                    <!-- Ratings & Cart -->\n"
                     + "                                    <div class=\"ratings-cart text-right\">\n"
-                    + "                                        <div class=\"ratings\">\n"
-                    + "                                            <i class=\"fa fa-star\" aria-hidden=\"true\"></i>\n"
-                    + "                                            <i class=\"fa fa-star\" aria-hidden=\"true\"></i>\n"
-                    + "                                            <i class=\"fa fa-star\" aria-hidden=\"true\"></i>\n"
-                    + "                                            <i class=\"fa fa-star\" aria-hidden=\"true\"></i>\n"
-                    + "                                            <i class=\"fa fa-star\" aria-hidden=\"true\"></i>\n"
-                    + "                                        </div>\n"
                     + "                                        <div class=\"cart\">\n";
             // Check product availability and generate appropriate action links
             if (o.getAmount() != 0) {
                 product
-                        += "                                                <a href=\"productDetail?productID=" + o.getId() + "&action=add\" data-toggle=\"tooltip\" data-placement=\"left\" title=\"Add to Cart\"><img src=\"img/core-img/cart.png\" alt=\"\"></a>\n"
-                        + "                                                <a href=\"#\" style='font-size:16px;' title=\"Add to favourite\">&#129505;</a>\n";
+                        += "                                                <a href=\"productDetail?productID=" + o.getId() + "&sizeId="+o.getSize().getId()+"\" data-toggle=\"tooltip\" data-placement=\"left\" title=\"Add to Cart\"><img src=\"img/core-img/cart.png\" alt=\"\"></a>\n";
             } else {
 
-                product += "                                                <a href=\"ShopControl\" data-toggle=\"tooltip\" data-placement=\"left\">Sold out</a>\n"
-                        + "                                                <a href=\"FavouriteControl\" style='font-size:16px;' title=\"Add to favourite\">&#129505;</a>\n";
+                product += "                                                <a href=\"ShopControl\" data-toggle=\"tooltip\" data-placement=\"left\">Sold out</a>\n";
             }
             product
                     += "                                        </div>\n"

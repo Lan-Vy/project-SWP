@@ -82,7 +82,7 @@ public class CheckOutControl extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -127,7 +127,7 @@ public class CheckOutControl extends HttpServlet {
             String address = request.getParameter("address");
             String phone = request.getParameter("phone");
             String payment = request.getParameter("payment");
-            
+
             CartDAO cdao = new CartDAO();
             List<CartItem> cartItems = cdao.getCartItemByUserId(a.getId());
 
@@ -144,7 +144,7 @@ public class CheckOutControl extends HttpServlet {
                 response.sendRedirect("ShopControl");
                 return;
             }
-            
+
             if (payment.equals("cod")) {
                 //payment cod
                 // Get the current date for the order
@@ -157,18 +157,18 @@ public class CheckOutControl extends HttpServlet {
                 int orderID = odao.getOrderID();
                 // Loop through each product in the cart and insert order details
                 // Loop through each product in the cart, insert order details và cập nhật tồn kho
-for (CartItem cartItem : cartItems) {
-    int productId = cartItem.getProduct().getId();
-    int quantity = cartItem.getQuantity();
-    double price = cartItem.getProduct().getPrice();
-    int sizeId = cartItem.getSize().getId();
+                for (CartItem cartItem : cartItems) {
+                    int productId = cartItem.getProduct().getId();
+                    int quantity = cartItem.getQuantity();
+                    double price = cartItem.getProduct().getPrice();
+                    int sizeId = cartItem.getSize().getId();
 
-    // Thêm chi tiết đơn hàng
-    oddao.insertOrderDetails(orderID, productId, price, quantity, sizeId);
+                    // Thêm chi tiết đơn hàng
+                    oddao.insertOrderDetails(orderID, productId, price, quantity, sizeId);
 
-    // Trừ tồn kho sản phẩm
-    pdao.updateProductQuantity(productId, quantity);
-}
+                    // Trừ tồn kho sản phẩm
+                    pdao.updateProductQuantity(productId, quantity, sizeId);
+                }
 
                 // Update the product amounts in the inventory based on the order
 //                for (Product product : c.getItems()) {
@@ -190,24 +190,24 @@ for (CartItem cartItem : cartItems) {
                 String orderType = "other";
                 long amount = (long) (totalPrice * 100);
                 String bankCode = "NCB";
-                
+
                 String vnp_TxnRef = Config.getRandomNumber(8);
                 String vnp_IpAddr = Config.getIpAddress(request);
-                
+
                 String vnp_TmnCode = Config.vnp_TmnCode;
-                
+
                 Map<String, String> vnp_Params = new HashMap<>();
                 vnp_Params.put("vnp_Version", vnp_Version);
                 vnp_Params.put("vnp_Command", vnp_Command);
                 vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
                 vnp_Params.put("vnp_Amount", String.valueOf(amount));
                 vnp_Params.put("vnp_CurrCode", "VND");
-                
+
                 vnp_Params.put("vnp_BankCode", bankCode);
                 vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
                 vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_TxnRef);
                 vnp_Params.put("vnp_OrderType", orderType);
-                
+
                 String locate = request.getParameter("language");
                 if (locate != null && !locate.isEmpty()) {
                     vnp_Params.put("vnp_Locale", locate);
@@ -217,16 +217,16 @@ for (CartItem cartItem : cartItems) {
                 String returnURL = Config.vnp_ReturnUrl + "?firstname=" + firstname + "&lastname=" + lastname + "&address=" + address + "&phone=" + phone;
                 vnp_Params.put("vnp_ReturnUrl", returnURL);
                 vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
-                
+
                 Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
                 String vnp_CreateDate = formatter.format(cld.getTime());
                 vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
-                
+
                 cld.add(Calendar.MINUTE, 15);
                 String vnp_ExpireDate = formatter.format(cld.getTime());
                 vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
-                
+
                 List fieldNames = new ArrayList(vnp_Params.keySet());
                 Collections.sort(fieldNames);
                 StringBuilder hashData = new StringBuilder();
@@ -251,11 +251,11 @@ for (CartItem cartItem : cartItems) {
                     }
                 }
                 String queryUrl = query.toString();
-                
+
                 String vnp_SecureHash = Config.hmacSHA512(Config.secretKey, hashData.toString());
                 queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
                 String paymentUrl = Config.vnp_PayUrl + "?" + queryUrl;
-                
+
                 response.sendRedirect(paymentUrl);
             }
         } catch (Exception e) {
