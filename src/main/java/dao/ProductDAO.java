@@ -580,49 +580,70 @@ public class ProductDAO {
                 + "      ,p.[pName]\n"
                 + "      ,p.[image],ps.price, p.[title]\n"
                 + "      ,p.[description]\n"
-                + "      ,p.[cID]\n"
+                + "      ,p.[cID], ps.quantity,s.id, s.size\n"
                 + "from Product p \n"
-                + "left join Product_Size ps on p.pID = ps.pID\n"
+                + "left join Product_Size ps on p.pID = ps.pID left join Size s on ps.sizeId = s.id \n"
                 + "where ps.isDeleted != 1\n"
                 + "order by p.pID desc";
         try {
+            SubImageDAO dao = new SubImageDAO();
             conn = new DBContext().getConnection(); //mo ket noi toi sql
             ps = conn.prepareStatement(query);//nem cau lenh query sang sql
             rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
             while (rs.next()) {
-                return new Product(rs.getInt(1),
+                Product p = new Product(rs.getInt(1),
                         rs.getString(2),
                         rs.getString(3),
                         rs.getDouble(4),
                         rs.getString(5),
                         rs.getString(6),
-                        rs.getInt(7), new SubImageDAO().getAllSubImageByPID(rs.getInt(1) + ""));
+                        rs.getInt(7), dao.getAllSubImageByPID(rs.getInt(1) + ""), rs.getInt(8),
+                        new Size(rs.getInt(9), rs.getString(10)));
+                return p;
             }
         } catch (Exception e) {
         }
         return null;
     }
 
-    public int getBestSeller() {
-        String query = "with R as(\n"
-                + "select ProductID,SUM(Quantity) SL\n"
-                + "from Product P, OrderDetails O\n"
-                + "where P.pID = O.ProductID\n"
-                + "group by ProductID\n"
-                + ")\n"
-                + "select top 1 R.ProductID from R where SL = (select MAX(SL) from R)\n"
-                + "order by R.ProductID desc";
+    public Product getBestSeller() {
+        String query = "WITH R AS ( "
+                + "    SELECT O.ProductID, SUM(O.Quantity) AS SL "
+                + "    FROM OrderDetails O "
+                + "    GROUP BY O.ProductID "
+                + ") "
+                + "SELECT TOP 1 p.pID, p.pName, p.image, ps.price, p.title, p.description, p.cID, ps.quantity, s.id, s.size "
+                + "FROM Product p "
+                + "JOIN R ON p.pID = R.ProductID "
+                + "LEFT JOIN Product_Size ps ON p.pID = ps.pID "
+                + "LEFT JOIN Size s ON ps.sizeId = s.id "
+                + "WHERE ps.isDeleted != 1 AND R.SL = (SELECT MAX(SL) FROM R) "
+                + "ORDER BY p.pID DESC";
+
         try {
-            conn = new DBContext().getConnection(); //mo ket noi toi sql
-            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
-            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
-            while (rs.next()) {
-                return rs.getInt(1);
+            SubImageDAO dao = new SubImageDAO();
+            conn = new DBContext().getConnection();
+            ps = conn.prepareStatement(query);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return new Product(
+                        rs.getInt(1), // pID
+                        rs.getString(2), // pName
+                        rs.getString(3), // image
+                        rs.getDouble(4), // price
+                        rs.getString(5), // title
+                        rs.getString(6), // description
+                        rs.getInt(7), // cID
+                        dao.getAllSubImageByPID(rs.getInt(1) + ""), // List ảnh phụ
+                        rs.getInt(8), // quantity
+                        new Size(rs.getInt(9), rs.getString(10)) // Size
+                );
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return 0;
+        return null;
     }
 
     public List<Integer> getTotalProductBoughtByYear(int year) {

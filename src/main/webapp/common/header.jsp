@@ -71,12 +71,12 @@
             ProductDAO dao = new ProductDAO(); // Get the newest product
             Product pNew = dao.getNewestProduct();// ID of the newest product
             int idNew = pNew.getId();// Get the best-selling product
-            int idBest = dao.getBestSeller();// Retrieve the cart from session
+            Product pBest = dao.getBestSeller();// Retrieve the cart from session
         %>
         <!-- Button for Bestselling Product -->
         <div class="amado-btn-group mt-30 mb-100">
-            <a href="productDetail?productID=<%= idBest%>" class="btn amado-btn mb-15">Bestseller</a>
-            <a href="productDetail?productID=<%= idNew%>" class="btn amado-btn active">Newest Product</a>
+            <a href="productDetail?productID=<%= pBest.getId() %>&sizeId=<%= pBest.getSize().getId() %>" class="btn amado-btn mb-15">Bestseller</a>
+            <a href="productDetail?productID=<%= idNew%>&sizeId=<%= pNew.getSize().getId() %>" class="btn amado-btn active">Newest Product</a>
         </div>
       
     </header>
