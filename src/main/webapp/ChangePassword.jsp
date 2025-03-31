@@ -70,7 +70,7 @@
                 <input name="oldPass" type="password" id="oldpass" class="form-control" placeholder="Old Password" required autofocus="">
                 <input name="pass" type="password" id="pass" class="form-control" placeholder="New Password" required autofocus="" >
                 <input name="repass" type="password" id="repass" class="form-control" placeholder="Repeat New Password" required autofocus="" pattern=".{8,15}" minlength="8" maxlength="15" 
-                       title="Password must be between 8 and 15 characters long>
+                       title="Password must be between 8 and 15 characters long">
 
                        <button class="btn btn-warning btn-block" type="submit"><i class="fas fa-user-plus"></i> Change password</button>
                 <a href="Profile"><i class="fas fa-angle-left"></i> Back</a>

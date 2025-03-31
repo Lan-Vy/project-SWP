@@ -145,122 +145,134 @@ public class CheckOutControl extends HttpServlet {
                 return;
             }
 
-            if (payment.equals("cod")) {
-                //payment cod
-                // Get the current date for the order
-                Date date = new Date();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                java.sql.Date dateInsert = java.sql.Date.valueOf(dateFormat.format(date));
-                // Insert the order into the database
-                odao.insertOrder(dateInsert + "", a.getId(), address, phone, firstname + " " + lastname, totalPrice);
-                // Retrieve the order ID for the newly created order
-                int orderID = odao.getOrderID();
-                // Loop through each product in the cart and insert order details
-                // Loop through each product in the cart, insert order details và cập nhật tồn kho
-                for (CartItem cartItem : cartItems) {
-                    int productId = cartItem.getProduct().getId();
-                    int quantity = cartItem.getQuantity();
-                    double price = cartItem.getProduct().getPrice();
-                    int sizeId = cartItem.getSize().getId();
-
-                    // Thêm chi tiết đơn hàng
-                    oddao.insertOrderDetails(orderID, productId, price, quantity, sizeId);
-
-                    // Trừ tồn kho sản phẩm
-                    pdao.updateProductQuantity(productId, quantity, sizeId);
+            //check so luong san pham du hay khong
+            boolean isError = false;
+            for (CartItem cartItem : cartItems) {
+                int productId = cartItem.getProduct().getId();
+                int sizeId = cartItem.getSize().getId();
+                Product product = pdao.getProductByIDAndSize(productId + "", sizeId + "");
+                if (cartItem.getQuantity() > product.getAmount()) {
+                    isError = true;
+                    break;
                 }
-
-                // Update the product amounts in the inventory based on the order
-//                for (Product product : c.getItems()) {
-//
-//                    int reduceAmount = product.getAmount() - product.getNumberInCart();
-//                    pdao.updateAmounProduct(reduceAmount, product.getId());
-//                }
-// remove cart
-                cdao.removeAllFromCart(a.getId());
-                // Set a success message to be displayed on the CheckOut.jsp page
-                request.setAttribute("message", "Order successfull!");
-                // Forward the request to CheckOut.jsp to display the success message
+            }
+            if (isError) {
+                // In case of an error, set an error message
+                request.setAttribute("errorMessage", "Order failed because your shopping cart contains a product that has been removed or the product is out of stock");
+                // Forward the request back to CheckOut.jsp to display the error message
                 request.getRequestDispatcher("CheckOut.jsp").forward(request, response);
-            } else if (payment.equals("vnpay")) {
-                //vnpay
-                //vnpay
-                String vnp_Version = "2.1.0";
-                String vnp_Command = "pay";
-                String orderType = "other";
-                long amount = (long) (totalPrice * 100);
-                String bankCode = "NCB";
+            } else {
 
-                String vnp_TxnRef = Config.getRandomNumber(8);
-                String vnp_IpAddr = Config.getIpAddress(request);
+                if (payment.equals("cod")) {
+                    //payment cod
+                    // Get the current date for the order
+                    Date date = new Date();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    java.sql.Date dateInsert = java.sql.Date.valueOf(dateFormat.format(date));
+                    // Insert the order into the database
+                    odao.insertOrder(dateInsert + "", a.getId(), address, phone, firstname + " " + lastname, totalPrice);
+                    // Retrieve the order ID for the newly created order
+                    int orderID = odao.getOrderID();
+                    // Loop through each product in the cart and insert order details
+                    // Loop through each product in the cart, insert order details và cập nhật tồn kho
+                    for (CartItem cartItem : cartItems) {
+                        int productId = cartItem.getProduct().getId();
+                        int quantity = cartItem.getQuantity();
+                        double price = cartItem.getProduct().getPrice();
+                        int sizeId = cartItem.getSize().getId();
 
-                String vnp_TmnCode = Config.vnp_TmnCode;
+                        // Thêm chi tiết đơn hàng
+                        oddao.insertOrderDetails(orderID, productId, price, quantity, sizeId);
 
-                Map<String, String> vnp_Params = new HashMap<>();
-                vnp_Params.put("vnp_Version", vnp_Version);
-                vnp_Params.put("vnp_Command", vnp_Command);
-                vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
-                vnp_Params.put("vnp_Amount", String.valueOf(amount));
-                vnp_Params.put("vnp_CurrCode", "VND");
+                        // Trừ tồn kho sản phẩm
+                        pdao.updateProductQuantity(productId, quantity, sizeId);
+                    }
 
-                vnp_Params.put("vnp_BankCode", bankCode);
-                vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-                vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_TxnRef);
-                vnp_Params.put("vnp_OrderType", orderType);
+                    cdao.removeAllFromCart(a.getId());
+                    // Set a success message to be displayed on the CheckOut.jsp page
+                    request.setAttribute("message", "Order successfull!");
+                    // Forward the request to CheckOut.jsp to display the success message
+                    request.getRequestDispatcher("CheckOut.jsp").forward(request, response);
+                } else if (payment.equals("vnpay")) {
+                    //vnpay
+                    //vnpay
+                    String vnp_Version = "2.1.0";
+                    String vnp_Command = "pay";
+                    String orderType = "other";
+                    long amount = (long) (totalPrice * 100);
+                    String bankCode = "NCB";
 
-                String locate = request.getParameter("language");
-                if (locate != null && !locate.isEmpty()) {
-                    vnp_Params.put("vnp_Locale", locate);
-                } else {
-                    vnp_Params.put("vnp_Locale", "vn");
-                }
-                String returnURL = Config.vnp_ReturnUrl + "?firstname=" + firstname + "&lastname=" + lastname + "&address=" + address + "&phone=" + phone;
-                vnp_Params.put("vnp_ReturnUrl", returnURL);
-                vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
+                    String vnp_TxnRef = Config.getRandomNumber(8);
+                    String vnp_IpAddr = Config.getIpAddress(request);
 
-                Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-                String vnp_CreateDate = formatter.format(cld.getTime());
-                vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
+                    String vnp_TmnCode = Config.vnp_TmnCode;
 
-                cld.add(Calendar.MINUTE, 15);
-                String vnp_ExpireDate = formatter.format(cld.getTime());
-                vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
+                    Map<String, String> vnp_Params = new HashMap<>();
+                    vnp_Params.put("vnp_Version", vnp_Version);
+                    vnp_Params.put("vnp_Command", vnp_Command);
+                    vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
+                    vnp_Params.put("vnp_Amount", String.valueOf(amount));
+                    vnp_Params.put("vnp_CurrCode", "VND");
 
-                List fieldNames = new ArrayList(vnp_Params.keySet());
-                Collections.sort(fieldNames);
-                StringBuilder hashData = new StringBuilder();
-                StringBuilder query = new StringBuilder();
-                Iterator itr = fieldNames.iterator();
-                while (itr.hasNext()) {
-                    String fieldName = (String) itr.next();
-                    String fieldValue = (String) vnp_Params.get(fieldName);
-                    if ((fieldValue != null) && (fieldValue.length() > 0)) {
-                        //Build hash data
-                        hashData.append(fieldName);
-                        hashData.append('=');
-                        hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
-                        //Build query
-                        query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString()));
-                        query.append('=');
-                        query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
-                        if (itr.hasNext()) {
-                            query.append('&');
-                            hashData.append('&');
+                    vnp_Params.put("vnp_BankCode", bankCode);
+                    vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
+                    vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_TxnRef);
+                    vnp_Params.put("vnp_OrderType", orderType);
+
+                    String locate = request.getParameter("language");
+                    if (locate != null && !locate.isEmpty()) {
+                        vnp_Params.put("vnp_Locale", locate);
+                    } else {
+                        vnp_Params.put("vnp_Locale", "vn");
+                    }
+                    String returnURL = Config.vnp_ReturnUrl + "?firstname=" + firstname + "&lastname=" + lastname + "&address=" + address + "&phone=" + phone;
+                    vnp_Params.put("vnp_ReturnUrl", returnURL);
+                    vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
+
+                    Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+                    String vnp_CreateDate = formatter.format(cld.getTime());
+                    vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
+
+                    cld.add(Calendar.MINUTE, 15);
+                    String vnp_ExpireDate = formatter.format(cld.getTime());
+                    vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
+
+                    List fieldNames = new ArrayList(vnp_Params.keySet());
+                    Collections.sort(fieldNames);
+                    StringBuilder hashData = new StringBuilder();
+                    StringBuilder query = new StringBuilder();
+                    Iterator itr = fieldNames.iterator();
+                    while (itr.hasNext()) {
+                        String fieldName = (String) itr.next();
+                        String fieldValue = (String) vnp_Params.get(fieldName);
+                        if ((fieldValue != null) && (fieldValue.length() > 0)) {
+                            //Build hash data
+                            hashData.append(fieldName);
+                            hashData.append('=');
+                            hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                            //Build query
+                            query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString()));
+                            query.append('=');
+                            query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                            if (itr.hasNext()) {
+                                query.append('&');
+                                hashData.append('&');
+                            }
                         }
                     }
+                    String queryUrl = query.toString();
+
+                    String vnp_SecureHash = Config.hmacSHA512(Config.secretKey, hashData.toString());
+                    queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
+                    String paymentUrl = Config.vnp_PayUrl + "?" + queryUrl;
+
+                    response.sendRedirect(paymentUrl);
                 }
-                String queryUrl = query.toString();
-
-                String vnp_SecureHash = Config.hmacSHA512(Config.secretKey, hashData.toString());
-                queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
-                String paymentUrl = Config.vnp_PayUrl + "?" + queryUrl;
-
-                response.sendRedirect(paymentUrl);
             }
         } catch (Exception e) {
             // In case of an error, set an error message
-            request.setAttribute("message", "Order fail!");
+            request.setAttribute("errorMessage", "Order fail!");
             // Forward the request back to CheckOut.jsp to display the error message
             request.getRequestDispatcher("CheckOut.jsp").forward(request, response);
         }

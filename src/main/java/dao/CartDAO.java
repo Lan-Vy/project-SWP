@@ -32,7 +32,8 @@ public class CartDAO {
                 + "left join Product p on ci.productId = p.pID\n"
                 + "left join Product_Size ps on p.pID = ps.pID\n"
                 + "left join Size s on ci.sizeId = s.id\n"
-                + "where ci.userId = ? and ps.isDeleted = 0 and ps.quantity > 0 and ps.quantity >= ci.quantity";
+                + "where ci.userId = ? ";
+//                + "and ps.isDeleted = 0 and ps.quantity > 0 and ps.quantity >= ci.quantity";
         try {
             conn = new DBContext().getConnection(); //mo ket noi toi sql
             ps = conn.prepareStatement(query);//nem cau lenh query sang sql

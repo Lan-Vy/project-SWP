@@ -69,7 +69,7 @@ public class LoginWithGoogle extends HttpServlet {
                 dao.signUp(user.getUserName(), "Abc@123", user.getEmail());
 
                 // Gửi mật khẩu đến email người dùng
-                MailService.sendMail(user.getEmail(), "Password!", "Your password is: " + "Abc@123");
+                MailService.sendMail(user.getEmail(), "Password!", "Your password is: " + "Abc@1234");
                 Account newAcc = dao.checkExist(user.getEmail());
                 session.setAttribute("acc", newAcc);
                 response.sendRedirect("ShopControl");

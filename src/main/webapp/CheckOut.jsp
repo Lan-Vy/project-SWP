@@ -156,7 +156,7 @@
     </c:if>
     <c:if test="${errorMessage != null}">
         <script type="text/javascript">
-            toastr.error(`${errorMessage}`, 'Error', {timeOut: 1000});
+            toastr.error(`${errorMessage}`, 'Error', {timeOut: 3000});
         </script>
     </c:if>
 </body>

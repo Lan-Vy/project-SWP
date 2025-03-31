@@ -115,30 +115,6 @@ public class ProductDAO {
         return null;
     }
 
-    public Product getProductByID(String id) {
-        String query = "select * from Product where pID = ?";
-        SubImageDAO dao = new SubImageDAO();
-        try {
-            conn = new DBContext().getConnection(); //mo ket noi toi sql
-            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
-            ps.setString(1, id);
-            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
-            while (rs.next()) {
-                return new Product(rs.getInt(1),
-                        rs.getString(2),
-                        rs.getString(3),
-                        rs.getDouble(4),
-                        rs.getString(5),
-                        rs.getString(6),
-                        rs.getInt(7), dao.getAllSubImageByPID(rs.getInt(1) + ""), rs.getInt(8), rs.getInt(9));
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public List<Product> searchWithPaging(String txtSearch, int pageIndex, int pageSize, String cID, String sort, String priceRange) {
         List<Product> list = new ArrayList<>();
         String query = "select p.[pID]\n"
@@ -424,11 +400,9 @@ public class ProductDAO {
             ps = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);//nem cau lenh query sang sql
             ps.setString(1, name);
             ps.setString(2, image);
-//            ps.setString(3, price);
             ps.setString(3, title);
             ps.setString(4, description);
             ps.setString(5, cid);
-//            ps.setInt(7, amount);
             ps.executeUpdate();
             // Lấy ID của sản phẩm vừa chèn vào
             ResultSet rs = ps.getGeneratedKeys();
@@ -490,31 +464,20 @@ public class ProductDAO {
             ps = conn.prepareStatement(query);//nem cau lenh query sang sql
             ps.setString(1, name);
             ps.setString(2, image);
-//            ps.setString(3, price);
             ps.setString(3, title);
             ps.setString(4, description);
             ps.setString(5, cid);
-//            ps.setInt(7, amount);
             ps.setInt(6, pID);
             ps.executeUpdate();
 
-//            // Bước 2: Xóa tất cả size cũ của sản phẩm trong bảng product_size
-//            query = "DELETE FROM Product_Size WHERE pID = ?";
-//            PreparedStatement psDelete = conn.prepareStatement(query);
-//            psDelete.setInt(1, pID);
-//            psDelete.executeUpdate();
-            // Bước 3: Thêm lại size mới vào product_size
             query = "UPDATE Product_Size set quantity = ?, price = ? where pId = ? and sizeId = ?";
             PreparedStatement psInsert = conn.prepareStatement(query);
-//            if (sizes != null) {
-//                for (String size : sizes) {
             psInsert.setInt(1, amount);
             psInsert.setString(2, price);
             psInsert.setInt(3, pID);
             psInsert.setInt(4, Integer.parseInt(sizeId));
             psInsert.executeUpdate();
-//                }
-//            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -610,18 +573,6 @@ public class ProductDAO {
         }
 
         return list;
-    }
-
-    public void updateAmounProduct(int amount, int productID) {
-        String query = "UPDATE Product SET pAmount = ? WHERE pID = ?";
-        try {
-            conn = new DBContext().getConnection();
-            ps = conn.prepareStatement(query);
-            ps.setInt(1, amount);
-            ps.setInt(2, productID);
-            ps.executeUpdate();
-        } catch (Exception e) {
-        }
     }
 
     public Product getNewestProduct() {
@@ -836,28 +787,6 @@ public class ProductDAO {
         return list;
     }
 
-    public List<Product> getAllProduct() {
-        List<Product> list = new ArrayList<>();
-        String query = "select * from Product where isDeleted != 1";
-        try {
-            conn = new DBContext().getConnection(); //mo ket noi toi sql
-            ps = conn.prepareStatement(query);//nem cau lenh query sang sql
-            rs = ps.executeQuery();//chay cau lenh query, nhan ket qua tra ve
-            while (rs.next()) {
-                list.add(new Product(rs.getInt(1),
-                        rs.getString(2),
-                        rs.getString(3),
-                        rs.getDouble(4),
-                        rs.getString(5),
-                        rs.getString(6),
-                        rs.getInt(7), new SubImageDAO().getAllSubImageByPID(rs.getInt(1) + ""), rs.getInt(8), rs.getInt(9)));
-            }
-
-        } catch (Exception e) {
-        }
-        return list;
-    }
-
     public int getNumberItemsSolid() {
         int n = 0;
         String query = "select SUM(Quantity) from OrderDetails";
@@ -893,23 +822,4 @@ public class ProductDAO {
         return total;
     }
 
-    public boolean isBought(int userId, int productId) {
-        String query = "select * from OrderDetails OD\n"
-                + "  left join [Order] O on O.id = OD.OrderID\n"
-                + "  where O.accountID = ? and OD.ProductID = ? and O.status = 3";
-        try {
-            conn = new DBContext().getConnection();
-            ps = conn.prepareStatement(query);
-            ps.setInt(1, userId);
-            ps.setInt(2, productId);
-
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                return true;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
 }

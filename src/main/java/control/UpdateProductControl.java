@@ -76,23 +76,7 @@ public class UpdateProductControl extends HttpServlet {
                 select += "<option value=\"" + category.getId() + "\"selected>" + category.getName() + "</option>\n";
             }
         }
-
-//        SizeDAO sizeDAO = new SizeDAO();
-//        List<Size> listSize = sizeDAO.getAllSize();
-//        // Lấy danh sách size của sản phẩm đang edit
-//        List<Size> selectedSizes = sizeDAO.getAllSizeByProductId(Integer.parseInt(id));
-//
-//        // Chuyển danh sách selectedSizes thành Set để tra cứu nhanh hơn
-//        Set<Integer> selectedSizeIds = selectedSizes.stream()
-//                .map(Size::getId)
-//                .collect(Collectors.toSet());
-//
-//        String selectSize = "";
-//
-//        for (Size size : listSize) {
-//            String selected = selectedSizeIds.contains(size.getId()) ? " selected" : "";
-//            selectSize += "<option value=\"" + size.getId() + "\"" + selected + ">" + size.getSize() + "</option>\n";
-//        }
+        
         PrintWriter out = response.getWriter();
         out.println("<div class=\"modal-dialog\">\n"
                 + "                    <div class=\"modal-content\">\n"
@@ -197,12 +181,10 @@ public class UpdateProductControl extends HttpServlet {
         String description = request.getParameter("description");
         String amount = request.getParameter("amount");
         String category = request.getParameter("category");
-//        String[] sizes = request.getParameterValues("size");
         String sizeId = request.getParameter("size");
 
         ProductDAO dao = new ProductDAO();
         SubImageDAO sdao = new SubImageDAO();
-        Product oldProduct = dao.getProductByID(pID);
 
         List<SubImage> listSubImg = sdao.getAllSubImageByPID(pID);
         SubImage s = listSubImg.get(0);

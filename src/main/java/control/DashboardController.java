@@ -47,7 +47,7 @@ public class DashboardController extends HttpServlet {
         if (a.getRole() == 2) {
 
             // Get the total number of products and set it as a request attribute
-            int numberProduct = dao.getAllProduct().size();
+            int numberProduct = dao.search2(null, null, "0").size();
             // Get the number of sold items and set it as a request attribute
             int numberItemsSolid = dao.getNumberItemsSolid();
             // Get total earnings from sales and set it as a request attribute
