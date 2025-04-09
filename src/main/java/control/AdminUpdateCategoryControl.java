@@ -36,42 +36,26 @@ public class AdminUpdateCategoryControl extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        request.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json"); 
+    response.setCharacterEncoding("UTF-8");
         // Retrieve the 'id' parameter from the request
-        String id = request.getParameter("id");
-        // Create an instance of the DAO to interact with the database
+        try {
+        int id = Integer.parseInt(request.getParameter("id"));
         CategoryDAO dao = new CategoryDAO();
-        // Fetch the category object based on the provided ID
-        Category c = dao.getCategoryById(Integer.parseInt(id));
-        // Obtain a PrintWriter to send the response back to the client
-        PrintWriter out = response.getWriter();
-        // Begin generating the HTML for the modal dialog
-        out.println("<div class=\"modal-dialog\">\n"
-                + "                    <div class=\"modal-content\">\n"
-                + "                        <form action=\"updateCategory\" method=\"post\">\n"
-                + "                            <div class=\"modal-header\">\n"
-                + "                                <h4 class=\"modal-title\">Edit Category</h4>\n"
-                + "                                <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">&times;</button>\n"
-                + "                            </div>\n"
-                + "                            <div class=\"modal-body\">\n"
-                + "\n"
-                + "                                <div class=\"form-group\">\n"
-                + "                                    <input name=\"cid\" type=\"hidden\" class=\"form-control\" value=\"" + c.getId() + "\">\n"
-                + "                                    <label>Name</label>\n"
-                + "                                    <input name=\"name\" type=\"text\" class=\"form-control\" required value=\"" + c.getName() + "\">\n"
-                + "                                </div>\n"
-                + "                                \n"
-                + "\n"
-                + "                            </div>\n"
-                + "                            <div class=\"modal-footer\">\n"
-                + "                                <input type=\"button\" class=\"btn btn-default\" data-dismiss=\"modal\" value=\"Cancel\">\n"
-                + "                                <input type=\"submit\" class=\"btn btn-info\" value=\"Save\">\n"
-                + "                            </div>\n"
-                + "                        </form>\n"
-                + "                    </div>\n"
-                + "                </div>");
+        Category category = dao.getCategoryById(id);
+
+        if (category != null) {
+            String json = String.format("{\"id\": %d, \"name\": \"%s\"}", category.getId(), category.getName().replace("\"", "\\\""));
+            response.getWriter().write(json);
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            response.getWriter().write("{\"error\": \"Category not found\"}");
+        }
+    } catch (Exception e) {
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        response.getWriter().write("{\"error\": \"Invalid request\"}");
     }
+}
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -104,19 +88,24 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
 
     String name = request.getParameter("name");
     String cId = request.getParameter("cid");
-    CategoryDAO dao = new CategoryDAO();
-    int categoryId = Integer.parseInt(cId);
- 
-    if (dao.isCategoryNameExistsExceptCurrent(name.trim(), categoryId)) {
-        request.setAttribute("errorMessage", "Category name already exists!");
-    } else {
-        dao.updateCategory(name.trim(), categoryId);
-        request.setAttribute("message", "Update success!");
+    try {
+            int categoryId = Integer.parseInt(cId);
+            Category category = new Category(categoryId, name.trim());
+            CategoryDAO dao = new CategoryDAO();
+
+            if (dao.isCategoryNameExistsExceptCurrent(category.getName(), category.getId())) {
+                request.setAttribute("errorMessage", "Category name already exists!");
+            } else {
+                dao.updateCategory(category.getName(), category.getId());
+                request.setAttribute("message", "Update success!");
+            }
+
+        } catch (NumberFormatException e) {
+            request.setAttribute("errorMessage", "Invalid category ID!");
+        }
+
+        request.getRequestDispatcher("ManagerCategoryControl").forward(request, response);
     }
-
-    request.getRequestDispatcher("ManagerCategoryControl").forward(request, response);
-}
-
 
     /**
      * Returns a short description of the servlet.
