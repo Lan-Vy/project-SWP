@@ -42,7 +42,7 @@ public class AdminDeleteCategoryControl extends HttpServlet {
             String cId = request.getParameter("cId");
             ProductDAO pdao = new ProductDAO();
             // Get a list of products associated with the specified category ID
-            List<Product> lstP = pdao.getProductByCid(cId);
+            List<Product> lstP = pdao.getProductByCidForCheck(cId);
             // Check if there are any products in the category
             if (lstP.size() > 0) {
                 // If there are products, set an error message indicating deletion is not allowed
