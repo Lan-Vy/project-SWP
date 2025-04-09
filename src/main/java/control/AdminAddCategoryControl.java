@@ -12,6 +12,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import entity.Category;
 
 /**
  *
@@ -79,10 +80,13 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
         request.setAttribute("errorMessage", "Category name cannot be empty!");
     } else {
         CategoryDAO dao = new CategoryDAO();
-        if (dao.isCategoryNameExists(name.trim())) {
-            request.setAttribute("errorMessage", "Category name already exists!");
-        } else {
-            dao.addNewCategory(name.trim());
+        String trimmedName = name.trim();
+            if (dao.isCategoryNameExists(trimmedName)) {
+                request.setAttribute("errorMessage", "Category name already exists!");
+            } else {
+                Category newCategory = new Category(); 
+                newCategory.setName(trimmedName);
+                dao.addNewCategory(newCategory.getName());
             request.setAttribute("message", "Create success!");
         }
     }
