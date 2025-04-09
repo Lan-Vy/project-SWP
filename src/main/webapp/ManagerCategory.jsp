@@ -2,6 +2,7 @@
 <%@page import="java.util.List"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -34,48 +35,48 @@
 
         <div class="page-wrapper">
             <!-- MAIN CONTENT-->
-                         <div class="main-content">
+            <div class="main-content">
                 <div class="section__content section__content--p30">
                     <div class="container-fluid">
                         <jsp:include page="common/menu.jsp"></jsp:include>
                         </div>
                     </div>
                 </div>
-            <!-- END MAIN CONTENT-->
+                <!-- END MAIN CONTENT-->
 
 
 
 
-            <!-- list------------------------------------------------------------------- -->
-            <div class="container">
-                <div class="table-wrapper">
-                    <div class="table-title">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <h2>Manage <b>Category</b></h2>
-                            </div>
-                            <div class="col-sm-6">
-                                <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Category</span></a>
-                                <button type="button" class="btn btn-danger" id="openDeleteModal"><i class="material-icons">&#xE15C;</i> <span>Delete</span></button>
-                                <!--<a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Delete</span></a>-->
+                <!-- list------------------------------------------------------------------- -->
+                <div class="container">
+                    <div class="table-wrapper">
+                        <div class="table-title">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h2>Manage <b>Category</b></h2>
+                                </div>
+                                <div class="col-sm-6">
+                                    <a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Category</span></a>
+                                    <button type="button" class="btn btn-danger" id="openDeleteModal"><i class="material-icons">&#xE15C;</i> <span>Delete</span></button>
+                                    <!--<a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Delete</span></a>-->
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <table class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th>
-                                    <span class="custom-checkbox">
-                                        <input type="checkbox" id="selectAll">
-                                        <label for="selectAll"></label>
-                                    </span>
-                                </th>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <span class="custom-checkbox">
+                                            <input type="checkbox" id="selectAll">
+                                            <label for="selectAll"></label>
+                                        </span>
+                                    </th>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                             <c:forEach items="${listP}" var="o"> 
                                 <tr>
                                     <td>
@@ -115,7 +116,7 @@
                             <div class="modal-body">
                                 <div class="form-group">
                                     <label>Name</label>
-                                    <input name="name" type="text" class="form-control" required>
+                                    <input name="name" type="text" class="form-control" maxlength="20" required>
                                 </div>
 
 
@@ -129,22 +130,21 @@
                 </div>
             </div>
             <!-- Edit Modal HTML -->
+            <!-- Edit Category Modal (nằm sẵn trong JSP) -->
             <div id="editEmployeeModal" class="modal fade">
                 <div class="modal-dialog">
                     <div class="modal-content">
-                        <form>
+                        <form action="updateCategory" method="post">
                             <div class="modal-header">
                                 <h4 class="modal-title">Edit Category</h4>
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                             </div>
                             <div class="modal-body">
-
+                                <input type="hidden" name="cid" id="editCategoryId">
                                 <div class="form-group">
                                     <label>Name</label>
-                                    <input name="name" type="text" class="form-control" required>
+                                    <input name="name" type="text" class="form-control" id="editCategoryName" maxlength="20" required>
                                 </div>
-
-
                             </div>
                             <div class="modal-footer">
                                 <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
@@ -154,6 +154,7 @@
                     </div>
                 </div>
             </div>
+
             <!-- Delete Modal HTML -->
             <div id="deleteEmployeeModal" class="modal fade">
                 <div class="modal-dialog">
@@ -179,23 +180,19 @@
             </div>
             <script src="js/manager.js" type="text/javascript"></script>
             <script>
-                                            function editProduct(param) {
-                                                var id = param;
-                                                console.log(id);
+                                            function editProduct(id) {
                                                 $.ajax({
-                                                    url: "/Project_Group6/updateCategory",
-                                                    type: "get", //send it throung get method
-                                                    data: {
-                                                        id: id
-                                                    },
+                                                    url: "updateCategory",
+                                                    type: "get",
+                                                    dataType: "json",
+                                                    data: {id: id},
                                                     success: function (data) {
-                                                        var row = document.getElementById("editEmployeeModal");
-                                                        row.innerHTML = data;
-                                                        $("#editEmployeeModal").modal('show');
-
+                                                        $("#editCategoryId").val(data.id);
+                                                        $("#editCategoryName").val(data.name);
+                                                        $("#editEmployeeModal").modal("show");
                                                     },
-                                                    error: function (xhr) {
-                                                        //do something to handle error
+                                                    error: function () {
+                                                        toastr.error("Lỗi khi tải dữ liệu danh mục.");
                                                     }
                                                 });
                                             }
